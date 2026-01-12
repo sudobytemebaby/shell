@@ -30,10 +30,10 @@ Scope {
       PanelWindow {
         id: notifWindow
         
-        // Calculate Y position based on stack index (more compact stacking)
+        // Calculate Y position based on stack index (compact stacking)
         property real stackOffset: {
-          var baseOffset = Theme.barHeight + Theme.spacing.md
-          var perNotifOffset = 96  // Reduced for minimalism (adjust as needed)
+          var baseOffset = Theme.component.barHeight + Theme.spacing.md
+          var perNotifOffset = 160 // Compact spacing
           return baseOffset + (loader.index * perNotifOffset)
         }
         
@@ -55,9 +55,12 @@ Scope {
         
         Component.onCompleted: {
           exclusiveZone = 0
-          implicitWidth = 320
-          implicitHeight = notifContent.implicitHeight + (Theme.padding.sm * 2)
+          implicitWidth = 340
+          // Let height be determined by content binding below
         }
+        
+        // Dynamic height binding - this will update as content changes
+        implicitHeight: wrapper.height
         
         // Smooth position transitions when notifications above are removed
         Behavior on stackOffset {
@@ -70,10 +73,11 @@ Scope {
         // Wrapper item for fade animation
         Item {
           id: wrapper
-          anchors.fill: parent
+          width: 340
+          height: background.height  // Size to background
           opacity: 0
           
-          // Simple fade in
+          // Fade in
           NumberAnimation on opacity {
             from: 0
             to: 1
@@ -81,68 +85,80 @@ Scope {
             easing.type: Easing.OutCubic
           }
           
-          // Main notification container
-          Card {
+          // Main notification container - Material 3 minimalistic
+          Rectangle {
             id: background
-            anchors.fill: parent
+            width: parent.width
+            height: notifContent.implicitHeight + (Theme.padding.lg * 2)
             radius: Theme.radius.lg
-            padding: Theme.padding.sm
+            
+            // Use transparent_medium for blur effect consistency
+            color: hovered 
+                   ? Qt.darker(Theme.surface_container_transparent_medium, 1.1) 
+                   : Theme.surface_container_transparent_medium
+            
+            border.width: 1
+            border.color: Theme.surface_container_high
             
             property bool hovered: false
             
-            // Hover effects similar to Control Center modules
-            color: hovered ? Qt.darker(Theme.surface_container_low, 1.05) : Theme.surface_container_low
-            
             Behavior on color {
-              ColorAnimation { duration: 150 }
+              ColorAnimation { duration: 200 }
             }
             
             ColumnLayout {
               id: notifContent
-              anchors.fill: parent
+              anchors {
+                fill: parent
+                margins: Theme.padding.lg
+              }
+
+              spacing: Theme.spacing.md
               
-              // Header row
+              // Header row - app icon + name + close
               RowLayout {
                 Layout.fillWidth: true
-                Layout.topMargin: Theme.padding.sm
-                Layout.bottomMargin: Theme.padding.xs
-                Layout.leftMargin: Theme.padding.sm
-                Layout.rightMargin: Theme.padding.md
                 spacing: Theme.spacing.sm
                 
                 // App icon 
                 IconCircle {
-                  Layout.preferredWidth: 24 // Smaller for minimalism
-                  Layout.preferredHeight: 24
-                  icon: "󰂚"  // Default app icon (customize per app if possible)
-                  bgColor: Theme.surface_container_high
-                  iconColor: Theme.on_surface_variant
+                  Layout.preferredWidth: 28
+                  Layout.preferredHeight: 28
+                  icon: "󰂚"
+                  bgColor: Theme.primary_container
+                  iconColor: Theme.primary
                   iconSize: Theme.typography.md
                 }
                 
-                // App name - minimal text
+                // App name
                 Text {
                   Layout.fillWidth: true
                   text: loader.notifApp || "Notification"
                   color: Theme.on_surface
-                  font.pixelSize: Theme.typography.md
+                  font.pixelSize: Theme.typography.sm
                   font.family: Theme.typography.fontFamily
                   font.weight: Theme.typography.weightMedium
                   elide: Text.ElideRight
+                  maximumLineCount: 1
                 }
                 
+                // Close button
                 Text {
                   text: "✕"
                   color: Theme.on_surface_variant
                   font.pixelSize: Theme.typography.md
-                  opacity: closeArea.containsMouse ? 0.7 : 1
+                  font.family: Theme.typography.fontFamily
+                  opacity: closeArea.containsMouse ? 1 : 0.7
 
-                  Behavior on opacity { NumberAnimation { duration: 200 } }
+                  Behavior on opacity { 
+                    NumberAnimation { duration: 150 } 
+                  }
 
                   MouseArea {
                     id: closeArea
                     anchors.centerIn: parent
-                    width: 28; height: 28 
+                    width: 32
+                    height: 32
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: fadeOut.start()
@@ -150,26 +166,12 @@ Scope {
                 }
               }
               
-              // Subtle divider (minimal opacity)
-              Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1  // Thinner for minimalism
-                Layout.leftMargin: Theme.padding.sm
-                Layout.rightMargin: Theme.padding.sm
-                color: Theme.outline_variant
-                opacity: 0.6
-              }
-              
-              // Content - compact and minimal
+              // Content - summary + body
               ColumnLayout {
                 Layout.fillWidth: true
-                Layout.topMargin: Theme.padding.sm
-                Layout.bottomMargin: Theme.padding.sm
-                Layout.leftMargin: Theme.padding.md
-                Layout.rightMargin: Theme.padding.md
-                spacing: Theme.spacing.sm
+                spacing: Theme.spacing.xs
                 
-                // Summary - bold and primary
+                // Summary - bold and prominent
                 Text {
                   Layout.fillWidth: true
                   text: loader.notifSummary
@@ -177,20 +179,20 @@ Scope {
                   font.pixelSize: Theme.typography.md
                   font.family: Theme.typography.fontFamily
                   font.weight: Theme.typography.weightMedium
-                  wrapMode: Text.WordWrap
-                  maximumLineCount: 1  // Limit for minimalism
+                  wrapMode: Text.Wrap
+                  maximumLineCount: 2
                   elide: Text.ElideRight
                 }
                 
-                // Body - muted and smaller
+                // Body - muted and compact
                 Text {
                   Layout.fillWidth: true
                   text: loader.notifBody
                   color: Theme.on_surface_variant
                   font.pixelSize: Theme.typography.sm
                   font.family: Theme.typography.fontFamily
-                  wrapMode: Text.WordWrap
-                  maximumLineCount: 3  // Limit lines for compactness
+                  wrapMode: Text.Wrap
+                  maximumLineCount: 3
                   elide: Text.ElideRight
                   visible: text !== ""
                   opacity: 0.8
@@ -198,18 +200,17 @@ Scope {
               }
             }
             
-            // Hover area with effects like in IconButton
+            // Hover detection
             MouseArea {
               anchors.fill: parent
               hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
               propagateComposedEvents: true
               
               onEntered: background.hovered = true
               onExited: background.hovered = false
               
               onClicked: mouse => {
-                mouse.accepted = false  // Allow clicks to pass if needed
+                mouse.accepted = false
               }
             }
           }
@@ -229,10 +230,10 @@ Scope {
           }
         }
         
-        // Auto-dismiss timer (shortened for minimalism)
+        // Auto-dismiss timer
         Timer {
           id: dismissTimer
-          interval: 5000  // 5 seconds - adjust as preferred
+          interval: 5000
           running: true
           onTriggered: {
             fadeOut.start()
