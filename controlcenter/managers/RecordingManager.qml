@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../core" as Core
 
 Scope {
   id: manager
@@ -40,26 +41,20 @@ Scope {
   function toggleRecording() {
     console.log("Toggle recording called, current state:", manager.isRecording)
     
-    // Create a process to run screen-rec
-    var proc = Qt.createQmlObject(
-      'import Quickshell; import Quickshell.Io; Process { command: ["screen-rec"] }',
-      manager
-    )
-    
-    proc.exited.connect(code => {
-      console.log("screen-rec exited with code:", code)
-      proc.destroy()
-      
-      // Force immediate state check after toggle
-      Qt.callLater(() => {
+    Core.ProcessUtils.runCommand(
+      manager,
+      ["screen-rec"],
+      () => {
+        console.log("screen-rec executed successfully")
+        // Force immediate state check after toggle
         checkRecordingProcess.running = true
-      })
-    })
-    
-    // Note: stderr handling removed due to QML limitations
-    // The script sends notifications anyway
-    
-    proc.running = true
+      },
+      (code, error) => {
+        console.error("[RecordingManager] screen-rec failed:", error)
+        // Still check state even on error
+        checkRecordingProcess.running = true
+      }
+    )
   }
   
   // ========== INITIALIZATION ==========

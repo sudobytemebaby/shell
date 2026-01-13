@@ -12,6 +12,7 @@ import "calendar"
 import "wallpaper"
 import "powermenu"
 import "emoji"
+import "lockscreen"
 
 ShellRoot {
   // ============================================================================
@@ -129,6 +130,7 @@ ShellRoot {
     wallpaperManager: wallpaperManager
     powerMenuManager: powerMenuManager
     emojiManager: emojiManager
+    lockscreenManager: lockscreenManager
   }
   
   MenuDisplay {
@@ -145,6 +147,18 @@ ShellRoot {
   
   CalendarDisplay {
     manager: calendarManager
+  }
+
+  // ============================================================================
+  // LOCKSCREEN
+  // ============================================================================
+  
+  LockscreenManager {
+    id: lockscreenManager
+  }
+  
+  LockscreenDisplay {
+    manager: lockscreenManager
   }
 
   // ============================================================================

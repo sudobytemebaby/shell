@@ -6,14 +6,23 @@ ColumnLayout {
   id: root
 
   // Public API
-  required property real value           // 0.0 to 1.0
+  required property real value           // Current value
   signal moved(real newValue)
+  
+  property bool pressed: handleMouseArea.drag.active
 
   property real minimumValue: 0.0
   property real maximumValue: 1.0
   property int tickCount: 11
 
   spacing: 4
+  
+  // Normalize value to 0-1 range for internal calculations
+  readonly property real normalizedValue: {
+    const range = maximumValue - minimumValue
+    if (range <= 0) return 0
+    return Math.max(0, Math.min(1, (value - minimumValue) / range))
+  }
 
   Item {
     Layout.fillWidth: true
@@ -38,7 +47,7 @@ ColumnLayout {
           top: parent.top
           bottom: parent.bottom
         }
-        width: Math.max(0, Math.min(parent.width, parent.width * root.value))
+        width: Math.max(0, Math.min(parent.width, parent.width * root.normalizedValue))
         radius: parent.radius
         color: Theme.primary
 
@@ -51,7 +60,7 @@ ColumnLayout {
     // Handle
     Rectangle {
       id: handle
-      x: Math.max(0, Math.min(parent.width - width, (parent.width - width) * root.value))
+      x: Math.max(0, Math.min(parent.width - width, (parent.width - width) * root.normalizedValue))
       anchors.verticalCenter: parent.verticalCenter
       width: 18
       height: 18
@@ -83,8 +92,10 @@ ColumnLayout {
         drag.maximumX: track.width - handle.width
 
         onPositionChanged: if (drag.active) {
-          const newValue = (handle.x + handle.width / 2) / track.width
-          const clamped = Math.max(root.minimumValue, Math.min(root.maximumValue, newValue))
+          const normalizedValue = (handle.x + handle.width / 2) / track.width
+          const range = root.maximumValue - root.minimumValue
+          const actualValue = root.minimumValue + (normalizedValue * range)
+          const clamped = Math.max(root.minimumValue, Math.min(root.maximumValue, actualValue))
           root.moved(clamped)
         }
       }
@@ -95,8 +106,10 @@ ColumnLayout {
       anchors.fill: track
       z: -1
       onClicked: mouse => {
-        const newValue = mouse.x / track.width
-        const clamped = Math.max(root.minimumValue, Math.min(root.maximumValue, newValue))
+        const normalizedValue = mouse.x / track.width
+        const range = root.maximumValue - root.minimumValue
+        const actualValue = root.minimumValue + (normalizedValue * range)
+        const clamped = Math.max(root.minimumValue, Math.min(root.maximumValue, actualValue))
         root.moved(clamped)
       }
     }

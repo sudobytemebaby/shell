@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../core" as Core
 
 Scope {
   id: manager
@@ -108,23 +109,17 @@ Scope {
   function copyEmoji(emoji) {
     console.log("[EmojiManager] Copying emoji:", emoji)
     
-    var proc = Qt.createQmlObject(
-      'import Quickshell.Io; Process { command: ["emoji-picker", "' + emoji + '"] }',
-      manager
-    )
-    
-    proc.exited.connect(code => {
-      proc.destroy()
-      
-      if (code === 0) {
+    Core.ProcessUtils.runCommand(
+      manager,
+      ["emoji-picker", emoji],
+      () => {
         // Close picker after successful copy
         manager.visible = false
-      } else {
-        console.error("[EmojiManager] Failed to copy emoji, exit code:", code)
+      },
+      (code, error) => {
+        console.error("[EmojiManager] Failed to copy emoji:", error)
       }
-    })
-    
-    proc.running = true
+    )
   }
   
   // Load emojis when component is created

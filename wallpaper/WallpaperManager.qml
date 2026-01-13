@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../core" as Core
 
 Scope {
   id: manager
@@ -282,54 +283,21 @@ Scope {
     
     console.log("[WallpaperManager] Setting wallpaper to:", filename)
     
-    // Create process - parent parsers to proc for auto-cleanup
-    var proc = Qt.createQmlObject(
-      'import Quickshell.Io; Process {}',
-      manager
-    )
-    
-    // Set command using array form (secure)
-    proc.command = [manager.switcherScript, filename]
-    
-    // Create parsers parented to proc (will auto-destroy)
-    var stdoutParser = Qt.createQmlObject(
-      'import Quickshell.Io; SplitParser {}',
-      proc
-    )
-    stdoutParser.onRead.connect(data => {
-      if (data && data.trim()) {
-        console.log("[WallpaperManager]", data.trim())
-      }
-    })
-    proc.stdout = stdoutParser
-    
-    var stderrParser = Qt.createQmlObject(
-      'import Quickshell.Io; SplitParser {}',
-      proc
-    )
-    stderrParser.onRead.connect(data => {
-      if (data && data.trim()) {
-        console.error("[WallpaperManager]", data.trim())
-      }
-    })
-    proc.stderr = stderrParser
-    
-    proc.exited.connect(code => {
-      if (code === 0) {
+    Core.ProcessUtils.runCommand(
+      manager,
+      [manager.switcherScript, filename],
+      (output) => {
+        if (output) console.log("[WallpaperManager]", output)
         console.log("[WallpaperManager] Wallpaper set successfully")
         manager.currentWallpaper = filename
         
         // Close picker on success
         manager.visible = false
-      } else {
-        console.error("[WallpaperManager] Failed to set wallpaper (exit code:", code + ")")
+      },
+      (code, error) => {
+        console.error("[WallpaperManager] Failed to set wallpaper:", error)
       }
-      
-      // Cleanup (parsers auto-destroy as children)
-      proc.destroy()
-    })
-    
-    proc.running = true
+    )
   }
   
   // ============================================================================

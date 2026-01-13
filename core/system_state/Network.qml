@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../" as Core
 
 // Network State Module - loopback filtering
 Scope {
@@ -212,7 +213,7 @@ Scope {
   // ============================================================================
   
   Timer {
-    interval: 2000
+    interval: 5000  // Reduced polling frequency (was 2000ms)
     running: true
     repeat: true
     onTriggered: {
@@ -256,23 +257,21 @@ Scope {
       interfaceName = ""
     }
     
-    var cmd = enabled ? "nmcli radio wifi on" : "nmcli radio wifi off"
+    var cmd = enabled ? ["nmcli", "radio", "wifi", "on"] : ["nmcli", "radio", "wifi", "off"]
     
-    var proc = Qt.createQmlObject(
-      'import Quickshell.Io; Process { command: ["sh", "-c", "' + cmd + '"] }',
-      module
-    )
-    
-    proc.exited.connect(function(code) {
-      proc.destroy()
-      
-      // Force state refresh after a short delay
-      Qt.callLater(function() {
+    Core.ProcessUtils.runCommand(
+      module,
+      cmd,
+      () => {
+        // Force state refresh after a short delay
         refreshTimer.start()
-      })
-    })
-    
-    proc.running = true
+      },
+      (code, error) => {
+        console.error("[Network] Failed to set WiFi state:", error)
+        // Still refresh state even on error
+        refreshTimer.start()
+      }
+    )
   }
   
   // Refresh timer to avoid race conditions after toggle
@@ -287,12 +286,7 @@ Scope {
   }
   
   function openNetworkManager() {
-    var proc = Qt.createQmlObject(
-      'import Quickshell.Io; Process { command: ["kitty", "--class", "floating_term_m", "-e", "impala"] }',
-      module
-    )
-    proc.startDetached()
-    proc.destroy()
+    Core.ProcessUtils.runCommandAsync(module, ["kitty", "--class", "floating_term_m", "-e", "impala"])
   }
   
   // ============================================================================

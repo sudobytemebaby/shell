@@ -96,7 +96,7 @@ Card {
         }
       }
       
-      // Progress bar + time
+      // Progress slider + time
       RowLayout {
         Layout.fillWidth: true
         spacing: Theme.spacing.sm
@@ -108,23 +108,25 @@ Card {
           font.family: Theme.typography.fontFamily
         }
         
-        Rectangle {
+        HorizontalSlider {
+          id: positionSlider
           Layout.fillWidth: true
-          height: 4
-          radius: Theme.radius.sm
-          color: Theme.outline_variant
           
-          Rectangle {
-            width: mediaManager.playerLength > 0
-                   ? parent.width * (mediaManager.playerPosition / mediaManager.playerLength)
-                   : 0
-            height: parent.height
-            radius: parent.radius
-            color: Theme.primary
-            
-            Behavior on width { 
-              NumberAnimation { duration: 150 } 
-            }
+          minimumValue: 0
+          maximumValue: mediaManager.playerLength > 0 ? mediaManager.playerLength : 100
+          value: mediaManager.playerPosition
+          
+          // Only update slider from player when not being dragged
+          Binding {
+            target: positionSlider
+            property: "value"
+            value: mediaManager.playerPosition
+            when: !positionSlider.pressed
+          }
+          
+          onMoved: newValue => {
+            // Seek when user drags the slider
+            mediaManager.playerSeek(newValue)
           }
         }
         

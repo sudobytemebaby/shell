@@ -36,13 +36,55 @@ Scope {
   signal brightnessChangedExternally(real brightness)
   
   // ============================================================================
+  // BACKLIGHT DEVICE AUTO-DETECTION
+  // ============================================================================
+  
+  property string detectedBacklightDevice: ""
+  
+  Process {
+    id: detectBacklightProcess
+    command: ["sh", "-c", "ls /sys/class/backlight/ 2>/dev/null | head -n 1"]
+    running: true
+    
+    stdout: SplitParser {
+      onRead: data => {
+        if (data && data.trim()) {
+          module.detectedBacklightDevice = data.trim()
+          console.log("[Brightness] Detected backlight device:", module.detectedBacklightDevice)
+        } else {
+          console.error("[Brightness] No backlight device found")
+        }
+      }
+    }
+    
+    stderr: SplitParser {
+      onRead: data => {
+        if (data && data.trim()) {
+          console.error("[Brightness] Error detecting backlight:", data.trim())
+        }
+      }
+    }
+  }
+  
+  // ============================================================================
   // FILE WATCHER (for external changes)
   // ============================================================================
   
   FileView {
     id: brightnessFileWatcher
-    path: "/sys/class/backlight/amdgpu_bl1/actual_brightness"
-    watchChanges: true
+    path: module.detectedBacklightDevice 
+        ? "/sys/class/backlight/" + module.detectedBacklightDevice + "/actual_brightness"
+        : ""
+    watchChanges: module.detectedBacklightDevice !== ""
+    
+    onPathChanged: {
+      if (path && path !== "") {
+        // Read initial brightness when device is detected
+        Qt.callLater(() => {
+          brightnessMaxGetter.running = true
+        })
+      }
+    }
     
     onFileChanged: {
       // Only read back if we're not currently changing it ourselves

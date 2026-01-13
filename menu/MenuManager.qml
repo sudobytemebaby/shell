@@ -23,6 +23,9 @@ Scope {
   // Reference to emoji manager (for the Emoji item)
   required property var emojiManager
   
+  // Reference to lockscreen manager (for the Lock item)
+  required property var lockscreenManager
+  
   onVisibleChanged: {
     if (visible) {
       searchText = "" // Reset search when opening
@@ -74,6 +77,12 @@ Scope {
       command: "themes"  // Special command to trigger theme switcher
     },
     {
+      icon: "󰌾",
+      name: "Lock Screen",
+      description: "Lock your screen",
+      command: "lock"  // Special command to trigger lockscreen
+    },
+    {
       icon: "󰐥",
       name: "Power",
       description: "Shutdown, reboot, logout...",
@@ -120,6 +129,13 @@ Scope {
     if (item.command === "themes") {
       manager.visible = false
       themeManager.visible = true
+      return
+    }
+    
+    // Special case: Lock Screen locks the screen
+    if (item.command === "lock") {
+      manager.visible = false
+      lockscreenManager.lock()
       return
     }
     

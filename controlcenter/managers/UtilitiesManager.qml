@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../../core" as Core
 
 Scope {
   id: manager
@@ -40,23 +41,19 @@ Scope {
   
   // ========== TOGGLE NIGHT LIGHT ==========
   function toggleNightLight() {
-    // Create a process to run your script
-    var proc = Qt.createQmlObject(
-      'import Quickshell; import Quickshell.Io; Process { command: ["night-mode"] }',
-      manager
-    )
-    
-    // Listen for when the script completes
-    proc.exited.connect(code => {
-      proc.destroy()
-      
-      // Wait a bit longer after script completes to ensure state is settled
-      Qt.callLater(() => {
+    Core.ProcessUtils.runCommand(
+      manager,
+      ["night-mode"],
+      () => {
+        // Wait a bit after script completes to ensure state is settled
         checkStateDelayTimer.restart()
-      })
-    })
-    
-    proc.running = true
+      },
+      (code, error) => {
+        console.error("[UtilitiesManager] Failed to toggle night mode:", error)
+        // Still check state even on error
+        checkStateDelayTimer.restart()
+      }
+    )
   }
   
   // Delayed state check timer - gives the system time to settle
@@ -70,21 +67,15 @@ Scope {
   
   // ========== LAUNCHER FUNCTIONS ==========
   function launchColorPicker() {
-    var proc = Qt.createQmlObject('import Quickshell; import Quickshell.Io; Process { command: ["hyprpicker", "-a"] }', manager)
-    proc.startDetached()
-    proc.destroy()
+    Core.ProcessUtils.runCommandAsync(manager, ["hyprpicker", "-a"])
   }
   
   function takeScreenshot() {
-    var proc = Qt.createQmlObject('import Quickshell; import Quickshell.Io; Process { command: ["hyprshot", "-m", "region"] }', manager)
-    proc.startDetached()
-    proc.destroy()
+    Core.ProcessUtils.runCommandAsync(manager, ["hyprshot", "-m", "region"])
   }
   
   function openClipboard() {
-    var proc = Qt.createQmlObject('import Quickshell; import Quickshell.Io; Process { command: ["kitty", "--class", "floating_term_s", "-e", "clipse"] }', manager)
-    proc.startDetached()
-    proc.destroy()
+    Core.ProcessUtils.runCommandAsync(manager, ["kitty", "--class", "floating_term_s", "-e", "clipse"])
   }
   
   // ========== INITIALIZATION ==========

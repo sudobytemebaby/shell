@@ -22,6 +22,7 @@ Scope {
   
   Managers.MediaManager {
     id: mediaManager
+    controlCenterVisible: manager.visible
   }
   
   Managers.RecordingManager {

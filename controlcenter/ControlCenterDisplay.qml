@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -72,6 +73,18 @@ LazyLoader {
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Qt.lighter(Theme.bg1, 1.3)
+      
+      // Enable layering for the shadow effect
+      layer.enabled: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: Qt.rgba(0, 0, 0, 0.5)
+        shadowBlur: 1.0
+        shadowHorizontalOffset: 0
+        shadowVerticalOffset: 4
+        shadowOpacity: 0.3
+        blurMax: 32
+      }
       
       Column {
         anchors {

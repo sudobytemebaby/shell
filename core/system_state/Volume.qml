@@ -200,31 +200,13 @@ Scope {
   }
   
   // ============================================================================
-  // POLLING TIMER - Update device info periodically
-  // ============================================================================
-  
-  Timer {
-    interval: 3000  // Check every 3 seconds
-    running: true
-    repeat: true
-    onTriggered: {
-      if (!sinkNameProcess.running) {
-        sinkNameProcess.running = true
-      }
-    }
-  }
-  
-  // ============================================================================
   // DEVICE CHANGE DETECTION
   // ============================================================================
   
-  // Watch for audio sink changes (device switches)
-  Connections {
-    target: module.audioSinkNode
-    enabled: module.audioSinkNode !== null
-    
-    function onDescriptionChanged() {
-      // Device changed - refresh device info
+  // Watch for audio sink node changes (device switches)
+  onAudioSinkNodeChanged: {
+    // Device changed - refresh device info
+    if (audioSinkNode !== null) {
       Qt.callLater(() => {
         if (!sinkNameProcess.running) {
           sinkNameProcess.running = true

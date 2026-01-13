@@ -1,169 +1,163 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
+import Quickshell.Services.Mpris
+import "../../core" as Core
 
 Scope {
-  id: manager
-  
-  // ========== MEDIA PLAYER STATE ==========
-  property bool playerActive: false
-  property bool playerPlaying: false
-  property string playerTitle: ""
-  property string playerArtist: ""
-  property string playerName: ""
-  property real playerPosition: 0.0  // Current position in seconds
-  property real playerLength: 0.0     // Total length in seconds
-  
-  // ========== GET PLAYER STATUS ==========
-  Process {
-    id: playerStatusProcess
-    command: ["playerctl", "status"]
+    id: manager
     
-    stdout: SplitParser {
-      onRead: data => {
-        if (!data) {
-          manager.playerActive = false
-          return
+    // ========== MEDIA PLAYER STATE (Public API) ==========
+    property bool playerActive: false
+    property bool playerPlaying: false
+    property string playerTitle: ""
+    property string playerArtist: ""
+    property string playerName: ""
+    property real playerPosition: 0.0  // Current position in seconds
+    property real playerLength: 0.0     // Total length in seconds
+    
+    // Track if control center is visible (for position updates)
+    property bool controlCenterVisible: false
+    
+    // ========== NATIVE MPRIS INTEGRATION ==========
+    
+    // Get first available player (or null if none)
+    readonly property var activePlayer: Mpris.players.values.length > 0 
+        ? Mpris.players.values[0] 
+        : null
+    
+    // Automatically update state when player changes
+    Connections {
+        target: manager
+        function onActivePlayerChanged() {
+            updatePlayerState()
         }
-        var status = data.trim()
+    }
+    
+    // Watch for player property changes
+    Connections {
+        target: manager.activePlayer
+        enabled: manager.activePlayer !== null
         
-        if (status === "Playing" || status === "Paused") {
-          manager.playerActive = true
-          manager.playerPlaying = (status === "Playing")
-          
-          // Get metadata and position
-          playerMetadataProcess.running = true
-          playerPositionProcess.running = true
-        } else {
-          manager.playerActive = false
+        function onPlaybackStateChanged() {
+            updatePlayerState()
         }
-      }
-    }
-    
-    stderr: SplitParser {
-      onRead: data => {
-        // No player available
-        manager.playerActive = false
-      }
-    }
-  }
-  
-  // ========== GET PLAYER METADATA ==========
-  Process {
-    id: playerMetadataProcess
-    command: ["playerctl", "metadata", "--format", "{{title}}|{{artist}}|{{playerName}}|{{mpris:length}}"]
-    
-    stdout: SplitParser {
-      onRead: data => {
-        if (!data) return
-        var parts = data.trim().split("|")
-        manager.playerTitle = parts[0] || ""
-        manager.playerArtist = parts[1] || ""
-        manager.playerName = parts[2] || ""
         
-        // Length comes in microseconds, convert to seconds
-        var lengthMicro = parseInt(parts[3] || "0")
-        manager.playerLength = lengthMicro / 1000000.0
-      }
-    }
-  }
-  
-  // ========== GET CURRENT POSITION ==========
-  Process {
-    id: playerPositionProcess
-    command: ["playerctl", "position"]
-    
-    stdout: SplitParser {
-      onRead: data => {
-        if (!data) return
-        var pos = parseFloat(data.trim())
-        if (!isNaN(pos)) {
-          manager.playerPosition = pos
+        function onMetadataChanged() {
+            updatePlayerState()
         }
-      }
+        
+        function onPositionChanged() {
+            // Update position from player (already in seconds)
+            if (manager.activePlayer && manager.activePlayer.position !== undefined) {
+                var newPosition = manager.activePlayer.position
+                if (!isNaN(newPosition) && newPosition >= 0) {
+                    manager.playerPosition = newPosition
+                }
+            }
+        }
     }
-  }
-  
-  // ========== TIMERS ==========
-  // Timer to poll player status (every 2 seconds)
-  Timer {
-    interval: 2000
-    running: true
-    repeat: true
-    onTriggered: {
-      if (!playerStatusProcess.running) {
-        playerStatusProcess.running = true
-      }
-    }
-  }
-  
-  // Timer to update position more frequently when playing (every 1 second)
-  Timer {
-    interval: 1000
-    running: manager.playerPlaying
-    repeat: true
-    onTriggered: {
-      if (!playerPositionProcess.running) {
-        playerPositionProcess.running = true
-      }
-    }
-  }
-  
-  // ========== MEDIA PLAYER CONTROLS ==========
-  function playerPlayPause() {
-    var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["playerctl", "play-pause"] }', manager)
-    proc.running = true
-    proc.exited.connect(() => {
-      proc.destroy()
-      // Force update status
-      playerStatusProcess.running = true
-    })
-  }
-  
-  function playerNext() {
-    var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["playerctl", "next"] }', manager)
-    proc.running = true
-    proc.exited.connect(() => {
-      proc.destroy()
-      // Small delay before updating to let player switch
-      Qt.callLater(() => playerStatusProcess.running = true)
-    })
-  }
-  
-  function playerPrevious() {
-    var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["playerctl", "previous"] }', manager)
-    proc.running = true
-    proc.exited.connect(() => {
-      proc.destroy()
-      // Small delay before updating to let player switch
-      Qt.callLater(() => playerStatusProcess.running = true)
-    })
-  }
-  
-  function playerSeek(position) {
-    // Update UI immediately for responsive feel
-    manager.playerPosition = position
     
-    var proc = Qt.createQmlObject('import Quickshell.Io; Process { command: ["playerctl", "position", "' + position + '"] }', manager)
-    proc.running = true
-    proc.exited.connect(() => {
-      proc.destroy()
-      // Update position after seek
-      Qt.callLater(() => playerPositionProcess.running = true)
-    })
-  }
-  
-  // Helper function to format time (seconds -> MM:SS)
-  function formatTime(seconds) {
-    if (isNaN(seconds) || seconds < 0) return "0:00"
+    // Poll position when playing
+    // Updates more frequently when control center is visible for smooth progress bars
+    Timer {
+        interval: manager.controlCenterVisible ? 500 : 2000
+        running: manager.playerPlaying && manager.activePlayer !== null
+        repeat: true
+        onTriggered: {
+            if (manager.activePlayer && manager.activePlayer.position !== undefined) {
+                var newPosition = manager.activePlayer.position
+                if (!isNaN(newPosition) && newPosition >= 0) {
+                    manager.playerPosition = newPosition
+                }
+            }
+        }
+    }
     
-    var mins = Math.floor(seconds / 60)
-    var secs = Math.floor(seconds % 60)
-    return mins + ":" + (secs < 10 ? "0" : "") + secs
-  }
-  
-  Component.onCompleted: {
-    // Get initial player status
-    playerStatusProcess.running = true
-  }
+    // Update all player state from active player
+    function updatePlayerState() {
+        if (manager.activePlayer === null) {
+            manager.playerActive = false
+            manager.playerPlaying = false
+            manager.playerTitle = ""
+            manager.playerArtist = ""
+            manager.playerName = ""
+            manager.playerPosition = 0.0
+            manager.playerLength = 0.0
+            return
+        }
+        
+        var player = manager.activePlayer
+        manager.playerActive = true
+        manager.playerPlaying = (player.playbackState === MprisPlaybackState.Playing)
+        
+        // Use player's direct properties (these have extra guards against bad metadata)
+        manager.playerTitle = player.trackTitle || ""
+        manager.playerArtist = player.trackArtist || ""
+        manager.playerName = player.identity || ""
+        
+        // Position and length from player
+        // Both position and length are already in seconds from Quickshell
+        var position = player.position || 0
+        var length = player.length || 0
+        
+        // Validate values before assigning
+        manager.playerPosition = (!isNaN(position) && position >= 0) ? position : 0.0
+        manager.playerLength = (!isNaN(length) && length > 0) ? length : 0.0
+    }
+    
+    // Initialize on startup
+    Component.onCompleted: {
+        updatePlayerState()
+    }
+    
+    // ========== MEDIA PLAYER CONTROLS ==========
+    
+    function playerPlayPause() {
+        if (manager.activePlayer) {
+            manager.activePlayer.togglePlaying()
+        }
+    }
+    
+    function playerNext() {
+        if (manager.activePlayer) {
+            manager.activePlayer.next()
+        }
+    }
+    
+    function playerPrevious() {
+        if (manager.activePlayer) {
+            manager.activePlayer.previous()
+        }
+    }
+    
+    function playerStop() {
+        if (manager.activePlayer) {
+            manager.activePlayer.stop()
+        }
+    }
+    
+    function playerSeek(position) {
+        if (manager.activePlayer) {
+            // Update UI immediately for responsive feel
+            manager.playerPosition = position
+            // Set position directly (already in seconds)
+            manager.activePlayer.position = position
+        }
+    }
+    
+    function playerSeekRelative(offset) {
+        if (manager.activePlayer) {
+            // Seek relative (offset already in seconds)
+            manager.activePlayer.seek(offset)
+        }
+    }
+    
+    // Helper function to format time (seconds -> MM:SS)
+    function formatTime(seconds) {
+        if (isNaN(seconds) || seconds < 0) return "0:00"
+        
+        var mins = Math.floor(seconds / 60)
+        var secs = Math.floor(seconds % 60)
+        return mins + ":" + (secs < 10 ? "0" : "") + secs
+    }
 }

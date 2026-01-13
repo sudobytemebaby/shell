@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../" as Core
 
 // Bluetooth State Module - SIMPLIFIED VERSION
 Scope {
@@ -161,25 +162,28 @@ Scope {
   function setPower(enabled) {
     changingState = true
     stateChangeResetTimer.restart()
-    powered = enabled
     
-    var cmd = enabled ? "bluetoothctl power on" : "bluetoothctl power off"
-    
-    var proc = Qt.createQmlObject(
-      'import Quickshell.Io; Process { command: ["sh", "-c", "' + cmd + '"] }',
-      module
+    Core.ProcessUtils.runCommand(
+      module,
+      ["bluetoothctl", "power", enabled ? "on" : "off"],
+      () => {
+        // Refresh state after change
+        Qt.callLater(function() {
+          if (!bluetoothStateProcess.running) {
+            bluetoothStateProcess.running = true
+          }
+        })
+      },
+      (code, error) => {
+        console.error("[Bluetooth] Failed to set power:", error)
+        // Still refresh state
+        Qt.callLater(function() {
+          if (!bluetoothStateProcess.running) {
+            bluetoothStateProcess.running = true
+          }
+        })
+      }
     )
-    
-    proc.exited.connect(function(code) {
-      proc.destroy()
-      Qt.callLater(function() {
-        if (!bluetoothStateProcess.running) {
-          bluetoothStateProcess.running = true
-        }
-      })
-    })
-    
-    proc.running = true
   }
   
   function connectDevice(address) {

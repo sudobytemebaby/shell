@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import "../core" as Core
 
 Scope {
   id: manager
@@ -35,7 +36,7 @@ Scope {
       icon: "󰌾",
       name: "Lock",
       description: "Lock the screen",
-      command: "hyprlock",
+      command: "loginctl lock-session",
       color: "#7FB4CA"
     },
     {
@@ -58,19 +59,20 @@ Scope {
   function executePowerOption(option) {
     console.log("[PowerMenu] Executing:", option.name, "command:", option.command)
     
-    try {
-      var proc = Qt.createQmlObject(
-        'import Quickshell.Io; Process { command: ["sh", "-c", "' + option.command + '"] }',
-        manager
-      )
-      
-      proc.startDetached()
-      proc.destroy()
-      
-      manager.visible = false
-    } catch (error) {
-      console.error("[PowerMenu] Failed to execute command:", error)
-    }
+    // Close menu immediately for better UX
+    manager.visible = false
+    
+    // Execute command
+    Core.ProcessUtils.runCommand(
+      manager,
+      ["sh", "-c", option.command],
+      () => {
+        console.log("[PowerMenu] Command executed successfully")
+      },
+      (code, error) => {
+        console.error("[PowerMenu] Failed to execute command:", error)
+      }
+    )
   }
   
   // IPC Handler for external control
