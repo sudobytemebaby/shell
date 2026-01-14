@@ -20,7 +20,7 @@ Rectangle {
     if (isPrimary) {
       return mouseArea.pressed ? Qt.darker(Theme.primary, 1.2) : Theme.primary
     } else {
-      return mouseArea.containsMouse ? Qt.lighter(Theme.surface_container_low, 1.3): Theme.surface_container_transparent_light
+      return mouseArea.containsMouse ? Qt.lighter(Theme.surface_container_low, 1.3): Theme.surface_container_low_transparent_light
     }
   }
   
@@ -41,24 +41,6 @@ Rectangle {
     NumberAnimation { 
       duration: 100
       easing.type: Easing.OutCubic
-    }
-  }
-  
-  // Subtle shadow
-  Rectangle {
-    visible: root.isPrimary
-    anchors.centerIn: parent
-    width: parent.width + 4
-    height: parent.height + 4
-    radius: (parent.width + 4) / 2
-    color: "transparent"
-    border.width: 2
-    border.color: Theme.surface_container_low
-    z: -1
-    opacity: mouseArea.containsMouse ? 0.8 : 0.5
-    
-    Behavior on opacity {
-      NumberAnimation { duration: 150 }
     }
   }
   

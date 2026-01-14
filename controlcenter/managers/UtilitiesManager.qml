@@ -78,6 +78,10 @@ Scope {
     Core.ProcessUtils.runCommandAsync(manager, ["kitty", "--class", "floating_term_s", "-e", "clipse"])
   }
   
+  function updateTheme() {
+    Core.ProcessUtils.runCommandAsync(manager, ["update-matugen"])
+  }
+  
   // ========== INITIALIZATION ==========
   Component.onCompleted: {
     // Check initial night light state

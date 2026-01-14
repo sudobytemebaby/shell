@@ -15,7 +15,7 @@ Rectangle {
   border.color: Theme.surface_container_high
 
   Elevation {
-    visible: true
+    visible: false 
   }
   
   TextInput {

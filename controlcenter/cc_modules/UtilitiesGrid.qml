@@ -22,8 +22,8 @@ Item {
       action: () => utilitiesManager.toggleNightLight()
     },
     {
-      icon: "󰅍",
-      action: () => utilitiesManager.openClipboard()
+      icon: "󰏘",
+      action: () => utilitiesManager.updateTheme()
     }
   ]
   
