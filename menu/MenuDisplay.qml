@@ -92,40 +92,20 @@ LazyLoader {
       border.color: Qt.lighter(Theme.surface_container, 1.3)
       
       // Initial state for animations
-      opacity: 0
-      scale: 0.95
+      scale: 0.85
       
       // Prevent clicks on menu from closing it
       MouseArea {
         anchors.fill: parent
       }
       
-      // Unified animation on appear
-      ParallelAnimation {
-        id: appearAnimation
-        running: false
-        
-        NumberAnimation {
-          target: menuBox
-          property: "opacity"
-          from: 0
-          to: 1
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-        
-        NumberAnimation {
-          target: menuBox
-          property: "scale"
-          from: 0.85
-          to: 1.0
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
-      
-      Component.onCompleted: {
-        appearAnimation.start()
+      // Scale animation on appear
+      NumberAnimation on scale {
+        from: 0.85
+        to: 1.0
+        duration: 150
+        easing.type: Easing.OutCubic
+        running: true
       }
       
       ColumnLayout {
