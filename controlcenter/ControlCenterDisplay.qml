@@ -5,57 +5,67 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../theme"
+import "../components"
 import "cc_modules" as Modules
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  
+
   required property var manager
   required property var systemState
-  
-  active: manager.visible
-  
+
+  // Bind to manager visibility
+  show: manager.visible
+
+  // Animation config (defaults are fine, but can customize)
+  openDuration: 280
+  closeDuration: 150
+  openEasingType: Easing.OutBack
+  closeEasingType: Easing.OutCubic
+  openOvershoot: 0.8
+
   PanelWindow {
     id: controlCenterWindow
-    
+
     anchors {
       top: true
       left: true
     }
-    
+
     margins {
-      top: Theme.barHeight + Theme.spacingM
+      // Animate from bar position (0) to final position
+      top: Theme.spacingM + (Theme.barHeight * loader.animationProgress)
       left: Theme.spacingM
     }
 
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-    
+    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
     color: "transparent"
     mask: null
-    
-    Component.onCompleted: {
-      exclusiveZone = 0
-      implicitWidth = 360
-    }
-    
+
     // Dynamic height based on media player state
     implicitHeight: {
       let baseHeight = 630
       let mediaExpansion = manager.media.playerActive ? 158 : 0
       return baseHeight + mediaExpansion
     }
-    
+
     Behavior on implicitHeight {
       NumberAnimation {
         duration: 300
         easing.type: Easing.OutCubic
       }
     }
-    
+
+    Component.onCompleted: {
+      exclusiveZone = 0
+      implicitWidth = 360
+    }
+
     contentItem {
       focus: true
-      
+
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
@@ -64,7 +74,6 @@ LazyLoader {
       }
     }
 
-    
     // Main container with Material 3 style
     Rectangle {
       id: background
@@ -73,7 +82,12 @@ LazyLoader {
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Qt.lighter(Theme.bg1, 1.3)
-      
+
+      // Animate opacity and scale using loader's animationProgress
+      opacity: loader.animationProgress
+      scale: 0.95 + (0.05 * loader.animationProgress)
+      transformOrigin: Item.Top
+
       // Enable layering for the shadow effect
       layer.enabled: true
       layer.effect: MultiEffect {
@@ -85,7 +99,7 @@ LazyLoader {
         shadowOpacity: 0.3
         blurMax: 32
       }
-      
+
       Column {
         anchors {
           fill: parent
@@ -94,13 +108,13 @@ LazyLoader {
 
         // Spacing between modules
         spacing: Theme.spacing.md
-        
+
         // ========== HEADER ==========
         RowLayout {
           width: parent.width
           height: 40
           spacing: 8
-          
+
           Text {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding.sm
@@ -110,7 +124,7 @@ LazyLoader {
             font.family: Theme.typography.fontFamily
             font.weight: Theme.typography.weightMedium
           }
-          
+
           Text {
             Layout.rightMargin: Theme.padding.sm
             text: "✕"
@@ -132,20 +146,20 @@ LazyLoader {
             }
           }
         }
-        
+
         // ========== TOGGLES GRID ==========
         GridLayout {
           width: parent.width
           columns: 2
           rowSpacing: 12
           columnSpacing: 12
-          
+
           Modules.WiFiToggle {
-            Layout.fillWidth: true 
+            Layout.fillWidth: true
             Layout.preferredHeight: 64
             systemState: loader.systemState
           }
-          
+
           Modules.BluetoothToggle {
             Layout.fillWidth: true
             Layout.preferredHeight: 64
@@ -154,43 +168,43 @@ LazyLoader {
 
           Modules.RecordingButton {
             Layout.fillWidth: true
-            Layout.preferredHeight: 64 
+            Layout.preferredHeight: 64
             recordingManager: loader.manager.recording
           }
 
           Modules.PowerButton {
             Layout.fillWidth: true
-            Layout.preferredHeight: 64 
+            Layout.preferredHeight: 64
             powerMenuManager: loader.manager.powerMenuManager
           }
         }
-        
+
         // ========== SLIDERS SECTION ==========
         Column {
           width: parent.width
           spacing: 12
-          
+
           Modules.VolumeSlider {
             width: parent.width
             height: 108
             audioManager: loader.manager.audio
             systemState: loader.systemState
           }
-          
+
           Modules.BrightnessSlider {
             width: parent.width
-            height: 108 
+            height: 108
             brightnessManager: loader.manager.brightness
             systemState: loader.systemState
           }
         }
-        
+
         // ========== MEDIA PLAYER ==========
         Modules.PlayerControl {
           width: parent.width
           height: loader.manager.media.playerActive ? 220 : 72
           mediaManager: loader.manager.media
-          
+
           Behavior on height {
             NumberAnimation {
               duration: 300
@@ -198,7 +212,7 @@ LazyLoader {
             }
           }
         }
-        
+
         // ========== UTILITIES ==========
         Modules.UtilitiesGrid {
           width: parent.width

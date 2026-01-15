@@ -8,3 +8,4 @@ HorizontalSlider 1.0 HorizontalSlider.qml
 TickMarks 1.0 TickMarks.qml
 IconCircle 1.0 IconCircle.qml
 IconButton 1.0 IconButton.qml
+AnimatedLazyLoader 1.0 AnimatedLazyLoader.qml

@@ -75,7 +75,7 @@ Column {
     Text {
       id: successText
       anchors.centerIn: parent
-      text: "󰄬 Unlocked"
+      text: " Unlocked"
       color: Theme.primary
       font.family: Theme.typography.fontFamily
       font.pixelSize: Theme.typography.lg

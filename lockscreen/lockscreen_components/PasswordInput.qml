@@ -133,7 +133,7 @@ Rectangle {
       visible: passwordInput.text.length > 0
       
       Repeater {
-        model: 32  // Max password length
+        model: 20 // Max password length
         
         Rectangle {
           width: 8
@@ -153,14 +153,13 @@ Rectangle {
               scale = 0.5
             }
           }
-          
           Behavior on scale {
-            NumberAnimation { 
+            NumberAnimation {
               running: false
-              duration: 600
-              from: 0.5
+              duration: 200
+              from: 0
               to: 1.0
-              easing.type: Easing.OutCubic
+              easing.type: Easing.Elastic
             }
           }
         }
@@ -173,7 +172,7 @@ Rectangle {
       visible: passwordInput.text.length === 0
       text: "Password"
       color: root.parent.errorVisible ? Theme.error : 
-             root.isAuthenticating ? Theme.primary :
+             root.isAuthenticating ? "transparent" :
              Theme.on_surface_variant
       font.family: Theme.typography.fontFamily
       font.pixelSize: Theme.typography.sm

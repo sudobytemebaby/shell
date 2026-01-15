@@ -4,37 +4,46 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../theme"
+import "../components"
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  
+
   required property var manager
-  
-  active: manager.visible
-  
+
+  // Bind to manager visibility
+  show: manager.visible
+
+  // Animation config - snappy scale animation
+  openDuration: 150
+  closeDuration: 100
+  openEasingType: Easing.OutCubic
+  closeEasingType: Easing.OutCubic
+  openOvershoot: 0
+
   PanelWindow {
     id: menuWindow
-    
+
     anchors {
       top: true
       left: true
       bottom: true
       right: true
     }
-    
+
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-    
+    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
     color: "transparent"
     mask: null
-    
+
     Component.onCompleted: {
       exclusiveZone = 0
     }
-    
+
     contentItem {
       focus: true
-      
+
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
@@ -62,23 +71,13 @@ LazyLoader {
         }
       }
     }
-    
-      MouseArea {
-        anchors.fill: parent
-        onClicked: loader.manager.visible = false
-        
-        // Background fade animation
-        opacity: 0
-        
-        NumberAnimation on opacity {
-          from: 0
-          to: 0.4
-          duration: 150
-          easing.type: Easing.OutCubic
-          running: true
-        }
-      }
-    
+
+    // Background overlay - animates with loader progress
+    MouseArea {
+      anchors.fill: parent
+      onClicked: loader.manager.visible = false
+    }
+
     // Main container
     Rectangle {
       id: menuBox
@@ -90,37 +89,30 @@ LazyLoader {
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Qt.lighter(Theme.surface_container, 1.3)
-      
-      // Initial state for animations
-      scale: 0.85
-      
+
+      // Animate scale and opacity using loader's animationProgress
+      scale: 0.85 + (0.15 * loader.animationProgress)
+      opacity: loader.animationProgress
+      transformOrigin: Item.Center
+
       // Prevent clicks on menu from closing it
       MouseArea {
         anchors.fill: parent
       }
-      
-      // Scale animation on appear
-      NumberAnimation on scale {
-        from: 0.85
-        to: 1.0
-        duration: 150
-        easing.type: Easing.OutCubic
-        running: true
-      }
-      
+
       ColumnLayout {
         anchors {
           fill: parent
           margins: Theme.padding.xl
         }
         spacing: Theme.spacing.md
-        
+
         // ========== HEADER ==========
         RowLayout {
           Layout.fillWidth: true
           Layout.preferredHeight: 40
           spacing: Theme.spacing.sm
-          
+
           Text {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding.xs
@@ -130,7 +122,7 @@ LazyLoader {
             font.family: Theme.typography.fontFamily
             font.weight: Theme.typography.weightMedium
           }
-          
+
           // Close button
           Text {
             Layout.rightMargin: Theme.padding.sm
@@ -138,6 +130,11 @@ LazyLoader {
             color: Theme.on_surface
             font.pixelSize: Theme.typography.lg
             font.family: Theme.typography.fontFamily
+            opacity: closeMouseArea.containsMouse ? 0.7 : 1
+
+            Behavior on opacity {
+              NumberAnimation { duration: 200 }
+            }
 
             MouseArea {
               id: closeMouseArea
@@ -148,31 +145,31 @@ LazyLoader {
             }
           }
         }
-        
+
         // ========== SEARCH BAR ==========
         MenuSearchBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 48
-          
+
           onSearchChanged: text => {
             loader.manager.searchText = text
           }
         }
-        
+
         // ========== MENU ITEMS LIST ==========
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
           clip: true
-          
+
           ListView {
             id: menuList
             anchors.fill: parent
             clip: true
             spacing: Theme.spacing.xs
-            
+
             currentIndex: 0
-            
+
             // Highlight
             highlight: Rectangle {
               width: menuList.width
@@ -182,29 +179,29 @@ LazyLoader {
               border.width: 0
               border.color : Theme.primary
             }
-            
+
             highlightFollowsCurrentItem: true
-          
+
             // Filtered model based on search
             model: ScriptModel {
               values: {
                 const search = loader.manager.searchText.toLowerCase()
                 const allItems = loader.manager.menuItems
-                
+
                 if (!search) {
                   return allItems
                 }
-                
+
                 const filtered = allItems.filter(item => {
                   const name = (item.name || "").toLowerCase()
                   const description = (item.description || "").toLowerCase()
                   return name.includes(search) || description.includes(search)
                 })
-                
+
                 return filtered
               }
             }
-            
+
             onCountChanged: {
               if (count > 0) {
                 if (currentIndex >= count) {
@@ -216,35 +213,35 @@ LazyLoader {
                 currentIndex = -1
               }
             }
-            
+
             onCurrentIndexChanged: {
               if (currentIndex >= 0 && currentIndex < count) {
                 positionViewAtIndex(currentIndex, ListView.Contain)
               }
             }
-            
+
             function getFilteredItems() {
               return model.values
             }
-            
+
             delegate: MenuItem {
               required property var modelData
               required property int index
-              
+
               width: menuList.width
               height: 72
               item: modelData
               isSelected: index === menuList.currentIndex
-              
+
               onClicked: {
                 menuList.currentIndex = index
               }
-              
+
               onActivated: {
                 loader.manager.executeItem(modelData)
               }
             }
-            
+
             // Empty state
             Text {
               anchors.centerIn: parent
@@ -256,7 +253,7 @@ LazyLoader {
             }
           }
         }
-        
+
         // ========== FOOTER WITH HINT ==========
         Text {
           Layout.fillWidth: true
