@@ -6,12 +6,20 @@ import Quickshell.Wayland
 import "../theme"
 import "../components"
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
 
   required property var manager
 
-  active: manager.visible
+  // Bind to manager visibility
+  show: manager.visible
+
+  // Animation config - snappy like control center
+  openDuration: 280
+  closeDuration: 150
+  openEasingType: Easing.OutBack
+  closeEasingType: Easing.OutCubic
+  openOvershoot: 0.8
 
   PanelWindow {
     id: notifCenterWindow
@@ -22,12 +30,12 @@ LazyLoader {
     }
 
     margins {
-      top: Theme.component.barHeight + Theme.spacing.md
+      top: Theme.spacing.md + (Theme.component.barHeight * loader.animationProgress)
       right: Theme.spacing.md
     }
 
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     color: "transparent"
     mask: null
@@ -58,11 +66,16 @@ LazyLoader {
       id: background
       anchors.fill: parent
       radius: Theme.radius.xl
-      
+
       // Consistent with other panels
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Theme.surface_container_high_transparent_light
+
+      // Open: scale pop, Close: fade out
+      scale: loader.isClosing ? 1 : (0.85 + (0.15 * loader.animationProgress))
+      opacity: loader.isClosing ? loader.animationProgress : 1
+      transformOrigin: Item.Top
 
       ColumnLayout {
         anchors {

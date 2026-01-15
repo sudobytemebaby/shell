@@ -8,10 +8,10 @@ LazyLoader {
   required property bool show
 
   // Animation configuration
-  property int openDuration: 280
+  property int openDuration: 250
   property int closeDuration: 150
   property real openEasingType: Easing.OutBack
-  property real closeEasingType: Easing.OutCubic
+  property real closeEasingType: Easing.OutQuint
   property real openOvershoot: 0.8
 
   // Animation state - use this in your content to drive visual changes

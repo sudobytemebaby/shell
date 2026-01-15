@@ -7,41 +7,49 @@ import "../theme"
 import "../components"
 import "cal_modules" as CalModules
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  
+
   required property var manager
-  
-  active: manager.visible
-  
+
+  // Bind to manager visibility
+  show: manager.visible
+
+  // Animation config - snappy like control center
+  openDuration: 280
+  closeDuration: 150
+  openEasingType: Easing.OutBack
+  closeEasingType: Easing.OutCubic
+  openOvershoot: 0.8
+
   PanelWindow {
     id: calendarWindow
-    
+
     anchors {
       top: true
       right: true
     }
-    
+
     margins {
-      top: Theme.component.barHeight + Theme.spacing.md
+      top: Theme.spacing.md + (Theme.component.barHeight * loader.animationProgress)
       right: Theme.spacing.md
     }
-    
+
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-    
+    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
     color: "transparent"
     mask: null
-    
+
     Component.onCompleted: {
       exclusiveZone = 0
       implicitWidth = 360
       implicitHeight = 520
     }
-    
+
     contentItem {
       focus: true
-      
+
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
@@ -49,14 +57,14 @@ LazyLoader {
         }
       }
     }
-    
+
     MouseArea {
       anchors.fill: parent
       onClicked: {
         loader.manager.visible = false
       }
     }
-    
+
     // Main container with Material 3 style
     Rectangle {
       id: background
@@ -65,6 +73,11 @@ LazyLoader {
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Qt.lighter(Theme.surface_container, 1.3)
+
+      // Open: scale pop, Close: fade out
+      scale: loader.isClosing ? 1 : (0.85 + (0.15 * loader.animationProgress))
+      opacity: loader.isClosing ? loader.animationProgress : 1
+      transformOrigin: Item.Top
       
       ColumnLayout {
         anchors {

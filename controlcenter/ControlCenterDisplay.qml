@@ -83,9 +83,9 @@ AnimatedLazyLoader {
       border.width: 1
       border.color: Qt.lighter(Theme.bg1, 1.3)
 
-      // Animate opacity and scale using loader's animationProgress
-      opacity: loader.animationProgress
-      scale: 0.95 + (0.05 * loader.animationProgress)
+      // Open: scale pop, Close: fade out
+      scale: loader.isClosing ? 1 : (0.85 + (0.15 * loader.animationProgress))
+      opacity: loader.isClosing ? loader.animationProgress : 1
       transformOrigin: Item.Top
 
       // Enable layering for the shadow effect
