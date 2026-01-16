@@ -18,7 +18,7 @@ PanelWindow {
   anchors.left: true
   anchors.right: true
   implicitHeight: Theme.barHeight
-  color: Theme.surface_transparent_heavy
+  color: "transparent" 
 
   Rectangle {
     anchors.fill: parent
