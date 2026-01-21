@@ -1,3 +1,0 @@
-module Core
-singleton ProcessUtils ProcessUtils.qml
-SystemStateManager 1.0 SystemStateManager.qml

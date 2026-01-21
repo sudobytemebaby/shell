@@ -1,18 +1,17 @@
 import QtQuick
 import Quickshell
-import "core" as Core
-import "osd"
-import "bar"
-import "notifications"
-import "launcher"
-import "notificationcenter"
-import "controlcenter"
-import "menu"
-import "calendar"
-import "wallpaper"
-import "powermenu"
-import "emoji"
-import "lockscreen"
+import "core/system_state" as Core
+import "features/shell_chrome/osd"
+import "features/shell_chrome/bar"
+import "features/notifications"
+import "features/launchers/launcher"
+import "features/system_panels/controlcenter"
+import "features/launchers/menu"
+import "features/system_panels/calendar"
+import "features/launchers/wallpaper"
+import "features/session/powermenu"
+import "features/launchers/emoji"
+import "features/session/lockscreen"
 
 ShellRoot {
   // ============================================================================
