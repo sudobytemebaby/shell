@@ -25,7 +25,17 @@ Scope {
   
   // Track if brightness change came from THIS module (to prevent loops)
   property bool changingBrightness: false
-  
+
+  // ============================================================================
+  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
+  // ============================================================================
+
+  readonly property string brightnessIcon: {
+    if (brightness < 0.33) return "󰃞"
+    if (brightness < 0.66) return "󰃟"
+    return "󰃠"
+  }
+
   // ============================================================================
   // EXTERNAL CHANGE SIGNAL (for OSD)
   // ============================================================================
@@ -237,20 +247,34 @@ Scope {
   }
   
   // ============================================================================
-  // UTILITY FUNCTIONS
+  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
   // ============================================================================
-  
+
   function getBrightnessIcon(brightness) {
-    if (brightness < 0.33) return "󰃞"
-    if (brightness < 0.66) return "󰃟"
-    return "󰃠"
+    return module.brightnessIcon
   }
   
   // ============================================================================
   // INITIALIZATION
   // ============================================================================
-  
+
   Component.onCompleted: {
     readCurrentBrightness()
+  }
+
+  // ============================================================================
+  // CLEANUP (Noctalia Pattern)
+  // ============================================================================
+
+  Component.onDestruction: {
+    // Stop timers
+    brightnessChangeResetTimer.stop()
+    brightnessDebounceTimer.stop()
+
+    // Stop any running processes
+    if (detectBacklightProcess.running) detectBacklightProcess.running = false
+    if (brightnessMaxGetter.running) brightnessMaxGetter.running = false
+    if (brightnessCurrentGetter.running) brightnessCurrentGetter.running = false
+    if (brightnessSetterProcess.running) brightnessSetterProcess.running = false
   }
 }

@@ -71,13 +71,12 @@ Scope {
   
   // Whether device info is ready
   readonly property bool ready: batteryDevice?.ready ?? false
-  
+
   // ============================================================================
-  // UTILITY FUNCTIONS
+  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
   // ============================================================================
-  
-  // Get battery icon based on percentage and charging state
-  function getBatteryIcon(percentage, isCharging) {
+
+  readonly property string batteryIcon: {
     // Charging states
     if (isCharging) {
       if (percentage >= 0.9) return "󰂅"  // battery-charging-100
@@ -91,7 +90,7 @@ Scope {
       if (percentage >= 0.1) return "󰂆"  // battery-charging-20
       return "󰢜"  // battery-charging-10
     }
-    
+
     // Discharging/normal states
     if (percentage >= 0.9) return "󰁹"  // battery-100
     if (percentage >= 0.8) return "󰂂"  // battery-90
@@ -103,6 +102,24 @@ Scope {
     if (percentage >= 0.2) return "󰁼"  // battery-30
     if (percentage >= 0.1) return "󰁻"  // battery-20
     return "󰁺"  // battery-10
+  }
+
+  readonly property string statusText: {
+    if (!isLaptopBattery) return "No Battery"
+    if (!isPresent) return "Not Present"
+    if (isFullyCharged) return "Fully Charged"
+    if (isCharging) return "Charging"
+    if (isDischarging) return "Discharging"
+    return "Unknown"
+  }
+
+  // ============================================================================
+  // UTILITY FUNCTIONS (Legacy - use cached properties where possible)
+  // ============================================================================
+  
+  // Get battery icon based on percentage and charging state
+  function getBatteryIcon(percentage, isCharging) {
+    return module.batteryIcon
   }
   
   // Format time remaining (seconds -> "Xh Ym" or "Ym")
@@ -121,12 +138,7 @@ Scope {
   
   // Get status text (for display)
   function getStatusText() {
-    if (!isLaptopBattery) return "No Battery"
-    if (!isPresent) return "Not Present"
-    if (isFullyCharged) return "Fully Charged"
-    if (isCharging) return "Charging"
-    if (isDischarging) return "Discharging"
-    return "Unknown"
+    return module.statusText
   }
   
   // ============================================================================

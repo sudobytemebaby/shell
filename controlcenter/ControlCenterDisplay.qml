@@ -78,7 +78,8 @@ AnimatedLazyLoader {
     Rectangle {
       id: background
       anchors.fill: parent
-      radius: 28
+      //radius: Theme.radius.xl
+      radius: 0
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Qt.lighter(Theme.bg1, 1.3)

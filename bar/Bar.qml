@@ -22,7 +22,7 @@ PanelWindow {
 
   Rectangle {
     anchors.fill: parent
-    color: "transparent"
+    color: Theme.surface_container_transparent_medium
     radius: 0
     
     RowLayout {
@@ -43,7 +43,9 @@ PanelWindow {
         
         Modules.Workspaces {}
 
-        Modules.Keyboard {}
+        Modules.Keyboard {
+          systemState: barWindow.systemState
+        }
       }
 
       // Center Spacer

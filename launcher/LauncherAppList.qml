@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "../theme"
+import "../components/Lists"
 
 Item {
   id: root
@@ -84,21 +85,20 @@ Item {
       }
     }
     
-    delegate: LauncherAppItem {
+    delegate: ListItem {
       required property var modelData
       required property int index
-      
+
       width: appList.width
       height: 72
-      app: modelData
-      isSelected: index === root.currentIndex
-      
-      onLaunched: {
-        root.appLaunched()
-      }
-      
+      icon: modelData.name ? modelData.name.charAt(0).toUpperCase() : "?"
+      title: modelData.name || "Unknown"
+      subtitle: modelData.comment || ""
+      selected: index === root.currentIndex
+
       onClicked: {
         root.currentIndex = index
+        root.launchApp(modelData)
       }
     }
     
@@ -178,5 +178,24 @@ Item {
       return apps[root.currentIndex]
     }
     return null
+  }
+
+  function launchApp(app) {
+    try {
+      app.execute()
+      root.appLaunched()
+    } catch (error) {
+      console.error("execute() failed:", error)
+      // Fallback: try execDetached
+      try {
+        Quickshell.execDetached({
+          command: app.command,
+          workingDirectory: app.workingDirectory || ""
+        })
+        root.appLaunched()
+      } catch (fallbackError) {
+        console.error("Fallback also failed:", fallbackError)
+      }
+    }
   }
 }

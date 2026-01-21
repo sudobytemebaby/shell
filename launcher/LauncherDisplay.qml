@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../theme"
+import "../components/Input"
 
 LazyLoader {
   id: loader
@@ -141,10 +142,11 @@ LazyLoader {
         }
         
         // ========== SEARCH BAR ==========
-        LauncherSearchBar {
+        SearchBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 48
-          
+          placeholder: "Search applications..."
+
           onSearchChanged: text => {
             loader.manager.searchText = text
           }

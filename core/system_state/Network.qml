@@ -25,7 +25,47 @@ Scope {
   property string interfaceName: ""
   property bool ready: false
   property bool changingState: false
-  
+
+  // ============================================================================
+  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
+  // ============================================================================
+
+  readonly property string networkIcon: {
+    if (connectionType === "ethernet") {
+      return "󰈀"  // Ethernet icon
+    } else if (connectionType === "wifi" && wifiConnected) {
+      // WiFi icons based on signal strength
+      if (wifiSignalStrength >= 75) return "󰤨"
+      if (wifiSignalStrength >= 50) return "󰤥"
+      if (wifiSignalStrength >= 25) return "󰤢"
+      return "󰤟"
+    } else if (!wifiEnabled) {
+      return "󰤭"  // WiFi disabled
+    } else {
+      return "󰤮"  // Disconnected
+    }
+  }
+
+  readonly property string statusText: {
+    if (!wifiEnabled) return "Disabled"
+    if (connectionType === "ethernet") return "Ethernet"
+    if (connectionType === "wifi" && wifiConnected) {
+      return wifiSsid || "Connected"
+    }
+    if (connectionType === "none") return "Disconnected"
+    return "Unknown"
+  }
+
+  readonly property string detailedStatus: {
+    if (!wifiEnabled) return "WiFi is disabled"
+    if (connectionType === "ethernet") return "Connected via Ethernet"
+    if (connectionType === "wifi" && wifiConnected) {
+      return "Connected to " + (wifiSsid || "WiFi") + " (" + wifiSignalStrength + "%)"
+    }
+    if (connectionType === "none") return "No network connection"
+    return "Unknown connection state"
+  }
+
   // ============================================================================
   // EXTERNAL CHANGE SIGNAL
   // ============================================================================
@@ -211,9 +251,10 @@ Scope {
   // ============================================================================
   // POLLING TIMER
   // ============================================================================
-  
+
   Timer {
-    interval: 5000  // Reduced polling frequency (was 2000ms)
+    id: pollingTimer
+    interval: 10000  // 10 seconds - network state changes are infrequent
     running: true
     repeat: true
     onTriggered: {
@@ -288,52 +329,45 @@ Scope {
   function openNetworkManager() {
     Core.ProcessUtils.runCommandAsync(module, ["kitty", "--class", "floating_term_m", "-e", "impala"])
   }
-  
+
   // ============================================================================
-  // UTILITY FUNCTIONS
+  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
   // ============================================================================
-  
+
   function getNetworkIcon() {
-    if (connectionType === "ethernet") {
-      return "󰈀"  // Ethernet icon
-    } else if (connectionType === "wifi" && wifiConnected) {
-      // WiFi icons based on signal strength
-      if (wifiSignalStrength >= 75) return "󰤨"
-      if (wifiSignalStrength >= 50) return "󰤥"
-      if (wifiSignalStrength >= 25) return "󰤢"
-      return "󰤟"
-    } else if (!wifiEnabled) {
-      return "󰤭"  // WiFi disabled
-    } else {
-      return "󰤮"  // Disconnected
-    }
+    return module.networkIcon
   }
-  
+
   function getStatusText() {
-    if (!wifiEnabled) return "Disabled"
-    if (connectionType === "ethernet") return "Ethernet"
-    if (connectionType === "wifi" && wifiConnected) {
-      return wifiSsid || "Connected"
-    }
-    if (connectionType === "none") return "Disconnected"
-    return "Unknown"
+    return module.statusText
   }
-  
+
   function getDetailedStatus() {
-    if (!wifiEnabled) return "WiFi is disabled"
-    if (connectionType === "ethernet") return "Connected via Ethernet"
-    if (connectionType === "wifi" && wifiConnected) {
-      return "Connected to " + (wifiSsid || "WiFi") + " (" + wifiSignalStrength + "%)"
-    }
-    if (connectionType === "none") return "No network connection"
-    return "Unknown connection state"
+    return module.detailedStatus
   }
   
   // ============================================================================
   // INITIALIZATION
   // ============================================================================
-  
+
   Component.onCompleted: {
     wifiRadioProcess.running = true
+  }
+
+  // ============================================================================
+  // CLEANUP (Noctalia Pattern)
+  // ============================================================================
+
+  Component.onDestruction: {
+    // Stop timers
+    pollingTimer.stop()
+    stateChangeResetTimer.stop()
+    refreshTimer.stop()
+
+    // Stop any running processes
+    if (wifiRadioProcess.running) wifiRadioProcess.running = false
+    if (activeConnectionProcess.running) activeConnectionProcess.running = false
+    if (wifiDetailsProcess.running) wifiDetailsProcess.running = false
+    if (signalProcess.running) signalProcess.running = false
   }
 }

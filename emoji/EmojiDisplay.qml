@@ -5,6 +5,7 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import "../theme"
 import "../components"
+import "../components/Input"
 import "emoji_components" as Components
 
 LazyLoader {
@@ -209,10 +210,12 @@ LazyLoader {
         }
         
         // ========== SEARCH BAR ==========
-        Components.EmojiSearchBar {
+        SearchBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 48
-          
+          placeholder: "Search emojis..."
+          debounceInterval: 200
+
           onSearchChanged: text => {
             emojiWindow.searchText = text
             emojiWindow.updateFilteredEmojis()

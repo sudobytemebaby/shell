@@ -5,6 +5,8 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import "../theme"
 import "../components"
+import "../components/Input"
+import "../components/Lists"
 
 AnimatedLazyLoader {
   id: loader
@@ -147,9 +149,10 @@ AnimatedLazyLoader {
         }
 
         // ========== SEARCH BAR ==========
-        MenuSearchBar {
+        SearchBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 48
+          placeholder: "Search menu..."
 
           onSearchChanged: text => {
             loader.manager.searchText = text
@@ -176,8 +179,6 @@ AnimatedLazyLoader {
               height: 72
               radius: Theme.radius.xl
               color: Theme.primary_container
-              border.width: 0
-              border.color : Theme.primary
             }
 
             highlightFollowsCurrentItem: true
@@ -224,20 +225,25 @@ AnimatedLazyLoader {
               return model.values
             }
 
-            delegate: MenuItem {
+            delegate: ListItem {
               required property var modelData
               required property int index
 
               width: menuList.width
               height: 72
-              item: modelData
-              isSelected: index === menuList.currentIndex
+              icon: modelData.icon
+              title: modelData.name
+              subtitle: modelData.description
+              selected: index === menuList.currentIndex
+
+              // Menu uses primary colors (like original MenuItem)
+              selectedBgColor: Theme.primary
+              selectedIconColor: Theme.on_primary
+              defaultBgColor: Theme.primary_container
+              defaultIconColor: Theme.primary
 
               onClicked: {
                 menuList.currentIndex = index
-              }
-
-              onActivated: {
                 loader.manager.executeItem(modelData)
               }
             }

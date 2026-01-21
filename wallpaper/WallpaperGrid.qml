@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../theme"
+import "../components/Input"
 import "wallpaper_components" as Components
 
 LazyLoader {
@@ -321,11 +322,13 @@ LazyLoader {
         // ====================================================================
         // SEARCH BAR
         // ====================================================================
-        
-        Components.WallpaperSearchBar {
+
+        SearchBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 48
-          
+          placeholder: "Search wallpapers..."
+          debounceInterval: 200
+
           onSearchChanged: text => {
             wallpaperWindow.searchText = text
             wallpaperWindow.updateFilteredWallpapers()

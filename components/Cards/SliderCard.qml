@@ -1,16 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
-import "../theme"
+import "../../theme"
+import ".."
 
 Card {
   id: root
-  
+
   // Public API
   required property string icon
   required property string label
   required property real value        // 0.0 to 1.0
   signal moved(real newValue)         // Custom signal to avoid conflict
-  
+
   // Optional customization
   property real minimumValue: 0.0
   property real maximumValue: 1.0
@@ -19,12 +20,12 @@ Card {
   ColumnLayout {
     anchors.fill: parent
     spacing: Theme.spacing.md
-    
+
     // Header row: icon + label + percentage
     RowLayout {
       Layout.fillWidth: true
       spacing: Theme.spacing.sm
-      
+
       // Icon container
       IconCircle {
         icon: root.icon

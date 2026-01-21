@@ -1,11 +1,29 @@
-ToggleCard 1.0 ToggleCard.qml
-SliderCard 1.0 SliderCard.qml
-RoundIconButton 1.0 RoundIconButton.qml
-MediaButton 1.0 MediaButton.qml
-Card 1.0 Card.qml
-Elevation 1.0 Elevation.qml
-HorizontalSlider 1.0 HorizontalSlider.qml
-TickMarks 1.0 TickMarks.qml
-IconCircle 1.0 IconCircle.qml
-IconButton 1.0 IconButton.qml
-AnimatedLazyLoader 1.0 AnimatedLazyLoader.qml
+# Quickshell Components Module
+module components
+
+# Buttons
+IconButton 1.0 Buttons/IconButton.qml
+RoundIconButton 1.0 Buttons/RoundIconButton.qml
+
+# Cards
+Card 1.0 Cards/Card.qml
+SliderCard 1.0 Cards/SliderCard.qml
+
+# Display
+IconCircle 1.0 Display/IconCircle.qml
+Elevation 1.0 Display/Elevation.qml
+TickMarks 1.0 Display/TickMarks.qml
+NImageRounded 1.0 Display/NImageRounded.qml
+
+# Input
+SearchBar 1.0 Input/SearchBar.qml
+PasswordInput 1.0 Input/PasswordInput.qml
+
+# Lists
+ListItem 1.0 Lists/ListItem.qml
+
+# Sliders
+HorizontalSlider 1.0 Sliders/HorizontalSlider.qml
+
+# Utils
+AnimatedLazyLoader 1.0 Utils/AnimatedLazyLoader.qml

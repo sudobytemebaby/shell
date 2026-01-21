@@ -39,13 +39,19 @@ Scope {
     userInteracting: manager.userInteracting
   }
 
+  State.KeyboardLayout {
+    id: keyboardLayoutModule
+    userInteracting: manager.userInteracting
+  }
+
   // ============================================================================
   // EXPOSED MODULES (Public API)
   // ============================================================================
-  
+
   readonly property var brightness: brightnessModule
   readonly property var volume: volumeModule
-  readonly property var battery: batteryModule 
+  readonly property var battery: batteryModule
   readonly property var bluetooth: bluetoothModule
   readonly property var network: networkModule
+  readonly property var keyboardLayout: keyboardLayoutModule
 }

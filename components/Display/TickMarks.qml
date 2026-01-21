@@ -1,7 +1,7 @@
 // components/TickMarks.qml
 import QtQuick
 import QtQuick.Layouts
-import "../theme"
+import "../../theme"
 
 Row {
   id: root

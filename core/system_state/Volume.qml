@@ -67,7 +67,51 @@ Scope {
   // Device information (enhanced)
   readonly property string outputDevice: deviceName
   readonly property string inputDevice: audioSource?.description ?? "Unknown"
-  
+
+  // ============================================================================
+  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
+  // ============================================================================
+
+  readonly property string volumeIcon: {
+    // Muted state
+    if (volumeMuted) return "󰖁"
+
+    // Headphones - use headphone icon
+    if (isHeadphones) {
+      return "󰋋"  // Headphones icon
+    }
+
+    // Speakers - use volume-based icons
+    if (volume == 0) return "󰕿"
+    if (volume < 0.33) return "󰕿"
+    if (volume < 0.66) return "󰖀"
+    return "󰕾"
+  }
+
+  readonly property string micIcon: {
+    return micMuted ? "󰍭" : "󰍬"
+  }
+
+  readonly property string statusText: {
+    var percentage = Math.round(volume * 100) + "%"
+
+    if (volumeMuted) {
+      return "Muted"
+    }
+
+    return percentage
+  }
+
+  readonly property string detailedStatusText: {
+    var percentage = Math.round(volume * 100) + "%"
+
+    if (volumeMuted) {
+      return deviceName + " (Muted)"
+    }
+
+    return deviceName + " " + percentage
+  }
+
   // ============================================================================
   // EXTERNAL CHANGE SIGNALS (for OSD)
   // ============================================================================
@@ -389,59 +433,50 @@ Scope {
   }
   
   // ============================================================================
-  // UTILITY FUNCTIONS - Enhanced with device-aware icons
+  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
   // ============================================================================
-  
+
   // Get appropriate volume icon based on level, mute state, and device type
   function getVolumeIcon(volume, muted) {
-    // Muted state
-    if (muted) return "󰖁"
-    
-    // Headphones - use headphone icon
-    if (module.isHeadphones) {
-      return "󰋋"  // Headphones icon
-    }
-    
-    // Speakers - use volume-based icons
-    if (volume == 0) return "󰕿"
-    if (volume < 0.33) return "󰕿"
-    if (volume < 0.66) return "󰖀"
-    return "󰕾"
+    return module.volumeIcon
   }
-  
+
   // Get microphone icon based on mute state
   function getMicIcon(muted) {
-    return muted ? "󰍭" : "󰍬"
+    return module.micIcon
   }
-  
+
   // Get status text for display (e.g., "Headphones 75%")
   function getStatusText() {
-    var percentage = Math.round(module.volume * 100) + "%"
-    
-    if (module.volumeMuted) {
-      return "Muted"
-    }
-    
-    return percentage
+    return module.statusText
   }
-  
+
   // Get detailed status (device name + volume)
   function getDetailedStatus() {
-    var percentage = Math.round(module.volume * 100) + "%"
-    
-    if (module.volumeMuted) {
-      return module.deviceName + " (Muted)"
-    }
-    
-    return module.deviceName + " " + percentage
+    return module.detailedStatusText
   }
   
   // ============================================================================
   // INITIALIZATION
   // ============================================================================
-  
+
   Component.onCompleted: {
     // Get initial device info
     sinkNameProcess.running = true
+  }
+
+  // ============================================================================
+  // CLEANUP (Noctalia Pattern)
+  // ============================================================================
+
+  Component.onDestruction: {
+    // Stop timers
+    volumeChangeResetTimer.stop()
+    micChangeResetTimer.stop()
+
+    // Stop any running processes
+    if (sinkNameProcess.running) sinkNameProcess.running = false
+    if (activePortProcess.running) activePortProcess.running = false
+    if (deviceDescriptionProcess.running) deviceDescriptionProcess.running = false
   }
 }

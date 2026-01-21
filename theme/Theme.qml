@@ -89,8 +89,8 @@ QtObject {
     
     // --- Surface Transparencies (for backgrounds) ---
     readonly property color surface_transparent: Qt.rgba(surface.r, surface.g, surface.b, 0.12)
-    readonly property color surface_transparent_light: Qt.rgba(surface.r, surface.g, surface.b, 0.50)
-    readonly property color surface_transparent_medium: Qt.rgba(surface.r, surface.g, surface.b, 0.70)
+    readonly property color surface_transparent_light: Qt.rgba(surface.r, surface.g, surface.b, 0.40)
+    readonly property color surface_transparent_medium: Qt.rgba(surface.r, surface.g, surface.b, 0.60)
     readonly property color surface_transparent_heavy: Qt.rgba(surface.r, surface.g, surface.b, 0.85)
     
     // --- Surface Container Transparencies (for main panels/popups) ---

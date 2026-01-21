@@ -24,7 +24,31 @@ Scope {
   property var connectedDevices: []
   property bool ready: false
   property bool changingState: false
-  
+
+  // ============================================================================
+  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
+  // ============================================================================
+
+  readonly property string bluetoothIcon: {
+    if (!powered) return "󰂲"
+    if (hasConnectedDevice) return "󰂯"
+    return "󰂯"
+  }
+
+  readonly property string statusText: {
+    if (!powered) return "Off"
+    if (!hasConnectedDevice) return "On"
+    if (connectedDeviceCount === 1) return connectedDeviceName
+    return connectedDeviceCount + " devices"
+  }
+
+  readonly property string detailedStatus: {
+    if (!powered) return "Bluetooth is off"
+    if (!hasConnectedDevice) return "No devices connected"
+    if (connectedDeviceCount === 1) return "Connected to " + connectedDeviceName
+    return connectedDeviceCount + " devices connected"
+  }
+
   // ============================================================================
   // EXTERNAL CHANGE SIGNAL
   // ============================================================================
@@ -130,9 +154,10 @@ Scope {
     }
   }
   
-  // Poll every 2 seconds
+  // Poll every 5 seconds - bluetooth state changes are infrequent
   Timer {
-    interval: 2000
+    id: pollingTimer
+    interval: 5000
     running: true
     repeat: true
     onTriggered: {
@@ -240,36 +265,42 @@ Scope {
     proc.startDetached()
     proc.destroy()
   }
-  
+
   // ============================================================================
-  // UTILITY FUNCTIONS
+  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
   // ============================================================================
-  
+
   function getBluetoothIcon(powered, hasDevice) {
-    if (!powered) return "󰂲"
-    if (hasDevice) return "󰂯"
-    return "󰂯"
+    return module.bluetoothIcon
   }
-  
+
   function getStatusText() {
-    if (!powered) return "Off"
-    if (!hasConnectedDevice) return "On"
-    if (connectedDeviceCount === 1) return connectedDeviceName
-    return connectedDeviceCount + " devices"
+    return module.statusText
   }
-  
+
   function getDetailedStatus() {
-    if (!powered) return "Bluetooth is off"
-    if (!hasConnectedDevice) return "No devices connected"
-    if (connectedDeviceCount === 1) return "Connected to " + connectedDeviceName
-    return connectedDeviceCount + " devices connected"
+    return module.detailedStatus
   }
   
   // ============================================================================
   // INITIALIZATION
   // ============================================================================
-  
+
   Component.onCompleted: {
     bluetoothStateProcess.running = true
+  }
+
+  // ============================================================================
+  // CLEANUP (Noctalia Pattern)
+  // ============================================================================
+
+  Component.onDestruction: {
+    // Stop timers
+    pollingTimer.stop()
+    stateChangeResetTimer.stop()
+
+    // Stop any running processes
+    if (bluetoothStateProcess.running) bluetoothStateProcess.running = false
+    if (connectedDevicesProcess.running) connectedDevicesProcess.running = false
   }
 }
