@@ -27,3 +27,4 @@ HorizontalSlider 1.0 Sliders/HorizontalSlider.qml
 
 # Utils
 AnimatedLazyLoader 1.0 Utils/AnimatedLazyLoader.qml
+SlideOutPanel 1.0 SlideOutPanel.qml

@@ -6,20 +6,11 @@ import Quickshell.Wayland
 import "../theme"
 import "../components"
 
-AnimatedLazyLoader {
+LazyLoader {
   id: loader
+  active: manager.visible
 
   required property var manager
-
-  // Bind to manager visibility
-  show: manager.visible
-
-  // Animation config - snappy like control center
-  openDuration: 280
-  closeDuration: 150
-  openEasingType: Easing.OutBack
-  closeEasingType: Easing.OutCubic
-  openOvershoot: 0.8
 
   PanelWindow {
     id: notifCenterWindow
@@ -30,35 +21,60 @@ AnimatedLazyLoader {
     }
 
     margins {
-      top: Theme.spacing.md + (Theme.component.barHeight * loader.animationProgress)
-      right: Theme.spacing.md
+      top: Theme.barHeight
+      right: 16
     }
 
-    WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    visible: loader.manager.visible
 
-    color: "transparent"
-    mask: null
+  WlrLayershell.layer: WlrLayer.Overlay
+  WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
+  color: "transparent"
+  mask: null
+
+    width: 360
+    height: 600
 
     Component.onCompleted: {
       exclusiveZone = 0
-      implicitWidth = 360
-      implicitHeight = 600
     }
 
     contentItem {
       focus: true
+
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
-          event.accepted = true
-        }
+        event.accepted = true
       }
     }
+  }
 
     MouseArea {
       anchors.fill: parent
       onClicked: loader.manager.visible = false
+    }
+
+    Item {
+      id: container
+      anchors.fill: parent
+
+      y: loader.manager.visible ? 0 : -height
+      opacity: loader.manager.visible ? 1 : 0
+
+      Behavior on y {
+        NumberAnimation {
+          duration: loader.manager.visible ? 300 : 200
+        easing.type: Easing.OutCubic
+      }
+    }
+
+      Behavior on opacity {
+        NumberAnimation {
+          duration: loader.manager.visible ? 200 : 150
+        easing.type: Easing.OutQuad
+      }
     }
 
     // Main container - Material 3 transparent
@@ -72,10 +88,10 @@ AnimatedLazyLoader {
       border.width: 1
       border.color: Theme.surface_container_high_transparent_light
 
-      // Open: scale pop, Close: fade out
-      scale: loader.isClosing ? 1 : (0.85 + (0.15 * loader.animationProgress))
-      opacity: loader.isClosing ? loader.animationProgress : 1
-      transformOrigin: Item.Top
+      // Prevent clicks on panel from closing it
+      MouseArea {
+        anchors.fill: parent
+      }
 
       ColumnLayout {
         anchors {
@@ -108,7 +124,7 @@ AnimatedLazyLoader {
             radius: Theme.radius.full
             visible: loader.manager.notifications.length > 0
 
-            color: clearMouseArea.containsMouse 
+            color: clearMouseArea.containsMouse
                    ? Theme.surface_container_low
                    : Theme.surface_container
 
@@ -119,11 +135,11 @@ AnimatedLazyLoader {
 
             Behavior on color { ColorAnimation { duration: 150 } }
             Behavior on border.color { ColorAnimation { duration: 150 } }
-            Behavior on scale { 
-              NumberAnimation { 
+            Behavior on scale {
+              NumberAnimation {
                 duration: 100
-                easing.type: Easing.OutCubic 
-              } 
+                easing.type: Easing.OutCubic
+              }
             }
 
             Text {
@@ -178,9 +194,9 @@ AnimatedLazyLoader {
           model: loader.manager.notifications
 
           Behavior on contentY {
-            NumberAnimation { 
+            NumberAnimation {
               duration: 250
-              easing.type: Easing.OutCubic 
+              easing.type: Easing.OutCubic
             }
           }
 
@@ -190,9 +206,9 @@ AnimatedLazyLoader {
 
             width: notifList.width
             height: notifCard.implicitHeight
-            
+
             color: "transparent"
-            
+
             // Individual notification card
             Rectangle {
               id: notifCard
@@ -201,14 +217,14 @@ AnimatedLazyLoader {
                 right: parent.right
                 top: parent.top
               }
-              
+
               implicitHeight: cardContent.implicitHeight + (Theme.padding.md * 2)
-              
+
               radius: Theme.radius.lg
-              
+
               // Subtle transparent background
-              color: hovered 
-                     ? Qt.darker(Theme.surface_container_low_transparent_light, 1.05) 
+              color: hovered
+                     ? Qt.darker(Theme.surface_container_low_transparent_light, 1.05)
                      : Theme.surface_container_low_transparent_light
 
               border.width: 1
@@ -332,10 +348,10 @@ AnimatedLazyLoader {
                 anchors.fill: parent
                 hoverEnabled: true
                 propagateComposedEvents: true
-                
+
                 onEntered: notifCard.hovered = true
                 onExited: notifCard.hovered = false
-                
+
                 onClicked: mouse => {
                   mouse.accepted = false
                 }
@@ -394,6 +410,7 @@ AnimatedLazyLoader {
           }
         }
       }
+    }
     }
   }
 }

@@ -33,24 +33,20 @@ Item {
   Rectangle {
     anchors {
       fill: parent
-      margins: Theme.spacing.sm
+      margins: Theme.spacing.xs
     }
-    radius: Theme.radius.xl
-    
+    radius: Theme.radius.md
+
     color: {
-      if (root.isSelected) return Theme.primary_container
-      if (itemMouseArea.containsMouse) return Theme.surface_container_high
-      return Theme.surface_container
+      if (root.isSelected && !root.isCurrent) return Theme.surface_container_high
+      if (itemMouseArea.containsMouse && !root.isCurrent) return Theme.surface_container
+      return "transparent"
     }
-    
-    border.width: root.isCurrent ? 3 : (root.isSelected ? 2 : 1)
-    border.color: {
-      if (root.isCurrent) return Theme.primary
-      if (root.isSelected) return Theme.primary
-      return Theme.surface_container_high
-    }
-    
-    scale: itemMouseArea.pressed ? 0.95 : 1.0
+
+    border.width: (root.isSelected && !root.isCurrent) ? 2 : 0
+    border.color: root.isSelected ? Theme.primary : "transparent"
+
+    scale: itemMouseArea.pressed ? 0.96 : 1.0
     
     Behavior on color {
       ColorAnimation {
@@ -80,146 +76,112 @@ Item {
       }
     }
     
-    ColumnLayout {
+    // ======================================================================
+    // IMAGE PREVIEW (Using NImageRounded with ImageCacheService)
+    // ======================================================================
+
+    NImageRounded {
+      id: imagePreview
       anchors {
         fill: parent
+        margins: Theme.spacing.xs
+      }
+      radius: Theme.radius.md
+      imagePath: root.cachedThumbnailPath !== "" ? "file://" + root.cachedThumbnailPath : ""
+      fallbackIcon: "󰸉"
+      borderWidth: 0
+      imageFillMode: Image.PreserveAspectCrop
+    }
+
+
+    // ======================================================================
+    // CURRENT WALLPAPER BADGE
+    // ======================================================================
+
+    Rectangle {
+      anchors {
+        bottom: imagePreview.bottom
+        right: imagePreview.right
         margins: Theme.spacing.sm
       }
-      spacing: Theme.spacing.sm
-      
-      // ======================================================================
-      // IMAGE PREVIEW (Using NImageRounded with ImageCacheService)
-      // ======================================================================
+      width: 28
+      height: 28
+      radius: Theme.radius.full
+      color: Theme.primary
+      visible: root.isCurrent
 
-      NImageRounded {
-        id: imagePreview
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.margins: Theme.spacing.sm
-        radius: Theme.radius.lg
-        imagePath: root.cachedThumbnailPath !== "" ? "file://" + root.cachedThumbnailPath : ""
-        fallbackIcon: "󰸉"
-        borderWidth: 0
-        imageFillMode: Image.PreserveAspectCrop
-      }
+      scale: root.isCurrent ? 1.0 : 0.8
+      opacity: root.isCurrent ? 0.95 : 0.0
 
-
-      // ======================================================================
-      // CURRENT WALLPAPER BADGE
-      // ======================================================================
-
-      Rectangle {
-        anchors {
-          top: imagePreview.top
-          right: imagePreview.right
-          margins: Theme.spacing.md
-        }
-        width: 32
-        height: 32
-        radius: Theme.radius.full
-        color: Theme.primary
-        visible: root.isCurrent
-
-        scale: root.isCurrent ? 1.0 : 0.8
-        opacity: root.isCurrent ? 1.0 : 0.0
-
-        Behavior on scale {
-          NumberAnimation {
-            duration: 250
-            easing.type: Easing.OutBack
-            easing.overshoot: 2
-          }
-        }
-
-        Behavior on opacity {
-          NumberAnimation {
-            duration: 200
-          }
-        }
-
-        Text {
-          anchors.centerIn: parent
-          text: "✓"
-          color: Theme.on_primary
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
-          font.weight: Theme.typography.weightMedium
+      Behavior on scale {
+        NumberAnimation {
+          duration: 300
+          easing.type: Easing.OutBack
+          easing.overshoot: 1.5
         }
       }
 
-      // ======================================================================
-      // SELECTED INDICATOR (keyboard nav)
-      // ======================================================================
-
-      Rectangle {
-        anchors {
-          top: imagePreview.top
-          left: imagePreview.left
-          margins: Theme.spacing.md
-        }
-        width: 32
-        height: 32
-        radius: Theme.radius.full
-        color: Theme.primary
-        visible: root.isSelected && !root.isCurrent
-
-        scale: root.isSelected && !root.isCurrent ? 1.0 : 0.8
-        opacity: root.isSelected && !root.isCurrent ? 1.0 : 0.0
-
-        Behavior on scale {
-          NumberAnimation {
-            duration: 250
-            easing.type: Easing.OutBack
-            easing.overshoot: 2
-          }
-        }
-
-        Behavior on opacity {
-          NumberAnimation {
-            duration: 200
-          }
-        }
-
-        Text {
-          anchors.centerIn: parent
-          text: "→"
-          color: Theme.on_primary
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
-          font.weight: Theme.typography.weightMedium
+      Behavior on opacity {
+        NumberAnimation {
+          duration: 250
+          easing.type: Easing.OutCubic
         }
       }
-      
-      // ======================================================================
-      // FILENAME
-      // ======================================================================
-      
+
       Text {
-        Layout.fillWidth: true
-        text: root.filename
-        color: {
-          if (root.isCurrent) return Theme.primary
-          if (root.isSelected) return Theme.on_primary_container
-          return Theme.on_surface
-        }
+        anchors.centerIn: parent
+        text: "✓"
+        color: Theme.on_primary
         font.pixelSize: Theme.typography.sm
         font.family: Theme.typography.fontFamily
-        font.weight: {
-          if (root.isCurrent || root.isSelected) return Theme.typography.weightMedium
-          return Theme.typography.weightNormal
-        }
-        elide: Text.ElideMiddle
-        horizontalAlignment: Text.AlignHCenter
-        
-        Behavior on color {
-          ColorAnimation {
-            duration: 200
-            easing.type: Easing.OutCubic
-          }
-        }
+        font.weight: Theme.typography.weightMedium
       }
     }
-    
+
+    // ======================================================================
+    // SELECTED INDICATOR (keyboard nav)
+    // ======================================================================
+
+    Rectangle {
+      anchors {
+        top: imagePreview.top
+        left: imagePreview.left
+        margins: Theme.spacing.sm
+      }
+      width: 28
+      height: 28
+      radius: Theme.radius.full
+      color: Theme.primary
+      visible: root.isSelected && !root.isCurrent
+
+      scale: root.isSelected && !root.isCurrent ? 1.0 : 0.8
+      opacity: root.isSelected && !root.isCurrent ? 0.9 : 0.0
+
+      Behavior on scale {
+        NumberAnimation {
+          duration: 300
+          easing.type: Easing.OutBack
+          easing.overshoot: 1.5
+        }
+      }
+
+      Behavior on opacity {
+        NumberAnimation {
+          duration: 250
+          easing.type: Easing.OutCubic
+        }
+      }
+
+      Text {
+        anchors.centerIn: parent
+        text: "→"
+        color: Theme.on_primary
+        font.pixelSize: Theme.typography.sm
+        font.family: Theme.typography.fontFamily
+        font.weight: Theme.typography.weightMedium
+      }
+    }
+
     // ========================================================================
     // INTERACTION
     // ========================================================================
