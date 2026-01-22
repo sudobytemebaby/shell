@@ -8,11 +8,45 @@ import "../../../shared/components"
 import "../../../shared/components/Input"
 import "../../../shared/components/Lists"
 
+/**
+ * MenuDisplay
+ *
+ * UI display component for the menu picker system.
+ *
+ * ARCHITECTURE:
+ * This component implements the Display pattern, handling all visual presentation
+ * while delegating state management and logic to MenuManager.qml. The UI is
+ * lazy-loaded for performance and uses Material 3 design principles.
+ *
+ * FEATURES:
+ * - Search-based filtering of menu items
+ * - Keyboard navigation with highlight following
+ * - Material 3 design with smooth animations
+ * - Empty state handling
+ *
+ * KEYBOARD SHORTCUTS:
+ * - Up/Down or Ctrl+P/N: Navigate through items
+ * - Enter: Execute selected item
+ * - Home/End: Jump to first/last item
+ * - Escape: Close menu
+ * - Type to search: Filter items in real-time
+ *
+ * BEHAVIOR:
+ * - Lazy loads when manager.visible becomes true
+ * - Resets search and selection when opened
+ * - Maintains highlight position during navigation
+ * - Automatically scrolls to keep current item visible
+ */
+
+// ========== LAZY LOADING ==========
+
 LazyLoader {
   id: loader
   active: manager.visible
 
   required property var manager
+
+  // ========== WINDOW CONFIGURATION ==========
 
   PanelWindow {
     id: menuWindow
@@ -43,9 +77,12 @@ LazyLoader {
       exclusiveZone = 0
     }
 
+    // ========== KEYBOARD NAVIGATION ==========
+
     contentItem {
       focus: true
 
+      // Handle all keyboard shortcuts for menu navigation
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
@@ -64,7 +101,7 @@ LazyLoader {
           event.accepted = true
         }
         else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          const filteredItems = menuList.getFilteredItems()
+          const filteredItems = menuList.model.values
           if (menuList.currentIndex >= 0 && menuList.currentIndex < filteredItems.length) {
             const selectedItem = filteredItems[menuList.currentIndex]
             loader.manager.executeItem(selectedItem)
@@ -84,45 +121,49 @@ LazyLoader {
       }
     }
 
-    // Background overlay
+    // ========== BACKGROUND OVERLAY ==========
+
+    // Clicking outside the menu closes it
     MouseArea {
       anchors.fill: parent
       onClicked: loader.manager.visible = false
     }
 
-    // Main container
+    // ========== MAIN CONTAINER ==========
+
     Rectangle {
       id: menuBox
       x: (parent.width - 460) / 2
       y: (parent.height - 520) / 2
-    width: 460
-    height: 520
-    radius: 28
-    color: Theme.surface_container_transparent_medium
-    border.width: 1
-    border.color: Qt.lighter(Theme.surface_container, 1.3)
+      width: 460
+      height: 520
+      radius: 28
+      color: Theme.surface_container_transparent_medium
+      border.width: 1
+      border.color: Qt.lighter(Theme.surface_container, 1.3)
 
-    scale: loader.manager.visible ? 1 : 0.85
-    opacity: loader.manager.visible ? 1 : 0
+      // Animate menu appearance: scale from 85% to 100% and fade in
+      scale: loader.manager.visible ? 1 : 0.85
+      opacity: loader.manager.visible ? 1 : 0
 
-    Behavior on scale {
-      NumberAnimation {
-        duration: loader.manager.visible ? 300 : 200
-        easing.type: Easing.OutCubic
+      Behavior on scale {
+        NumberAnimation {
+          duration: loader.manager.visible ? 300 : 200
+          easing.type: Easing.OutCubic
+        }
       }
-    }
 
-    Behavior on opacity {
-      NumberAnimation {
-        duration: loader.manager.visible ? 200 : 150
-        easing.type: Easing.OutQuad
+      Behavior on opacity {
+        NumberAnimation {
+          duration: loader.manager.visible ? 200 : 150
+          easing.type: Easing.OutQuad
+        }
       }
-    }
 
-    // Prevent clicks on menu from closing it
-    MouseArea {
-      anchors.fill: parent
-    }
+      // Prevent clicks on menu from closing it (only background clicks close)
+      MouseArea {
+        anchors.fill: parent
+      }
 
     ColumnLayout {
       anchors {
@@ -154,16 +195,10 @@ LazyLoader {
           color: Theme.on_surface
           font.pixelSize: Theme.typography.lg
           font.family: Theme.typography.fontFamily
-          opacity: closeMouseArea.containsMouse ? 0.7 : 1
-
-          Behavior on opacity {
-            NumberAnimation { duration: 200 }
-          }
 
           MouseArea {
             id: closeMouseArea
             anchors.fill: parent
-            hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: loader.manager.visible = false
           }
@@ -195,7 +230,8 @@ LazyLoader {
 
           currentIndex: 0
 
-          // Highlight
+          // Visual highlight that follows the currently selected item
+          // highlightFollowsCurrentItem ensures the highlight stays in sync
           highlight: Rectangle {
             width: menuList.width
             height: 72
@@ -203,9 +239,12 @@ LazyLoader {
             color: Theme.primary_container
           }
 
+          // Critical: This ensures the highlight automatically moves with currentIndex
+          // Without this, the highlight would stay in place when navigating
           highlightFollowsCurrentItem: true
 
-          // Filtered model based on search
+          // Dynamic model that filters menu items based on search text
+          // Filters by matching search against item name or description
           model: ScriptModel {
             values: {
               const search = loader.manager.searchText.toLowerCase()
@@ -225,6 +264,9 @@ LazyLoader {
             }
           }
 
+          // Ensure currentIndex stays within valid bounds when model changes
+          // This prevents crashes when the filtered list shrinks, but doesn't
+          // automatically trigger highlight refresh (that's handled by onSearchTextChanged)
           onCountChanged: {
             if (count > 0) {
               if (currentIndex >= count) {
@@ -237,16 +279,27 @@ LazyLoader {
             }
           }
 
+          // Automatically scroll to keep the current item visible
+          // Works with highlightFollowsCurrentItem to maintain highlight position
           onCurrentIndexChanged: {
             if (currentIndex >= 0 && currentIndex < count) {
               positionViewAtIndex(currentIndex, ListView.Contain)
             }
           }
 
-          function getFilteredItems() {
-            return model.values
+          // Reset selection when search changes to fix highlight disappearing bug
+          // Without this, clearing the search leaves the highlight invisible
+          Connections {
+            target: loader.manager
+            function onSearchTextChanged() {
+              menuList.currentIndex = 0
+              if (menuList.count > 0) {
+                menuList.positionViewAtBeginning()
+              }
+            }
           }
 
+          // List item delegate - renders each menu item with icon, name, and description
           delegate: ListItem {
             required property var modelData
             required property int index
@@ -258,7 +311,7 @@ LazyLoader {
             subtitle: modelData.description
             selected: index === menuList.currentIndex
 
-            // Menu uses primary colors (like original MenuItem)
+            // Menu uses primary color scheme for visual consistency
             selectedBgColor: Theme.primary
             selectedIconColor: Theme.on_primary
             defaultBgColor: Theme.primary_container
@@ -270,7 +323,7 @@ LazyLoader {
             }
           }
 
-          // Empty state
+          // Empty state message shown when no items match the search
           Text {
             anchors.centerIn: parent
             text: loader.manager.searchText ? "No items found" : "No menu items available"

@@ -33,11 +33,7 @@ Rectangle {
   // ============================================================================
 
   radius: Theme.radius.lg
-  color: mouseArea.containsMouse ? Theme.surface_container_high : "transparent"
-
-  Behavior on color {
-    ColorAnimation { duration: 150 }
-  }
+  color: "transparent"
 
   // ============================================================================
   // CONTENT
@@ -126,7 +122,6 @@ Rectangle {
   MouseArea {
     id: mouseArea
     anchors.fill: parent
-    hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
     acceptedButtons: Qt.LeftButton | Qt.RightButton
 

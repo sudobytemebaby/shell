@@ -2,37 +2,80 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
+/**
+ * MenuManager
+ *
+ * Central state and logic manager for the menu picker system.
+ *
+ * ARCHITECTURE:
+ * This component implements the Manager pattern, separating state management
+ * and business logic from UI presentation (handled by MenuDisplay.qml).
+ *
+ * RESPONSIBILITIES:
+ * - Maintains visibility state and search text
+ * - Defines menu items and their commands
+ * - Dispatches commands (both shell commands and special picker commands)
+ * - Provides IPC interface for external control
+ *
+ * USAGE:
+ * Menu items can have two types of commands:
+ * 1. Shell commands: Executed via Quickshell.execDetached
+ * 2. Special commands: Trigger other pickers (launcher, emoji, wallpapers, etc.)
+ *
+ * IPC INTERFACE:
+ * - quickshell --ipc menu toggle  # Toggle menu visibility
+ * - quickshell --ipc menu open    # Open menu
+ * - quickshell --ipc menu close   # Close menu
+ */
 Scope {
   id: manager
-  
-  // Visibility state
+
+  // ========== VISIBILITY STATE ==========
+
+  // Controls whether the menu picker is visible
   property bool visible: false
-  
-  // Search text
+
+  // ========== SEARCH STATE ==========
+
+  // Current search filter text
   property string searchText: ""
-  
+
+  // ========== MANAGER REFERENCES ==========
+
   // Reference to launcher manager (for the Applications item)
   required property var launcherManager
-  
+
   // Reference to wallpaper manager (for the Wallpapers item)
   required property var wallpaperManager
-  
+
   // Reference to power menu manager (for the Power item)
   required property var powerMenuManager
-  
+
   // Reference to emoji manager (for the Emoji item)
   required property var emojiManager
-  
+
   // Reference to lockscreen manager (for the Lock item)
   required property var lockscreenManager
+
+  // Reference to theme manager (for the Themes item)
+  required property var themeManager
+
+  // ========== ERROR STATE ==========
+
+  // Error message from last failed operation (empty if no error)
+  property string errorMessage: ""
   
   onVisibleChanged: {
     if (visible) {
       searchText = "" // Reset search when opening
+      errorMessage = "" // Clear any previous errors
     }
   }
-  
-  // Define our menu items - NEW: Added Themes entry
+
+  // ========== MENU ITEMS ==========
+
+  // Menu items with icons, descriptions, and commands
+  // Commands can be either shell commands or special picker triggers
   property var menuItems: [
     {
       icon: "󰂯",
@@ -71,10 +114,10 @@ Scope {
       command: "wallpapers"  // Special command to trigger wallpaper picker
     },
     {
-      icon: "󰏘",
-      name: "Themes",
-      description: "Switch color scheme",
-      command: "themes"  // Special command to trigger theme switcher
+      icon: "󰊕",
+      name: "Calculator",
+      description: "Calc ",
+      command: "kitty --class floating_term_s -e numbat"
     },
     {
       icon: "󰌾",
@@ -101,74 +144,103 @@ Scope {
       command: "kitty --class floating_term_l -e btop"
     }
   ]
-  
-  // Execute a menu item's command
-  function executeItem(item) {
-    // Special case: Applications opens the launcher
-    if (item.command === "launcher") {
+
+  // ========== COMMAND DISPATCH ==========
+
+  /**
+   * Command handlers for special menu items that trigger other pickers
+   * instead of executing shell commands.
+   *
+   * This map-based approach is more maintainable than a long if-else chain
+   * and makes it easy to add new special commands.
+   *
+   * Each handler closes the menu and opens the appropriate picker/manager.
+   */
+  readonly property var commandHandlers: ({
+    "launcher": () => {
       manager.visible = false
       launcherManager.visible = true
-      return
-    }
-    
-    // Special case: Emoji Picker opens the emoji picker
-    if (item.command === "emoji") {
+    },
+    "emoji": () => {
       manager.visible = false
       emojiManager.visible = true
-      return
-    }
-    
-    // Special case: Wallpapers opens the wallpaper picker
-    if (item.command === "wallpapers") {
+    },
+    "wallpapers": () => {
       manager.visible = false
       wallpaperManager.visible = true
-      return
-    }
-    
-    // Special case: Themes opens the theme switcher - NEW
-    if (item.command === "themes") {
+    },
+    "themes": () => {
       manager.visible = false
       themeManager.visible = true
-      return
-    }
-    
-    // Special case: Lock Screen locks the screen
-    if (item.command === "lock") {
+    },
+    "lock": () => {
       manager.visible = false
       lockscreenManager.lock()
-      return
-    }
-    
-    // Special case: Power opens the power menu
-    if (item.command === "power") {
+    },
+    "power": () => {
       manager.visible = false
       powerMenuManager.visible = true
+    }
+  })
+
+  /**
+   * Execute a menu item's command.
+   *
+   * Checks if the command is a special picker command first (using the
+   * commandHandlers map), otherwise executes it as a shell command.
+   *
+   * @param item - Menu item object with a 'command' property
+   */
+  function executeItem(item) {
+    // Check if this is a special command (picker/manager trigger)
+    if (commandHandlers[item.command]) {
+      try {
+        commandHandlers[item.command]()
+        errorMessage = ""
+      } catch (error) {
+        console.error("[MenuManager] Failed to execute special command:", error)
+        errorMessage = `Failed to execute: ${item.name}`
+      }
       return
     }
-    
-    // For everything else, use execDetached
+
+    // Otherwise, execute as a shell command
     try {
       Quickshell.execDetached({
         command: ["sh", "-c", item.command]
       })
       manager.visible = false
+      errorMessage = ""
     } catch (error) {
       console.error("[MenuManager] Failed to execute command:", error)
+      errorMessage = `Failed to launch: ${item.name}`
     }
   }
-  
-  // IPC Handler for external control
+
+  // ========== IPC INTERFACE ==========
+
+  /**
+   * IPC handler for external control via quickshell CLI.
+   *
+   * USAGE:
+   * - quickshell --ipc menu toggle  # Toggle menu visibility
+   * - quickshell --ipc menu open    # Show menu
+   * - quickshell --ipc menu close   # Hide menu
+   *
+   * This allows the menu to be controlled from scripts, keybindings,
+   * or other external sources.
+   */
   IpcHandler {
     target: "menu"
-    
+
     function toggle(): void {
       manager.visible = !manager.visible
     }
-    
+
     function open(): void {
       manager.visible = true
     }
-    
+
     function close(): void {
       manager.visible = false
     }
