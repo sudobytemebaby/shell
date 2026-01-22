@@ -14,7 +14,7 @@ LazyLoader {
   required property var manager
 
   active: manager.visible
-  
+
   PanelWindow {
     id: emojiWindow
 
@@ -35,109 +35,159 @@ LazyLoader {
     Component.onCompleted: {
       console.log("[EmojiDisplay] Window loaded")
       exclusiveZone = 0
-      // Initialize filtered model with all emojis
-      emojiWindow.performFilter()
     }
 
-    // Search and selection state
+    // ========== STATE PROPERTIES ==========
+
+    // Current search text (bound to SearchBar input)
     property string searchText: ""
+
+    // Currently selected emoji index for keyboard navigation
     property int selectedIndex: 0
 
     // Calculate columns dynamically based on grid width
-    readonly property int columns: Math.floor(gridView.width / gridView.cellWidth)
+    // Safety check: ensure at least 1 column to prevent division by zero
+    readonly property int columns: Math.max(1, Math.floor(gridView.width / gridView.cellWidth))
 
-    // Filtered ListModel - only contains matching emojis
-    ListModel {
-      id: filteredModel
-    }
+    // ========== FILTERING DEBOUNCE TIMER ==========
 
-    // Debounce timer for filter updates
+    // Timer for debounced filtering (150ms for better balance)
     Timer {
-      id: filterTimer
-      interval: 30
+      id: filterDebounceTimer
+      interval: 150
       repeat: false
-      onTriggered: emojiWindow.performFilter()
+      onTriggered: {
+        performFiltering()
+      }
     }
 
-    function updateFilter() {
-      filterTimer.restart()
+    // Function to schedule a filtered update with debouncing
+    function scheduleFilter() {
+      filterDebounceTimer.restart()
     }
 
-    function performFilter() {
-      var search = emojiWindow.searchText.toLowerCase()
-      var group = loader.manager.selectedGroup
-      var sourceModel = loader.manager.emojiModel
-
-      filteredModel.clear()
-
-      // If no filters, copy all
-      if (!search && !group) {
-        for (var i = 0; i < sourceModel.count; i++) {
-          var item = sourceModel.get(i)
-          filteredModel.append({
-            emoji: item.emoji,
-            name: item.name,
-            slug: item.slug,
-            group: item.group,
-            keywords: item.keywords
-          })
-        }
-      } else {
-        // Apply filters
-        for (var i = 0; i < sourceModel.count; i++) {
-          var item = sourceModel.get(i)
-
-          var matches = true
-          if (group && item.group !== group) {
-            matches = false
-          } else if (search && item.keywords.indexOf(search) === -1) {
-            matches = false
-          }
-
-          if (matches) {
-            filteredModel.append({
-              emoji: item.emoji,
-              name: item.name,
-              slug: item.slug,
-              group: item.group,
-              keywords: item.keywords
-            })
-          }
-        }
+    // Perform the actual filtering by updating group membership
+    // This is much more efficient than rebuilding a ListModel
+    function performFiltering() {
+      // Null safety check
+      if (!loader.manager || !loader.manager.emojiModel) {
+        console.warn("[EmojiDisplay] Manager or emoji model not available")
+        return
       }
 
+      var search = emojiWindow.searchText.toLowerCase()
+      var group = loader.manager.selectedGroup
+
+      // Iterate through all items and update their group membership
+      for (var i = 0; i < delegateModel.items.count; i++) {
+        var item = delegateModel.items.get(i)
+        var matches = true
+
+        // Apply group filter
+        if (group && item.model.group !== group) {
+          matches = false
+        }
+        // Apply search filter
+        else if (search && item.model.keywords.indexOf(search) === -1) {
+          matches = false
+        }
+
+        // Update visibility group membership
+        item.inVisible = matches
+      }
+
+      // Reset selection to first item when filter changes
       emojiWindow.selectedIndex = 0
     }
 
-    // Update filter when search or group changes
+    // ========== DELEGATE MODEL WITH FILTERING ==========
+
+    // DelegateModel wraps the source emoji model and provides efficient filtering
+    // Only visible items are in the "visible" group, avoiding the need to duplicate data
+    DelegateModel {
+      id: delegateModel
+
+      // Source model from manager
+      model: loader.manager ? loader.manager.emojiModel : null
+
+      // Only show items in the "visible" group
+      filterOnGroup: "visible"
+
+      // Define the "visible" group - all items start visible
+      groups: [
+        DelegateModelGroup {
+          name: "visible"
+          includeByDefault: true
+        }
+      ]
+
+      // Delegate for rendering each emoji item
+      delegate: Item {
+        width: 70
+        height: 70
+
+        Components.EmojiGridItem {
+          anchors.fill: parent
+          emoji: model.emoji
+          name: model.name
+          itemIndex: model.index
+          isSelected: delegateModel.filterOnGroup === "visible" ?
+                      (DelegateModel.itemsIndex === emojiWindow.selectedIndex) : false
+
+          onClicked: {
+            // Update selection to the filtered index
+            emojiWindow.selectedIndex = DelegateModel.itemsIndex
+            console.log("[EmojiDisplay] Selected via click:", model.emoji)
+
+            // Null safety check before calling manager method
+            if (loader.manager) {
+              loader.manager.copyEmoji(model.emoji)
+            }
+          }
+        }
+      }
+    }
+
+    // ========== FILTER TRIGGER CONNECTIONS ==========
+
+    // Watch for group filter changes from manager
     Connections {
       target: loader.manager
       function onSelectedGroupChanged() {
-        emojiWindow.updateFilter()
+        emojiWindow.scheduleFilter()
       }
     }
     
-    // Handle keyboard navigation
+    // ========== KEYBOARD NAVIGATION ==========
+
     contentItem {
       focus: true
 
       Keys.onPressed: event => {
+        // Close picker on Escape
         if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          // Select current emoji at current index
-          if (emojiWindow.selectedIndex >= 0 &&
-              emojiWindow.selectedIndex < filteredModel.count) {
-            var emoji = filteredModel.get(emojiWindow.selectedIndex)
-            console.log("[EmojiDisplay] Selected via Enter:", emoji.emoji)
-            loader.manager.copyEmoji(emoji.emoji)
+          if (loader.manager) {
+            loader.manager.visible = false
           }
           event.accepted = true
         }
+        // Select and copy current emoji on Enter
+        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+          // Get the actual item from the delegate model
+          if (emojiWindow.selectedIndex >= 0 &&
+              emojiWindow.selectedIndex < delegateModel.items.count) {
+            var item = delegateModel.items.get(emojiWindow.selectedIndex)
+            console.log("[EmojiDisplay] Selected via Enter:", item.model.emoji)
+
+            // Null safety check
+            if (loader.manager) {
+              loader.manager.copyEmoji(item.model.emoji)
+            }
+          }
+          event.accepted = true
+        }
+        // Navigate up by one row (calculated columns)
         else if (event.key === Qt.Key_Up) {
-          // Move up by calculated columns
           var newIndex = emojiWindow.selectedIndex - emojiWindow.columns
           if (newIndex >= 0) {
             emojiWindow.selectedIndex = newIndex
@@ -145,26 +195,26 @@ LazyLoader {
           }
           event.accepted = true
         }
+        // Navigate down by one row (calculated columns)
         else if (event.key === Qt.Key_Down) {
-          // Move down by calculated columns
           var newIndex = emojiWindow.selectedIndex + emojiWindow.columns
-          if (newIndex < filteredModel.count) {
+          if (newIndex < delegateModel.items.count) {
             emojiWindow.selectedIndex = newIndex
             gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
           }
           event.accepted = true
         }
+        // Navigate left
         else if (event.key === Qt.Key_Left) {
-          // Move left
           if (emojiWindow.selectedIndex > 0) {
             emojiWindow.selectedIndex--
             gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
           }
           event.accepted = true
         }
+        // Navigate right
         else if (event.key === Qt.Key_Right) {
-          // Move right
-          if (emojiWindow.selectedIndex < filteredModel.count - 1) {
+          if (emojiWindow.selectedIndex < delegateModel.items.count - 1) {
             emojiWindow.selectedIndex++
             gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
           }
@@ -173,19 +223,28 @@ LazyLoader {
       }
     }
     
-    // Background overlay
+    // ========== BACKGROUND OVERLAY ==========
+
+    // Semi-transparent scrim overlay - clicking it closes the picker
     Rectangle {
       anchors.fill: parent
       color: Theme.scrim
       opacity: 0.2
-      
+
       MouseArea {
         anchors.fill: parent
-        onClicked: loader.manager.visible = false
+        onClicked: {
+          // Null safety check
+          if (loader.manager) {
+            loader.manager.visible = false
+          }
+        }
       }
     }
     
-    // Main container - centered with Material 3 styling
+    // ========== MAIN PICKER CONTAINER ==========
+
+    // Centered modal dialog with Material 3 styling
     Rectangle {
       id: container
       x: (parent.width - 460) / 2
@@ -196,12 +255,12 @@ LazyLoader {
       color: Theme.surface_container_transparent_medium
       border.width: 1
       border.color: Qt.lighter(Theme.surface_container, 1.3)
-      
-      // Prevent clicks on container from closing
+
+      // Prevent clicks on container from propagating to background (which would close picker)
       MouseArea {
         anchors.fill: parent
       }
-      
+
       ColumnLayout {
         anchors {
           fill: parent
@@ -210,11 +269,13 @@ LazyLoader {
         spacing: Theme.spacing.md
         
         // ========== HEADER ==========
+
         RowLayout {
           Layout.fillWidth: true
           Layout.preferredHeight: 40
           spacing: Theme.spacing.sm
-          
+
+          // Title text
           Text {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding.xs
@@ -224,8 +285,8 @@ LazyLoader {
             font.family: Theme.typography.fontFamily
             font.weight: Theme.typography.weightMedium
           }
-          
-          // Close button
+
+          // Close button (X icon)
           Text {
             Layout.rightMargin: Theme.padding.sm
             text: "✕"
@@ -238,54 +299,74 @@ LazyLoader {
               anchors.fill: parent
               hoverEnabled: true
               cursorShape: Qt.PointingHandCursor
-              onClicked: loader.manager.visible = false
+              onClicked: {
+                // Null safety check
+                if (loader.manager) {
+                  loader.manager.visible = false
+                }
+              }
             }
           }
         }
-        
+
         // ========== SEARCH BAR ==========
+
+        // Search input with debouncing - filters emojis by name/keywords
         SearchBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 48
           placeholder: "Search emojis..."
-          debounceInterval: 200
+          debounceInterval: 0  // Disable SearchBar's debounce, using DelegateModel's instead
 
           onSearchChanged: text => {
             emojiWindow.searchText = text
-            emojiWindow.updateFilter()
+            emojiWindow.scheduleFilter()
           }
         }
         
         // ========== GROUP FILTER ==========
+
+        // Horizontal list of category filter buttons
         Components.EmojiGroupFilter {
           Layout.fillWidth: true
           Layout.preferredHeight: 40
-          
-          groups: loader.manager.emojiGroups
-          selectedGroup: loader.manager.selectedGroup
-          
+
+          // Pass groups from manager (with null safety)
+          groups: loader.manager ? loader.manager.emojiGroups : []
+          selectedGroup: loader.manager ? loader.manager.selectedGroup : ""
+
           onGroupSelected: group => {
-            loader.manager.selectedGroup = group
+            // Null safety check
+            if (loader.manager) {
+              loader.manager.selectedGroup = group
+            }
           }
         }
         
         // ========== LOADING STATE ==========
+
+        // Shown when emoji data hasn't loaded yet
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          visible: loader.manager.emojiModel.count === 0 && loader.manager.errorMessage === ""
-          
+          visible: {
+            // Null safety check
+            if (!loader.manager || !loader.manager.emojiModel) return false
+            return loader.manager.emojiModel.count === 0 && loader.manager.errorMessage === ""
+          }
+
           ColumnLayout {
             anchors.centerIn: parent
             spacing: Theme.spacing.md
-            
+
+            // Loading icon
             Rectangle {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: 64
               Layout.preferredHeight: 64
               radius: Theme.radius.full
               color: Theme.surface_container_high
-              
+
               Text {
                 anchors.centerIn: parent
                 text: "󰄉"
@@ -295,7 +376,8 @@ LazyLoader {
                 opacity: 0.6
               }
             }
-            
+
+            // Loading message
             Text {
               Layout.alignment: Qt.AlignHCenter
               text: "Loading emojis..."
@@ -309,22 +391,25 @@ LazyLoader {
         }
         
         // ========== ERROR STATE ==========
+
+        // Shown when there's an error loading emoji data
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          visible: loader.manager.errorMessage !== ""
-          
+          visible: loader.manager ? (loader.manager.errorMessage !== "") : false
+
           ColumnLayout {
             anchors.centerIn: parent
             spacing: Theme.spacing.md
-            
+
+            // Error icon
             Rectangle {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: 64
               Layout.preferredHeight: 64
               radius: Theme.radius.full
               color: Theme.error_container
-              
+
               Text {
                 anchors.centerIn: parent
                 text: "󰀪"
@@ -333,11 +418,12 @@ LazyLoader {
                 font.family: Theme.typography.fontFamily
               }
             }
-            
+
+            // Error message text
             Text {
               Layout.alignment: Qt.AlignHCenter
               Layout.maximumWidth: 600
-              text: loader.manager.errorMessage
+              text: loader.manager ? loader.manager.errorMessage : ""
               color: Theme.error
               font.pixelSize: Theme.typography.md
               font.family: Theme.typography.fontFamily
@@ -348,59 +434,61 @@ LazyLoader {
         }
         
         // ========== EMOJI GRID ==========
+
+        // Main scrollable grid of emoji items
+        // Uses DelegateModel for efficient filtering without data duplication
         GridView {
           id: gridView
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          visible: loader.manager.emojiModel.count > 0 && loader.manager.errorMessage === ""
+          visible: {
+            // Null safety check
+            if (!loader.manager || !loader.manager.emojiModel) return false
+            return loader.manager.emojiModel.count > 0 && loader.manager.errorMessage === ""
+          }
 
           clip: true
           cellWidth: 70
           cellHeight: 70
 
-          model: filteredModel
+          // Use the DelegateModel which provides filtered results
+          model: delegateModel
           currentIndex: emojiWindow.selectedIndex
 
+          // Smooth scrolling configuration
           maximumFlickVelocity: 2000
           flickDeceleration: 1500
 
-          delegate: Components.EmojiGridItem {
-            width: gridView.cellWidth
-            height: gridView.cellHeight
-
-            emoji: model.emoji
-            name: model.name
-            itemIndex: model.index
-            isSelected: model.index === emojiWindow.selectedIndex
-
-            onClicked: {
-              emojiWindow.selectedIndex = model.index
-              console.log("[EmojiDisplay] Selected via click:", model.emoji)
-              loader.manager.copyEmoji(model.emoji)
-            }
-          }
+          // Note: delegate is defined in DelegateModel above for proper filtering support
         }
         
         // ========== EMPTY STATE ==========
+
+        // Shown when filter/search returns no results
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          visible: loader.manager.emojiModel.count > 0 &&
-                   filteredModel.count === 0 &&
+          visible: {
+            // Null safety check
+            if (!loader.manager || !loader.manager.emojiModel) return false
+            return loader.manager.emojiModel.count > 0 &&
+                   delegateModel.items.count === 0 &&
                    loader.manager.errorMessage === ""
-          
+          }
+
           ColumnLayout {
             anchors.centerIn: parent
             spacing: Theme.spacing.md
-            
+
+            // Empty state icon
             Rectangle {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: 64
               Layout.preferredHeight: 64
               radius: Theme.radius.full
               color: Theme.surface_container_high
-              
+
               Text {
                 anchors.centerIn: parent
                 text: "󱚣"
@@ -410,11 +498,12 @@ LazyLoader {
                 opacity: 0.6
               }
             }
-            
+
+            // Primary message
             Text {
               Layout.alignment: Qt.AlignHCenter
-              text: emojiWindow.searchText ? 
-                    "No emojis found" : 
+              text: emojiWindow.searchText ?
+                    "No emojis found" :
                     "No emojis available"
               color: Theme.on_surface
               font.pixelSize: Theme.typography.md
@@ -422,11 +511,12 @@ LazyLoader {
               font.weight: Theme.typography.weightMedium
               opacity: 0.8
             }
-            
+
+            // Secondary hint message
             Text {
               Layout.alignment: Qt.AlignHCenter
-              text: emojiWindow.searchText ? 
-                    "Try a different search term" : 
+              text: emojiWindow.searchText ?
+                    "Try a different search term" :
                     "Check emoji data file"
               color: Theme.on_surface_variant
               font.pixelSize: Theme.typography.sm
@@ -435,8 +525,10 @@ LazyLoader {
             }
           }
         }
-        
-        // ========== FOOTER WITH HINT ==========
+
+        // ========== FOOTER WITH KEYBOARD HINTS ==========
+
+        // Shows keyboard shortcuts when emojis are visible
         Text {
           Layout.fillWidth: true
           text: "↑↓←→ Navigate • Enter Copy • Esc Close"
@@ -445,7 +537,7 @@ LazyLoader {
           font.family: Theme.typography.fontFamily
           horizontalAlignment: Text.AlignHCenter
           opacity: 0.7
-          visible: filteredModel.count > 0
+          visible: delegateModel.items.count > 0
         }
       }
     }
