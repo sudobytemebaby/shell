@@ -3,55 +3,31 @@ import "../../../../shared/theme"
 
 GridView {
   id: gridView
-  
+
   // Properties
-  property var emojis: []
   property int selectedIndex: 0
-  
+
   // Signals
   signal emojiSelected(string emoji)
   signal indexSelected(int index)
-  
+
   clip: true
-  
+
   cellWidth: 70
   cellHeight: 70
-  
-  model: emojis
-  
+
   currentIndex: selectedIndex
-  
+
   // Smooth scrolling
   maximumFlickVelocity: 2000
   flickDeceleration: 1500
-  
-  // Function to position view at index (exposed for keyboard nav)
-  function positionViewAtIndex(index, mode) {
-    GridView.positionViewAtIndex(index, mode)
-  }
-  
+
   // Watch for selectedIndex changes and position view accordingly
   onSelectedIndexChanged: {
     positionViewAtIndex(selectedIndex, GridView.Contain)
   }
-  
-  delegate: EmojiGridItem {
-    required property var modelData
-    required property int index
-    
-    width: gridView.cellWidth
-    height: gridView.cellHeight
-    
-    emoji: modelData.emoji
-    name: modelData.name
-    itemIndex: index
-    isSelected: index === gridView.selectedIndex
-    
-    onClicked: {
-      gridView.indexSelected(index)
-      gridView.emojiSelected(modelData.emoji)
-    }
-  }
+
+  // Note: delegate is now provided by DelegateModel in EmojiDisplay.qml
   
   // ========== MATERIAL 3 SCROLLBAR ==========
   Rectangle {

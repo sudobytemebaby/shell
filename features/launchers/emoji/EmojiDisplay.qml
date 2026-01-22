@@ -10,14 +10,14 @@ import "emoji_components" as Components
 
 LazyLoader {
   id: loader
-  
+
   required property var manager
-  
+
   active: manager.visible
   
   PanelWindow {
     id: emojiWindow
-    
+
     // Fill screen - emoji picker will be centered
     anchors {
       top: true
@@ -25,97 +25,131 @@ LazyLoader {
       bottom: true
       right: true
     }
-    
+
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-    
+
     color: "transparent"
     mask: null
-    
+
     Component.onCompleted: {
       console.log("[EmojiDisplay] Window loaded")
       exclusiveZone = 0
+      // Initialize filtered model with all emojis
+      emojiWindow.performFilter()
     }
-    
+
     // Search and selection state
     property string searchText: ""
     property int selectedIndex: 0
-    property var filteredEmojis: []
-    
-    // Filter emojis based on search and group
-    function updateFilteredEmojis() {
+
+    // Calculate columns dynamically based on grid width
+    readonly property int columns: Math.floor(gridView.width / gridView.cellWidth)
+
+    // Filtered ListModel - only contains matching emojis
+    ListModel {
+      id: filteredModel
+    }
+
+    // Debounce timer for filter updates
+    Timer {
+      id: filterTimer
+      interval: 30
+      repeat: false
+      onTriggered: emojiWindow.performFilter()
+    }
+
+    function updateFilter() {
+      filterTimer.restart()
+    }
+
+    function performFilter() {
       var search = emojiWindow.searchText.toLowerCase()
       var group = loader.manager.selectedGroup
-      
-      var filtered = []
-      
-      for (var i = 0; i < loader.manager.emojis.length; i++) {
-        var emoji = loader.manager.emojis[i]
-        
-        // Filter by group if selected
-        if (group && emoji.group !== group) {
-          continue
+      var sourceModel = loader.manager.emojiModel
+
+      filteredModel.clear()
+
+      // If no filters, copy all
+      if (!search && !group) {
+        for (var i = 0; i < sourceModel.count; i++) {
+          var item = sourceModel.get(i)
+          filteredModel.append({
+            emoji: item.emoji,
+            name: item.name,
+            slug: item.slug,
+            group: item.group,
+            keywords: item.keywords
+          })
         }
-        
-        // Filter by search
-        if (search) {
-          // Search in name and keywords
-          if (!emoji.keywords.includes(search)) {
-            continue
+      } else {
+        // Apply filters
+        for (var i = 0; i < sourceModel.count; i++) {
+          var item = sourceModel.get(i)
+
+          var matches = true
+          if (group && item.group !== group) {
+            matches = false
+          } else if (search && item.keywords.indexOf(search) === -1) {
+            matches = false
+          }
+
+          if (matches) {
+            filteredModel.append({
+              emoji: item.emoji,
+              name: item.name,
+              slug: item.slug,
+              group: item.group,
+              keywords: item.keywords
+            })
           }
         }
-        
-        filtered.push(emoji)
       }
-      
-      emojiWindow.filteredEmojis = filtered
+
       emojiWindow.selectedIndex = 0
-      
-      console.log("[EmojiDisplay] Filtered:", filtered.length, "emojis")
     }
-    
-    // Update filtered list when emojis or filters change
+
+    // Update filter when search or group changes
     Connections {
       target: loader.manager
-      function onEmojisChanged() {
-        emojiWindow.updateFilteredEmojis()
-      }
       function onSelectedGroupChanged() {
-        emojiWindow.updateFilteredEmojis()
+        emojiWindow.updateFilter()
       }
     }
     
     // Handle keyboard navigation
     contentItem {
       focus: true
-      
+
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
           event.accepted = true
         }
         else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          // Select current emoji
-          if (emojiWindow.selectedIndex >= 0 && 
-              emojiWindow.selectedIndex < emojiWindow.filteredEmojis.length) {
-            var selected = emojiWindow.filteredEmojis[emojiWindow.selectedIndex]
-            console.log("[EmojiDisplay] Selected via Enter:", selected.emoji)
-            loader.manager.copyEmoji(selected.emoji)
+          // Select current emoji at current index
+          if (emojiWindow.selectedIndex >= 0 &&
+              emojiWindow.selectedIndex < filteredModel.count) {
+            var emoji = filteredModel.get(emojiWindow.selectedIndex)
+            console.log("[EmojiDisplay] Selected via Enter:", emoji.emoji)
+            loader.manager.copyEmoji(emoji.emoji)
           }
           event.accepted = true
         }
         else if (event.key === Qt.Key_Up) {
-          // Move up by columns (6 per row)
-          if (emojiWindow.selectedIndex >= 6) {
-            emojiWindow.selectedIndex -= 6
+          // Move up by calculated columns
+          var newIndex = emojiWindow.selectedIndex - emojiWindow.columns
+          if (newIndex >= 0) {
+            emojiWindow.selectedIndex = newIndex
             gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
           }
           event.accepted = true
         }
         else if (event.key === Qt.Key_Down) {
-          // Move down by columns (6 per row)
-          if (emojiWindow.selectedIndex + 6 < emojiWindow.filteredEmojis.length) {
-            emojiWindow.selectedIndex += 6
+          // Move down by calculated columns
+          var newIndex = emojiWindow.selectedIndex + emojiWindow.columns
+          if (newIndex < filteredModel.count) {
+            emojiWindow.selectedIndex = newIndex
             gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
           }
           event.accepted = true
@@ -130,7 +164,7 @@ LazyLoader {
         }
         else if (event.key === Qt.Key_Right) {
           // Move right
-          if (emojiWindow.selectedIndex < emojiWindow.filteredEmojis.length - 1) {
+          if (emojiWindow.selectedIndex < filteredModel.count - 1) {
             emojiWindow.selectedIndex++
             gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
           }
@@ -154,10 +188,10 @@ LazyLoader {
     // Main container - centered with Material 3 styling
     Rectangle {
       id: container
-      x: (parent.width - 700) / 2
-      y: (parent.height - 600) / 2
-      width: 700
-      height: 600
+      x: (parent.width - 460) / 2
+      y: (parent.height - 550) / 2
+      width: 460
+      height: 550
       radius: 28
       color: Theme.surface_container_transparent_medium
       border.width: 1
@@ -218,7 +252,7 @@ LazyLoader {
 
           onSearchChanged: text => {
             emojiWindow.searchText = text
-            emojiWindow.updateFilteredEmojis()
+            emojiWindow.updateFilter()
           }
         }
         
@@ -239,7 +273,7 @@ LazyLoader {
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          visible: loader.manager.isLoading
+          visible: loader.manager.emojiModel.count === 0 && loader.manager.errorMessage === ""
           
           ColumnLayout {
             anchors.centerIn: parent
@@ -278,7 +312,7 @@ LazyLoader {
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          visible: !loader.manager.isLoading && loader.manager.errorMessage !== ""
+          visible: loader.manager.errorMessage !== ""
           
           ColumnLayout {
             anchors.centerIn: parent
@@ -314,23 +348,37 @@ LazyLoader {
         }
         
         // ========== EMOJI GRID ==========
-        Components.EmojiGridView {
+        GridView {
           id: gridView
           Layout.fillWidth: true
           Layout.fillHeight: true
-          
-          visible: !loader.manager.isLoading && loader.manager.errorMessage === ""
-          
-          emojis: emojiWindow.filteredEmojis
-          selectedIndex: emojiWindow.selectedIndex
-          
-          onEmojiSelected: emoji => {
-            console.log("[EmojiDisplay] Selected via click:", emoji)
-            loader.manager.copyEmoji(emoji)
-          }
-          
-          onIndexSelected: index => {
-            emojiWindow.selectedIndex = index
+
+          visible: loader.manager.emojiModel.count > 0 && loader.manager.errorMessage === ""
+
+          clip: true
+          cellWidth: 70
+          cellHeight: 70
+
+          model: filteredModel
+          currentIndex: emojiWindow.selectedIndex
+
+          maximumFlickVelocity: 2000
+          flickDeceleration: 1500
+
+          delegate: Components.EmojiGridItem {
+            width: gridView.cellWidth
+            height: gridView.cellHeight
+
+            emoji: model.emoji
+            name: model.name
+            itemIndex: model.index
+            isSelected: model.index === emojiWindow.selectedIndex
+
+            onClicked: {
+              emojiWindow.selectedIndex = model.index
+              console.log("[EmojiDisplay] Selected via click:", model.emoji)
+              loader.manager.copyEmoji(model.emoji)
+            }
           }
         }
         
@@ -338,8 +386,8 @@ LazyLoader {
         Item {
           Layout.fillWidth: true
           Layout.fillHeight: true
-          visible: !loader.manager.isLoading && 
-                   emojiWindow.filteredEmojis.length === 0 && 
+          visible: loader.manager.emojiModel.count > 0 &&
+                   filteredModel.count === 0 &&
                    loader.manager.errorMessage === ""
           
           ColumnLayout {
@@ -397,7 +445,7 @@ LazyLoader {
           font.family: Theme.typography.fontFamily
           horizontalAlignment: Text.AlignHCenter
           opacity: 0.7
-          visible: !loader.manager.isLoading && emojiWindow.filteredEmojis.length > 0
+          visible: filteredModel.count > 0
         }
       }
     }
