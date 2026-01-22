@@ -12,7 +12,6 @@ LazyLoader {
   property int closeDuration: 150
   property real openEasingType: Easing.OutBack
   property real closeEasingType: Easing.OutQuint
-  property real openOvershoot: 0.8
 
   // Animation state - use this in your content to drive visual changes
   // 0 = fully closed, 1 = fully open
@@ -33,7 +32,6 @@ LazyLoader {
       to: 1
       duration: root.openDuration
       easing.type: root.openEasingType
-      easing.overshoot: root.openOvershoot
     }
 
     property NumberAnimation closeAnimation: NumberAnimation {

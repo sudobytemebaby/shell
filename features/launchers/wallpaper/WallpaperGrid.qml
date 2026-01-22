@@ -403,7 +403,7 @@ LazyLoader {
 
               Text {
                 anchors.centerIn: parent
-                text: "󰄉"
+                text: "󰝲"
                 color: Theme.on_surface_variant
                 font.pixelSize: Theme.typography.xxxl
                 font.family: Theme.typography.fontFamily

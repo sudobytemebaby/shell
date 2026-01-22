@@ -52,25 +52,10 @@ LazyLoader {
 
     Item {
       id: container
-      x: parent.width - width - 16
-      y: loader.manager.visible ? Theme.barHeight : -(height + Theme.barHeight)
+      x: parent.width - width - 28
+      y: 28
       width: 360
       height: 520
-      opacity: loader.manager.visible ? 1 : 0
-
-      Behavior on y {
-        NumberAnimation {
-          duration: loader.manager.visible ? 300 : 200
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: loader.manager.visible ? 200 : 150
-          easing.type: Easing.OutQuad
-        }
-      }
 
       // Main container with Material 3 style
       Rectangle {

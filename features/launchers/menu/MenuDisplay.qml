@@ -40,11 +40,17 @@ import "../../../shared/components/Lists"
 
 // ========== LAZY LOADING ==========
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  active: manager.visible
+  show: manager.visible
 
   required property var manager
+
+  // Polished animation timings
+  openDuration: 150
+  closeDuration: 150
+  openEasingType: Easing.OutCubic
+  closeEasingType: Easing.InOutCubic
 
   // ========== WINDOW CONFIGURATION ==========
 
@@ -58,14 +64,7 @@ LazyLoader {
       right: true
     }
 
-    margins {
-      top: Theme.barHeight
-      left: Theme.spacing.md
-      right: Theme.spacing.md
-      bottom: Theme.spacing.md
-    }
-
-    visible: loader.manager.visible
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
@@ -121,44 +120,31 @@ LazyLoader {
       }
     }
 
-    // ========== BACKGROUND OVERLAY ==========
-
-    // Clicking outside the menu closes it
+      // Clicking outside the menu closes it
     MouseArea {
-      anchors.fill: parent
-      onClicked: loader.manager.visible = false
-    }
+        anchors.fill: parent
+        onClicked: loader.manager.visible = false
+      }
 
     // ========== MAIN CONTAINER ==========
 
     Rectangle {
       id: menuBox
       x: (parent.width - 460) / 2
-      y: (parent.height - 520) / 2
+      y: (parent.height - 560) / 2
       width: 460
-      height: 520
-      radius: 28
+      height: 560
+
+      // Rounded corners all around (centered design)
+      radius: Theme.radius.xl
+
       color: Theme.surface_container_transparent_medium
       border.width: 1
-      border.color: Qt.lighter(Theme.surface_container, 1.3)
+      border.color: Theme.surface_container_high
 
-      // Animate menu appearance: scale from 85% to 100% and fade in
-      scale: loader.manager.visible ? 1 : 0.85
-      opacity: loader.manager.visible ? 1 : 0
-
-      Behavior on scale {
-        NumberAnimation {
-          duration: loader.manager.visible ? 300 : 200
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: loader.manager.visible ? 200 : 150
-          easing.type: Easing.OutQuad
-        }
-      }
+      // Polished appearing animation: subtle scale + fade + slide
+      scale: 0.9 + (loader.animationProgress * 0.1)  // Scale from 0.94 to 1.0
+      opacity: loader.animationProgress  // Fade from 0 to 1
 
       // Prevent clicks on menu from closing it (only background clicks close)
       MouseArea {

@@ -61,34 +61,19 @@ LazyLoader {
 
     Item {
       id: container
-      x: 16
-      y: loader.manager.visible ? Theme.barHeight : -(height + Theme.barHeight)
+      x: 28
+      y: 28
       width: 360
       height: {
         let baseHeight = 630
         let mediaExpansion = loader.manager.media.playerActive ? 158 : 0
         return baseHeight + mediaExpansion
       }
-      opacity: loader.manager.visible ? 1 : 0
 
       Behavior on height {
         NumberAnimation {
-          duration: 300
+          duration: 150
           easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on y {
-        NumberAnimation {
-          duration: loader.manager.visible ? 300 : 200
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: loader.manager.visible ? 200 : 150
-          easing.type: Easing.OutQuad
         }
       }
 

@@ -138,24 +138,6 @@ LazyLoader {
       border.width: 1
       border.color: Qt.lighter(Theme.surface_container, 1.3)
 
-      // Animate launcher appearance: scale from 85% to 100% and fade in
-      scale: loader.manager.visible ? 1 : 0.85
-      opacity: loader.manager.visible ? 1 : 0
-
-      Behavior on scale {
-        NumberAnimation {
-          duration: loader.manager.visible ? 300 : 200
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: loader.manager.visible ? 200 : 150
-          easing.type: Easing.OutQuad
-        }
-      }
-
       // Prevent clicks on launcher from closing it (only background clicks close)
       MouseArea {
         anchors.fill: parent

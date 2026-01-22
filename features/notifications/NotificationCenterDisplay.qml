@@ -52,25 +52,10 @@ LazyLoader {
 
     Item {
       id: container
-      x: parent.width - width - 16
-      y: loader.manager.visible ? Theme.barHeight : -(height + Theme.barHeight)
+      x: parent.width - width - 28
+      y: 28
       width: 360
       height: 600
-      opacity: loader.manager.visible ? 1 : 0
-
-      Behavior on y {
-        NumberAnimation {
-          duration: loader.manager.visible ? 300 : 200
-          easing.type: Easing.OutCubic
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: loader.manager.visible ? 200 : 150
-          easing.type: Easing.OutQuad
-        }
-      }
 
       // Main container - Material 3 transparent
       Rectangle {
@@ -371,13 +356,13 @@ LazyLoader {
                 Layout.preferredWidth: 64
                 Layout.preferredHeight: 64
                 radius: Theme.radius.full
-                color: Theme.surface_container_high
+                color: "transparent"
 
                 Text {
                   anchors.centerIn: parent
                   text: "󰂚"
                   color: Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.xxxl
+                  font.pixelSize: Theme.typography.xxl * 2
                   font.family: Theme.typography.fontFamily
                   opacity: 0.6
                 }

@@ -24,14 +24,10 @@ Rectangle {
   // ============================================================================
 
   radius: Theme.radius.full
-  color: Theme.surface_container
+  color: Theme.surface_container_low
 
   border.width: 1
   border.color: Theme.surface_container_high
-
-  Elevation {
-    visible: root.showElevation
-  }
 
   // ============================================================================
   // INPUT FIELD
