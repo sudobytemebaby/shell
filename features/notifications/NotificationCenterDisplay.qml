@@ -17,24 +17,18 @@ LazyLoader {
 
     anchors {
       top: true
+      left: true
+      bottom: true
       right: true
-    }
-
-    margins {
-      top: Theme.barHeight
-      right: 16
     }
 
     visible: loader.manager.visible
 
   WlrLayershell.layer: WlrLayer.Overlay
-  WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+  WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
   color: "transparent"
   mask: null
-
-    width: 360
-    height: 600
 
     Component.onCompleted: {
       exclusiveZone = 0
@@ -46,9 +40,9 @@ LazyLoader {
       Keys.onPressed: event => {
         if (event.key === Qt.Key_Escape) {
           loader.manager.visible = false
-        event.accepted = true
+          event.accepted = true
+        }
       }
-    }
   }
 
     MouseArea {
@@ -58,29 +52,30 @@ LazyLoader {
 
     Item {
       id: container
-      anchors.fill: parent
-
-      y: loader.manager.visible ? 0 : -height
+      x: parent.width - width - 16
+      y: loader.manager.visible ? Theme.barHeight : -(height + Theme.barHeight)
+      width: 360
+      height: 600
       opacity: loader.manager.visible ? 1 : 0
 
       Behavior on y {
         NumberAnimation {
           duration: loader.manager.visible ? 300 : 200
-        easing.type: Easing.OutCubic
+          easing.type: Easing.OutCubic
+        }
       }
-    }
 
       Behavior on opacity {
         NumberAnimation {
           duration: loader.manager.visible ? 200 : 150
-        easing.type: Easing.OutQuad
+          easing.type: Easing.OutQuad
+        }
       }
-    }
 
-    // Main container - Material 3 transparent
-    Rectangle {
-      id: background
-      anchors.fill: parent
+      // Main container - Material 3 transparent
+      Rectangle {
+        id: background
+        anchors.fill: parent
       radius: Theme.radius.xl
 
       // Consistent with other panels
