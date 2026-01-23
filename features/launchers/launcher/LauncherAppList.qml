@@ -71,14 +71,6 @@ Item {
       color: Theme.secondary_container
       border.width: 0
       border.color: Theme.secondary
-
-      // Smooth animated transition when highlight moves between items
-      Behavior on y {
-        NumberAnimation {
-          duration: 150
-          easing.type: Easing.OutCubic
-        }
-      }
     }
 
     // Critical: This ensures the highlight automatically moves with currentIndex

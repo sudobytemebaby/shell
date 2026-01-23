@@ -151,13 +151,14 @@ ShellRoot {
   // ============================================================================
   // LOCKSCREEN
   // ============================================================================
-  
+
   LockscreenManager {
     id: lockscreenManager
   }
-  
+
   LockscreenDisplay {
     manager: lockscreenManager
+    systemState: systemStateManager
   }
 
   // ============================================================================

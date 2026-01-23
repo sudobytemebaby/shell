@@ -130,6 +130,10 @@ AnimatedLazyLoader {
 
     Rectangle {
       id: menuBox
+      
+      layer.enabled: true
+      layer.smooth: true
+
       x: (parent.width - 460) / 2
       y: (parent.height - 560) / 2
       width: 460

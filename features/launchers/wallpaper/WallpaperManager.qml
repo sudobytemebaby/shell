@@ -40,6 +40,7 @@ Scope {
   // Wallpaper data
   property var wallpapers: []               // Array of wallpaper filenames
   property string currentWallpaper: ""      // Currently active wallpaper filename
+  property string currentWallpaperPath: ""  // Full path to current wallpaper
 
   // Loading states
   property bool isLoading: false            // True while scanning wallpaper directory
@@ -60,6 +61,7 @@ Scope {
   /**
    * Initialize paths and perform initial wallpaper scan
    * Sets up wallpaper directory and thumbnail cache paths from HOME environment
+   * Reads current wallpaper from state file
    */
   Component.onCompleted: {
     var homeDir = Quickshell.env("HOME")
@@ -71,8 +73,67 @@ Scope {
 
     manager.wallpaperDir = homeDir + "/.config/hypr/wpapers"
 
+    // Read current wallpaper from state file
+    loadCurrentWallpaperState()
+
     // Initial load - scan wallpaper directory
     refreshWallpapers()
+  }
+
+  // ============================================================================
+  // LOAD CURRENT WALLPAPER STATE
+  // ============================================================================
+
+  /**
+   * Process to read current wallpaper from state file
+   * This file is written by wallpaper-switcher script
+   * Format: single line with full path to wallpaper
+   */
+  Process {
+    id: loadStateProcess
+
+    onStarted: {
+      manager.currentWpProcessRunning = true
+    }
+
+    stdout: SplitParser {
+      onRead: data => {
+        if (!data) return
+
+        var path = data.trim()
+        if (path && path !== "") {
+          // Extract filename from path
+          var parts = path.split("/")
+          var filename = parts[parts.length - 1]
+
+          manager.currentWallpaper = filename
+          manager.currentWallpaperPath = path
+          console.log("[WallpaperManager] Loaded wallpaper state:", filename)
+        }
+      }
+    }
+
+    stderr: SplitParser {
+      onRead: data => {
+        if (data && data.trim()) {
+          console.warn("[WallpaperManager] State read warning:", data.trim())
+        }
+      }
+    }
+
+    onExited: code => {
+      manager.currentWpProcessRunning = false
+    }
+  }
+
+  function loadCurrentWallpaperState() {
+    if (manager.currentWpProcessRunning) return
+
+    var homeDir = Quickshell.env("HOME")
+    var statePath = homeDir + "/.cache/quickshell/current-wallpaper"
+
+    loadStateProcess.command = ["cat", statePath]
+    loadStateProcess.running = true
   }
 
   // ============================================================================
@@ -185,6 +246,7 @@ Scope {
         var filename = data.trim()
         if (filename && filename !== "") {
           manager.currentWallpaper = filename
+          manager.currentWallpaperPath = manager.wallpaperDir + "/" + filename
           console.log("[WallpaperManager] Current wallpaper:", filename)
         }
       }
@@ -276,6 +338,7 @@ Scope {
         if (output) console.log("[WallpaperManager]", output)
         console.log("[WallpaperManager] Wallpaper set successfully")
         manager.currentWallpaper = filename
+        manager.currentWallpaperPath = manager.wallpaperDir + "/" + filename
 
         // Close picker on success
         manager.visible = false

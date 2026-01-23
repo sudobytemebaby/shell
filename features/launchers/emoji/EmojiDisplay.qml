@@ -226,10 +226,6 @@ LazyLoader {
     // ========== BACKGROUND OVERLAY ==========
 
     // Semi-transparent scrim overlay - clicking it closes the picker
-    Rectangle {
-      anchors.fill: parent
-      color: Theme.scrim
-      opacity: 0.2
 
       MouseArea {
         anchors.fill: parent
@@ -240,7 +236,6 @@ LazyLoader {
           }
         }
       }
-    }
     
     // ========== MAIN PICKER CONTAINER ==========
 
