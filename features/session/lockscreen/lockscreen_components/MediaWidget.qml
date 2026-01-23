@@ -30,17 +30,22 @@ Rectangle {
   clip: true
 
   RowLayout {
-    anchors.fill: parent
-    anchors.margins: Theme.spacing.sm
+    anchors {
+      fill: parent
+      leftMargin: Theme.spacing.lg
+      rightMargin: Theme.spacing.lg
+      bottomMargin: Theme.spacing.sm
+      topMargin: Theme.spacing.sm
+    }
+
     spacing: Theme.spacing.md
 
     // Album art
     Rectangle {
-      Layout.preferredWidth: 44
-      Layout.preferredHeight: 44
+      Layout.preferredWidth: 30
+      Layout.preferredHeight: 30 
       radius: Theme.radius.md
       color: Theme.surface_container_high
-      clip: true
 
       Image {
         anchors.fill: parent

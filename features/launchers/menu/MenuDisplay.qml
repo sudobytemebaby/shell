@@ -48,7 +48,7 @@ AnimatedLazyLoader {
 
   // Polished animation timings
   openDuration: 150
-  closeDuration: 150
+  closeDuration: 0
   openEasingType: Easing.OutCubic
   closeEasingType: Easing.InOutCubic
 
@@ -319,7 +319,7 @@ AnimatedLazyLoader {
             text: loader.manager.searchText ? "No items found" : "No menu items available"
             color: Theme.on_surface_variant
             font.pixelSize: Theme.typography.md
-            font.family: Theme.typography.fontFamily
+            font.family: Theme.typography.fontFamilyDisplay
             opacity: menuList.count === 0 ? 0.7 : 0
           }
         }
@@ -331,7 +331,7 @@ AnimatedLazyLoader {
         text: "↑↓ / Ctrl+P/N Navigate • Enter Select • Home/End Jump • Esc Close"
         color: Theme.on_surface_variant
         font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
+        font.family: Theme.typography.fontFamilyDisplay
         horizontalAlignment: Text.AlignHCenter
         opacity: 0.7
       }

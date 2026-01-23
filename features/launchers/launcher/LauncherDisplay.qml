@@ -31,191 +31,196 @@ import "../../../shared/components/Input"
  * - Type to search: Filter applications in real-time
  *
  * BEHAVIOR:
- * - Lazy loads when manager.visible becomes true
+ * - Component is destroyed when closed to free memory and reset state
  * - Resets search and selection when opened
  * - Maintains highlight position during navigation
  * - Automatically scrolls to keep current item visible
  * - Tries app.execute() first, falls back to Quickshell.execDetached
  */
 
-// ========== WINDOW CONFIGURATION ==========
+// ========== LAZY LOADING ==========
 
-PanelWindow {
-  id: launcherWindow
+Loader {
+  id: loader
+  active: manager.visible
 
   required property var manager
 
-  // Fill entire screen - the launcher box will be centered inside
-  anchors {
-    top: true
-    left: true
-    bottom: true
-    right: true
-  }
+  sourceComponent: PanelWindow {
+    id: launcherWindow
 
-  visible: manager.visible
+    // Fill entire screen - the launcher box will be centered inside
+    anchors {
+      top: true
+      left: true
+      bottom: true
+      right: true
+    }
 
-  WlrLayershell.layer: WlrLayer.Overlay
-  WlrLayershell.keyboardFocus: manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    visible: true
 
-  color: "transparent"
-  mask: null
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
-  Component.onCompleted: {
-    exclusiveZone = 0
-  }
+    color: "transparent"
+    mask: null
 
-  // ========== KEYBOARD NAVIGATION ==========
+    Component.onCompleted: {
+      exclusiveZone = 0
+    }
 
-  contentItem {
-    focus: true
+    // ========== KEYBOARD NAVIGATION ==========
 
-    // Handle all keyboard shortcuts for launcher navigation
-    Keys.onPressed: event => {
-        if (event.key === Qt.Key_Escape) {
-          manager.visible = false
-          event.accepted = true
-        } 
-        else if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier))) {
-          appListComponent.moveUp()
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier))) {
-          appListComponent.moveDown()
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          event.accepted = true
+    contentItem {
+      focus: true
 
-          const selectedApp = appListComponent.getCurrentApp()
+      // Handle all keyboard shortcuts for launcher navigation
+      Keys.onPressed: event => {
+          if (event.key === Qt.Key_Escape) {
+            loader.manager.visible = false
+            event.accepted = true
+          }
+          else if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier))) {
+            appListComponent.moveUp()
+            event.accepted = true
+          }
+          else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier))) {
+            appListComponent.moveDown()
+            event.accepted = true
+          }
+          else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+            event.accepted = true
 
-          if (selectedApp) {
-            // Try app.execute() first (preferred method)
-            try {
-              selectedApp.execute()
-              manager.visible = false
-            } catch (error) {
-              // Fallback: try execDetached if execute() fails
+            const selectedApp = appListComponent.getCurrentApp()
+
+            if (selectedApp) {
+              // Try app.execute() first (preferred method)
               try {
-                Quickshell.execDetached({
-                  command: selectedApp.command,
-                  workingDirectory: selectedApp.workingDirectory || ""
-                })
-                manager.visible = false
-              } catch (fallbackError) {
-                console.error("[LauncherDisplay] Both launch methods failed:", fallbackError)
+                selectedApp.execute()
+                loader.manager.visible = false
+              } catch (error) {
+                // Fallback: try execDetached if execute() fails
+                try {
+                  Quickshell.execDetached({
+                    command: selectedApp.command,
+                    workingDirectory: selectedApp.workingDirectory || ""
+                  })
+                  loader.manager.visible = false
+                } catch (fallbackError) {
+                  console.error("[LauncherDisplay] Both launch methods failed:", fallbackError)
+                }
               }
             }
-          }
+        }
       }
     }
-  }
 
-  // ========== BACKGROUND OVERLAY ==========
+    // ========== BACKGROUND OVERLAY ==========
 
-  // Clicking outside the launcher closes it
-  MouseArea {
-    anchors.fill: parent
-    onClicked: manager.visible = false
-  }
-
-  // ========== MAIN CONTAINER ==========
-
-  Rectangle {
-    id: background
-    x: (parent.width - 540) / 2
-    y: (parent.height - 600) / 2
-    width: 540
-    height: 600
-    radius: 28
-    color: Theme.surface_container_transparent_medium
-    border.width: 1
-    border.color: Qt.lighter(Theme.surface_container, 1.3)
-
-    // Prevent clicks on launcher from closing it (only background clicks close)
+    // Clicking outside the launcher closes it
     MouseArea {
       anchors.fill: parent
+      onClicked: loader.manager.visible = false
     }
 
-    ColumnLayout {
-      anchors {
-        fill: parent
-        margins: Theme.padding.xl
+    // ========== MAIN CONTAINER ==========
+
+    Rectangle {
+      id: background
+      x: (parent.width - 540) / 2
+      y: (parent.height - 600) / 2
+      width: 540
+      height: 600
+      radius: 28
+      color: Theme.surface_container_transparent_medium
+      border.width: 1
+      border.color: Qt.lighter(Theme.surface_container, 1.3)
+
+      // Prevent clicks on launcher from closing it (only background clicks close)
+      MouseArea {
+        anchors.fill: parent
       }
-      spacing: Theme.spacing.md
 
-      // ========== HEADER ==========
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 40
-        spacing: Theme.spacing.sm
-
-        Text {
-          Layout.fillWidth: true
-          Layout.leftMargin: Theme.padding.xs
-          text: "Applications"
-          color: Theme.on_surface
-          font.pixelSize: Theme.typography.xl
-          font.family: Theme.typography.fontFamily
-          font.weight: Theme.typography.weightMedium
+      ColumnLayout {
+        anchors {
+          fill: parent
+          margins: Theme.padding.xl
         }
+        spacing: Theme.spacing.md
 
-        // Close button (clickable X icon)
-        Text {
-          Layout.rightMargin: Theme.padding.sm
-          text: "✕"
-          color: Theme.on_surface
-          font.pixelSize: Theme.typography.lg
-          font.family: Theme.typography.fontFamily
+        // ========== HEADER ==========
+        RowLayout {
+          Layout.fillWidth: true
+          Layout.preferredHeight: 40
+          spacing: Theme.spacing.sm
 
-          MouseArea {
-            id: closeMouseArea
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: manager.visible = false
+          Text {
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.padding.xs
+            text: "Applications"
+            color: Theme.on_surface
+            font.pixelSize: Theme.typography.xl
+            font.family: Theme.typography.fontFamily
+            font.weight: Theme.typography.weightMedium
+          }
+
+          // Close button (clickable X icon)
+          Text {
+            Layout.rightMargin: Theme.padding.sm
+            text: "✕"
+            color: Theme.on_surface
+            font.pixelSize: Theme.typography.lg
+            font.family: Theme.typography.fontFamily
+
+            MouseArea {
+              id: closeMouseArea
+              anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
+              onClicked: loader.manager.visible = false
+            }
           }
         }
-      }
 
-      // ========== SEARCH BAR ==========
+        // ========== SEARCH BAR ==========
 
-      SearchBar {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 48
-        placeholder: "Search applications..."
+        SearchBar {
+          Layout.fillWidth: true
+          Layout.preferredHeight: 48
+          placeholder: "Search applications..."
 
-        // Update manager's search text when user types
-        onSearchChanged: text => {
-          manager.searchText = text
+          // Update manager's search text when user types
+          onSearchChanged: text => {
+            loader.manager.searchText = text
+          }
         }
-      }
 
-      // ========== APP LIST ==========
+        // ========== APP LIST ==========
 
-      // Delegated to LauncherAppList component for separation of concerns
-      // Handles application filtering, display, and launching
-      LauncherAppList {
-        id: appListComponent
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        // Delegated to LauncherAppList component for separation of concerns
+        // Handles application filtering, display, and launching
+        LauncherAppList {
+          id: appListComponent
+          Layout.fillWidth: true
+          Layout.fillHeight: true
 
-        searchTerm: manager.searchText
+          searchTerm: loader.manager.searchText
 
-        // Close launcher when an app is successfully launched
-        onAppLaunched: {
-          manager.visible = false
+          // Close launcher when an app is successfully launched
+          onAppLaunched: {
+            loader.manager.visible = false
+          }
         }
-      }
 
-      // ========== FOOTER WITH HINT ==========
-      Text {
-        Layout.fillWidth: true
-        text: "↑↓ / Ctrl+P/N Navigate • Enter Launch • Esc Close"
-        color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
-        horizontalAlignment: Text.AlignHCenter
-        opacity: 0.7
+        // ========== FOOTER WITH HINT ==========
+        Text {
+          Layout.fillWidth: true
+          text: "↑↓ / Ctrl+P/N Navigate • Enter Launch • Esc Close"
+          color: Theme.on_surface_variant
+          font.pixelSize: Theme.typography.sm
+          font.family: Theme.typography.fontFamily
+          horizontalAlignment: Text.AlignHCenter
+          opacity: 0.7
+        }
       }
     }
   }

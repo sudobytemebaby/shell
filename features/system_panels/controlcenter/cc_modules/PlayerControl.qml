@@ -44,7 +44,7 @@ Card {
                 : "No Media Playing"
           color: Theme.on_surface
           font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
+          font.family: Theme.typography.fontFamilyDisplay
           font.weight: Theme.typography.weightMedium
           elide: Text.ElideRight
         }
@@ -54,7 +54,7 @@ Card {
           text: mediaManager.playerActive ? "Active" : "Idle"
           color: mediaManager.playerActive ? Theme.primary : Theme.on_surface_variant
           font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
+          font.family: Theme.typography.fontFamilyDisplay
           opacity: 0.8
         }
       }

@@ -38,7 +38,7 @@ Card {
         text: root.label
         color: Theme.on_surface
         font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamily
+        font.family: Theme.fontFamilyDisplay
         font.weight: Font.Medium
       }
       
@@ -47,7 +47,7 @@ Card {
         text: Math.round(root.value * 100) + "%"
         color: Theme.outline
         font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamily
+        font.family: Theme.fontFamilyDisplay
         font.weight: Font.Medium
       }
     }

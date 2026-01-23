@@ -5,7 +5,7 @@ import "../../../../shared/theme"
 Column {
   id: root
   
-  spacing: Theme.spacing.sm
+  spacing: Theme.spacing.xs
   opacity: 0
   
   // Smooth fade-in animation

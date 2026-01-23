@@ -12,6 +12,8 @@ RowLayout {
   
   // Previous month button
   RoundIconButton {
+    color: "transparent"
+    border.width: 0
     Layout.preferredWidth: 40
     Layout.preferredHeight: 40
     icon: ""
@@ -27,13 +29,15 @@ RowLayout {
     }
     color: Theme.on_surface
     font.pixelSize: Theme.typography.md
-    font.family: Theme.typography.fontFamily
+    font.family: Theme.typography.fontFamilyDisplay
     font.weight: Theme.typography.weightMedium
     horizontalAlignment: Text.AlignHCenter
   }
   
   // Next month button
   RoundIconButton {
+    color: "transparent"
+    border.width: 0
     Layout.preferredWidth: 40
     Layout.preferredHeight: 40
     icon: ""

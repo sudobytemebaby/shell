@@ -94,7 +94,7 @@ LazyLoader {
             color: Theme.on_surface
             font.pixelSize: Theme.typography.xl
             font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
+            font.weight: 600 
           }
 
           // Clear All button - minimalistic
@@ -246,8 +246,8 @@ LazyLoader {
                     text: modelData.appName
                     color: Theme.on_surface
                     font.pixelSize: Theme.typography.sm
-                    font.family: Theme.typography.fontFamily
-                    font.weight: Theme.typography.weightMedium
+                    font.family: Theme.typography.fontFamilyDisplay
+                    font.weight: 600
                     elide: Text.ElideRight
                     maximumLineCount: 1
                   }

@@ -81,19 +81,19 @@ Scope {
       icon: "󰂯",
       name: "Bluetooth",
       description: "Manage Bluetooth devices",
-      command: "kitty --class floating_term_s -e bluetui"
+      command: "foot --app-id floating_term_s -e bluetui"
     },
     {
       icon: "󰤥",
       name: "WiFi",
       description: "Manage WiFi connections",
-      command: "kitty --class floating_term_m -e impala"
+      command: "foot --app-id floating_term_m -e impala"
     },
     {
       icon: "󱡫",
       name: "Audio",
       description: "Audio mixer and settings",
-      command: "kitty --class floating_term_s -e wiremix"
+      command: "foot --app-id floating_term_s -e wiremix"
     },
     {
       icon: "󰀻",
@@ -117,7 +117,7 @@ Scope {
       icon: "󰊕",
       name: "Calculator",
       description: "Calc ",
-      command: "kitty --class floating_term_s -e numbat"
+      command: "foot --app-id floating_term_s -e numbat"
     },
     {
       icon: "󰌾",
@@ -135,13 +135,13 @@ Scope {
       icon: "",
       name: "Files",
       description: "Browse files with Yazi",
-      command: "kitty --class floating_term_l -e yazi"
+      command: "foot --app-id floating_term_l -e yazi"
     },
     {
       icon: "󱙣",
       name: "System Monitor",
       description: "View system resources",
-      command: "kitty --class floating_term_l -e btop"
+      command: "foot --app-id floating_term_l -e btop"
     }
   ]
 

@@ -124,7 +124,7 @@ LazyLoader {
             text: "Control Center"
             color: Theme.on_surface
             font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamilyDisplay
+            font.family: Theme.typography.fontFamily
             font.weight: 600
           }
 
@@ -175,10 +175,10 @@ LazyLoader {
             recordingManager: loader.manager.recording
           }
 
-          Modules.PowerButton {
+          Modules.MicrophoneToggle {
             Layout.fillWidth: true
             Layout.preferredHeight: 64
-            powerMenuManager: loader.manager.powerMenuManager
+            systemState: loader.systemState
           }
         }
 

@@ -44,7 +44,7 @@ Rectangle {
     verticalAlignment: TextInput.AlignVCenter
     color: Theme.on_surface
     font.pixelSize: Theme.typography.lg
-    font.family: Theme.typography.fontFamily
+    font.family: Theme.typography.fontFamilyDisplay
 
     // Placeholder text
     Text {

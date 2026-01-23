@@ -10,12 +10,13 @@ import "../../../core/system_state" as Core
  * - Wallpaper discovery from ~/.config/hypr/wpapers
  * - Current wallpaper detection from hyprpaper.conf
  * - Thumbnail generation via external script
- * - Wallpaper switching via hyprctl
+ * - Wallpaper switching via ~/.local/bin/wallpaper-switcher
  * - IPC interface for external control (toggle/open/close/refresh)
  *
  * Architecture:
  * - This is a pure state management layer (no UI)
  * - UI is handled by WallpaperGrid.qml which binds to this manager
+ * - Uses full paths for scripts (reliable when not started from terminal)
  * - Uses secure command construction (array form) to prevent injection
  * - Implements race condition prevention with process state flags
  *
@@ -34,8 +35,8 @@ Scope {
   property bool visible: false              // Controls whether the picker window is shown
   property string wallpaperDir: ""          // Path to wallpaper directory
 
-  // Script paths (available in system PATH)
-  readonly property string switcherScript: "wallpaper-switcher"
+  // Script paths (use full path for reliability when not started from terminal)
+  property string switcherScript: ""
 
   // Wallpaper data
   property var wallpapers: []               // Array of wallpaper filenames
@@ -72,6 +73,7 @@ Scope {
     }
 
     manager.wallpaperDir = homeDir + "/.config/hypr/wpapers"
+    manager.switcherScript = homeDir + "/.local/bin/wallpaper-switcher"
 
     // Read current wallpaper from state file
     loadCurrentWallpaperState()

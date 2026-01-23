@@ -320,7 +320,7 @@ LazyLoader {
                   color: index === powerMenuWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface
                   font.pixelSize: Theme.typography.lg
-                  font.family: Theme.typography.fontFamily
+                  font.family: Theme.typography.fontFamilyDisplay
                   font.weight: Theme.typography.weightMedium
                   horizontalAlignment: Text.AlignHCenter
 
@@ -339,7 +339,7 @@ LazyLoader {
                   color: index === powerMenuWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface_variant
                   font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
+                  font.family: Theme.typography.fontFamilyDisplay
                   horizontalAlignment: Text.AlignHCenter
                   wrapMode: Text.WordWrap
                   opacity: index === powerMenuWindow.selectedIndex ? 0.9 : 0.7

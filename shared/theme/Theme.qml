@@ -144,11 +144,11 @@ QtObject {
     // ============================================================================
     // TYPOGRAPHY SYSTEM
     // ============================================================================
-
+    
     readonly property QtObject typography: QtObject {
-        readonly property string fontFamily: "Ubuntu Nerd Font Propo"
-        readonly property string fontFamilyDisplay: "Google Sans"  // For large display text (clock, titles)
-
+        readonly property string fontFamily: "Google Sans"
+        readonly property string fontFamilyDisplay: "Google Sans"
+        
         readonly property int xs: 10
         readonly property int sm: 12
         readonly property int md: 14
@@ -156,7 +156,7 @@ QtObject {
         readonly property int xl: 18
         readonly property int xxl: 24
         readonly property int xxxl: 32
-
+        
         readonly property int weightNormal: 400
         readonly property int weightMedium: 500
         readonly property int weightBold: 700

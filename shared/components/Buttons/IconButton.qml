@@ -87,7 +87,7 @@ Rectangle {
         // If stateful, dim when inactive. If not stateful, always full opacity
         opacity: root.isStateful ? (root.isActive ? 1 : 0.8) : 1
         font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
+        font.family: Theme.typography.fontFamilyDisplay
         font.weight: Theme.typography.weightMedium
         
         Behavior on opacity {

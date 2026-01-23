@@ -43,7 +43,7 @@ Scope {
     
     Core.ProcessUtils.runCommand(
       manager,
-      ["screen-rec"],
+      ["~/.local/bin/screen-rec"],
       () => {
         console.log("screen-rec executed successfully")
         // Force immediate state check after toggle

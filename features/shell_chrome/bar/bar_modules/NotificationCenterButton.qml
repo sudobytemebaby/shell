@@ -59,7 +59,7 @@ Item {
         anchors.centerIn: parent
         text: notificationCount > 99 ? "99+" : notificationCount
         color: Theme.bg1
-        font.pixelSize: Theme.fontSizeXS
+        font.pixelSize: Theme.fontSizeXS - 3
         font.family: Theme.fontFamily
         font.bold: true
       }

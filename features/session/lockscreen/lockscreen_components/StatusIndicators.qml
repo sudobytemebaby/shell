@@ -88,22 +88,11 @@ Rectangle {
     }
 
     // Keyboard layout
-    RowLayout {
-      spacing: Theme.spacing.sm
-
-      Text {
-        text: root.systemState?.keyboardLayout.currentIcon ?? "󰌌"
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamily
-        color: Theme.on_surface_variant
-      }
-
-      Text {
-        text: root.systemState?.keyboardLayout.currentLayout ?? "EN"
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
-        color: Theme.on_surface_variant
-      }
+    Text {
+      text: root.systemState?.keyboardLayout.currentLayout ?? "EN"
+      font.pixelSize: Theme.typography.md
+      font.family: Theme.typography.fontFamily
+      color: Theme.on_surface_variant
     }
   }
 }

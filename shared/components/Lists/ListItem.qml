@@ -94,9 +94,9 @@ Rectangle {
         id: titleText
         text: root.title
         color: Theme.on_surface
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Theme.typography.lg
+        font.family: Theme.typography.fontFamilyDisplay
+        font.weight: 500
         elide: Text.ElideRight
         Layout.fillWidth: true
       }
@@ -106,7 +106,7 @@ Rectangle {
         text: root.subtitle
         color: Theme.on_surface_variant
         font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
+        font.family: Theme.typography.fontFamilyDisplay
         opacity: 0.8
         elide: Text.ElideRight
         Layout.fillWidth: true

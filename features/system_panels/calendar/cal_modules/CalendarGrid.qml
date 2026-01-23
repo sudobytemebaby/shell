@@ -26,7 +26,7 @@ Card {
         text: shortName
         color: Theme.on_surface_variant
         font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
+        font.family: Theme.typography.fontFamilyDisplay
         font.weight: Theme.typography.weightMedium
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -82,7 +82,7 @@ Card {
             return Theme.on_surface
           }
           font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
+          font.family: Theme.typography.fontFamilyDisplay
           font.weight: {
             var now = new Date()
             var isToday = model.day === now.getDate() && 
