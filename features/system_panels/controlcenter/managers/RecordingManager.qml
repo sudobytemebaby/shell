@@ -40,10 +40,10 @@ Scope {
   // ========== TOGGLE RECORDING ==========
   function toggleRecording() {
     console.log("Toggle recording called, current state:", manager.isRecording)
-    
+
     Core.ProcessUtils.runCommand(
       manager,
-      ["~/.local/bin/screen-rec"],
+      ["sh", "-c", "~/.local/bin/screen-rec"],
       () => {
         console.log("screen-rec executed successfully")
         // Force immediate state check after toggle

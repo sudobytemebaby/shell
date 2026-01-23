@@ -43,7 +43,7 @@ Scope {
   function toggleNightLight() {
     Core.ProcessUtils.runCommand(
       manager,
-      ["night-mode"],
+      ["sh", "-c", "~/.local/bin/night-mode"],
       () => {
         // Wait a bit after script completes to ensure state is settled
         checkStateDelayTimer.restart()

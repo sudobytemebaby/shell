@@ -58,7 +58,13 @@ Scope {
   required property var lockscreenManager
 
   // Reference to theme manager (for the Themes item)
-  required property var themeManager
+  property var themeManager: null
+
+  // Reference to screenshot manager (for the Screenshot item)
+  required property var screenshotManager
+
+  // Reference to screen recording manager (for the Screen Recording item)
+  required property var screenRecordingManager
 
   // ========== ERROR STATE ==========
 
@@ -118,6 +124,18 @@ Scope {
       name: "Calculator",
       description: "Calc ",
       command: "foot --app-id floating_term_s -e numbat"
+    },
+    {
+      icon: "󰹑",
+      name: "Screenshot",
+      description: "Capture your screen",
+      command: "screenshot"  // Special command to trigger screenshot menu
+    },
+    {
+      icon: "󰻂",
+      name: "Screen Recording",
+      description: "Record your screen",
+      command: "screenrec"  // Special command to trigger screen recording menu
     },
     {
       icon: "󰌾",
@@ -180,6 +198,14 @@ Scope {
     "power": () => {
       manager.visible = false
       powerMenuManager.visible = true
+    },
+    "screenshot": () => {
+      manager.visible = false
+      screenshotManager.visible = true
+    },
+    "screenrec": () => {
+      manager.visible = false
+      screenRecordingManager.visible = true
     }
   })
 

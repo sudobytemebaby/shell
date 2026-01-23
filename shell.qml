@@ -12,6 +12,8 @@ import "features/launchers/wallpaper"
 import "features/session/powermenu"
 import "features/launchers/emoji"
 import "features/session/lockscreen"
+import "features/session/screenshot"
+import "features/session/screenrec"
 
 ShellRoot {
   // ============================================================================
@@ -33,7 +35,31 @@ ShellRoot {
   PowerMenuDisplay {
     manager: powerMenuManager
   }
-  
+
+  // ============================================================================
+  // SCREENSHOT MENU
+  // ============================================================================
+
+  ScreenshotManager {
+    id: screenshotManager
+  }
+
+  ScreenshotDisplay {
+    manager: screenshotManager
+  }
+
+  // ============================================================================
+  // SCREEN RECORDING MENU
+  // ============================================================================
+
+  ScreenRecordingManager {
+    id: screenRecordingManager
+  }
+
+  ScreenRecordingDisplay {
+    manager: screenRecordingManager
+  }
+
   // ============================================================================
   // CONTROL CENTER
   // ============================================================================
@@ -130,6 +156,8 @@ ShellRoot {
     powerMenuManager: powerMenuManager
     emojiManager: emojiManager
     lockscreenManager: lockscreenManager
+    screenshotManager: screenshotManager
+    screenRecordingManager: screenRecordingManager
   }
   
   MenuDisplay {
