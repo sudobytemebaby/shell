@@ -124,8 +124,8 @@ LazyLoader {
             text: "Control Center"
             color: Theme.on_surface
             font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
+            font.family: Theme.typography.fontFamilyDisplay
+            font.weight: 600
           }
 
           Text {

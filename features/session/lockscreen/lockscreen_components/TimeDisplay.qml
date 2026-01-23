@@ -28,21 +28,21 @@ Column {
   Text {
     id: timeText
     anchors.horizontalCenter: parent.horizontalCenter
-    font.family: Theme.typography.fontFamily
+    font.family: Theme.typography.fontFamilyDisplay
     font.pixelSize: Theme.typography.xxl * 4
-    font.weight: Theme.typography.weightMedium
+    font.weight: Font.Medium
     color: Theme.on_surface
-    
+
     text: Qt.formatDateTime(systemClock.date, "hh:mm")
   }
-  
+
   Text {
     anchors.horizontalCenter: parent.horizontalCenter
     text: Qt.formatDateTime(systemClock.date, "dddd, MMMM d")
     color: Theme.on_surface
-    font.family: Theme.typography.fontFamily
+    font.family: Theme.typography.fontFamilyDisplay
     font.pixelSize: Theme.typography.lg
-    font.weight: Theme.typography.weightMedium
+    font.weight: Font.Normal
     opacity: 0.7
   }
 }

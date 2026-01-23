@@ -23,7 +23,7 @@ Rectangle {
   readonly property string albumArt: activePlayer?.trackArtUrl || ""
 
   visible: hasMedia
-  width: 280
+  width: 380
   height: 60
   radius: Theme.radius.lg
   color: Theme.surface_container
@@ -60,9 +60,9 @@ Rectangle {
       }
     }
 
-    // Track info
+    // Track info (with fixed width to prevent overlay)
     ColumnLayout {
-      Layout.fillWidth: true
+      Layout.preferredWidth: 160
       Layout.fillHeight: true
       spacing: Theme.spacing.xs
 
@@ -87,13 +87,110 @@ Rectangle {
       }
     }
 
-    // Playing indicator
-    Text {
-      text: root.isPlaying ? "󰐊" : "󰏤"
-      font.pixelSize: Theme.typography.lg
-      font.family: Theme.typography.fontFamily
-      color: root.isPlaying ? Theme.primary : Theme.on_surface_variant
-      opacity: 0.7
+    // Spacer to push controls to the right
+    Item {
+      Layout.fillWidth: true
+    }
+
+    // Media controls (right side, one line)
+    RowLayout {
+      spacing: Theme.spacing.xs
+
+      // Previous button
+      Rectangle {
+        Layout.preferredWidth: 32
+        Layout.preferredHeight: 32
+        radius: Theme.radius.full
+        color: previousMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
+
+        Text {
+          anchors.centerIn: parent
+          text: "󰒮"
+          font.pixelSize: Theme.typography.md
+          font.family: Theme.typography.fontFamily
+          color: Theme.on_surface
+        }
+
+        MouseArea {
+          id: previousMouseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: {
+            if (root.activePlayer) {
+              root.activePlayer.previous()
+            }
+          }
+        }
+
+        Behavior on color {
+          ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
+        }
+      }
+
+      // Play/Pause button
+      Rectangle {
+        Layout.preferredWidth: 36
+        Layout.preferredHeight: 36
+        radius: Theme.radius.full
+        color: playPauseMouseArea.containsMouse ? Theme.primary_container : Theme.primary
+
+        Text {
+          anchors.centerIn: parent
+          text: root.isPlaying ? "󰏤" : "󰐊"
+          font.pixelSize: Theme.typography.lg
+          font.family: Theme.typography.fontFamily
+          color: Theme.on_primary
+        }
+
+        MouseArea {
+          id: playPauseMouseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: {
+            if (root.activePlayer) {
+              root.activePlayer.togglePlaying()
+            }
+          }
+        }
+
+        Behavior on color {
+          ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
+        }
+      }
+
+      // Next button
+      Rectangle {
+        Layout.preferredWidth: 32
+        Layout.preferredHeight: 32
+        radius: Theme.radius.full
+        color: nextMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
+
+        Text {
+          anchors.centerIn: parent
+          text: "󰒭"
+          font.pixelSize: Theme.typography.md
+          font.family: Theme.typography.fontFamily
+          color: Theme.on_surface
+        }
+
+        MouseArea {
+          id: nextMouseArea
+          anchors.fill: parent
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: {
+            if (root.activePlayer) {
+              root.activePlayer.next()
+            }
+          }
+        }
+
+        Behavior on color {
+          ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
+        }
+      }
     }
   }
 
