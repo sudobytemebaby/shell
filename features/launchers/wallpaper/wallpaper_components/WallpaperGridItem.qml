@@ -56,7 +56,8 @@ Item {
       fill: parent
       margins: Theme.spacing.xs
     }
-    radius: Theme.radius.md
+
+    radius: Theme.radius.lg
 
     // Dynamic background color based on state
     color: {
@@ -65,42 +66,9 @@ Item {
       return "transparent"
     }
 
-    // Border for keyboard-selected items (but not current wallpaper)
-    border.width: (root.isSelected && !root.isCurrent) ? 2 : 0
+    // Border for keyboard-selected items
+    border.width: root.isSelected ? 2 : 0
     border.color: root.isSelected ? Theme.primary : "transparent"
-
-    // Click animation - slight scale down when pressed
-    scale: itemMouseArea.pressed ? 0.96 : 1.0
-
-    // Smooth color transition animations
-    Behavior on color {
-      ColorAnimation {
-        duration: 200
-        easing.type: Easing.OutCubic
-      }
-    }
-
-    Behavior on border.color {
-      ColorAnimation {
-        duration: 200
-        easing.type: Easing.OutCubic
-      }
-    }
-
-    Behavior on border.width {
-      NumberAnimation {
-        duration: 200
-        easing.type: Easing.OutCubic
-      }
-    }
-
-    // Smooth scale transition for click feedback
-    Behavior on scale {
-      NumberAnimation {
-        duration: 100
-        easing.type: Easing.OutCubic
-      }
-    }
 
     // ======================================================================
     // IMAGE PREVIEW (Using NImageRounded with ImageCacheService)
@@ -119,7 +87,7 @@ Item {
         fill: parent
         margins: Theme.spacing.xs
       }
-      radius: Theme.radius.md
+      radius: Theme.radius.lg
       imagePath: root.cachedThumbnailPath !== "" ? "file://" + root.cachedThumbnailPath : ""
       fallbackIcon: "󰸉"  // Wallpaper icon shown when loading/error
       borderWidth: 0
@@ -142,39 +110,19 @@ Item {
         right: imagePreview.right
         margins: Theme.spacing.sm
       }
-      width: 28
-      height: 28
+      width: 100
+      height: 40 
       radius: Theme.radius.full
       color: Theme.primary
       visible: root.isCurrent
 
-      // Elastic bounce animation when appearing
-      scale: root.isCurrent ? 1.0 : 0.8
-      opacity: root.isCurrent ? 0.95 : 0.0
-
-      Behavior on scale {
-        NumberAnimation {
-          duration: 300
-          easing.type: Easing.OutBack
-          easing.overshoot: 1.5  // Bounce effect
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: 250
-          easing.type: Easing.OutCubic
-        }
-      }
-
       // Checkmark icon
       Text {
         anchors.centerIn: parent
-        text: "✓"
+        text: "󰄬  Applied"
         color: Theme.on_primary
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Theme.typography.md
+        font.family: Theme.fontFamily
       }
     }
 
@@ -193,37 +141,18 @@ Item {
         left: imagePreview.left
         margins: Theme.spacing.sm
       }
-      width: 28
-      height: 28
+      width: 40
+      height: 40 
       radius: Theme.radius.full
       color: Theme.primary
       visible: root.isSelected && !root.isCurrent
 
-      // Elastic bounce animation when appearing
-      scale: root.isSelected && !root.isCurrent ? 1.0 : 0.8
-      opacity: root.isSelected && !root.isCurrent ? 0.9 : 0.0
-
-      Behavior on scale {
-        NumberAnimation {
-          duration: 300
-          easing.type: Easing.OutBack
-          easing.overshoot: 1.5  // Bounce effect
-        }
-      }
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: 250
-          easing.type: Easing.OutCubic
-        }
-      }
-
       // Arrow icon (pointing right)
       Text {
         anchors.centerIn: parent
-        text: "→"
+        text: "󰋑"
         color: Theme.on_primary
-        font.pixelSize: Theme.typography.sm
+        font.pixelSize: Theme.typography.lg
         font.family: Theme.typography.fontFamily
         font.weight: Theme.typography.weightMedium
       }

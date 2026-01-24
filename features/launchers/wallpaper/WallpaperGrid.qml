@@ -600,7 +600,7 @@ LazyLoader {
           // Keyboard shortcuts hint
           Text {
             Layout.fillWidth: true
-            text: "↑↓←→ Navigate • Enter Select • Home/End Jump • Esc Close"
+            text: "Arrows to Navigate • Enter to Select • Esc to Close"
             color: Theme.on_surface_variant
             font.pixelSize: Theme.typography.sm
             font.family: Theme.typography.fontFamily

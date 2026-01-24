@@ -238,7 +238,6 @@ QtObject {
     
     // Font aliases
     readonly property string fontFamily: typography.fontFamily
-    readonly property string fontFamilyDisplay: typography.fontFamilyDisplay
     readonly property int fontSizeXSmall: typography.xs
     readonly property int fontSizeSmall: typography.sm
     readonly property int fontSizeMedium: typography.md

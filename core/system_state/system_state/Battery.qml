@@ -73,7 +73,7 @@ Scope {
   readonly property bool ready: batteryDevice?.ready ?? false
 
   // ============================================================================
-  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
+  // CACHED COMPUTED PROPERTIES
   // ============================================================================
 
   readonly property string batteryIcon: {

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Mpris
 import "../../../../shared/theme"
+import "../../../../shared/components/Display"
 
 // ============================================================================
 // MEDIA WIDGET
@@ -32,8 +33,8 @@ Rectangle {
   RowLayout {
     anchors {
       fill: parent
-      leftMargin: Theme.spacing.lg
-      rightMargin: Theme.spacing.lg
+      leftMargin: Theme.spacing.md
+      rightMargin: Theme.spacing.md
       bottomMargin: Theme.spacing.sm
       topMargin: Theme.spacing.sm
     }
@@ -42,15 +43,17 @@ Rectangle {
 
     // Album art
     Rectangle {
-      Layout.preferredWidth: 30
-      Layout.preferredHeight: 30 
+      Layout.preferredWidth: 38
+      Layout.preferredHeight: 38
       radius: Theme.radius.md
       color: Theme.surface_container_high
 
-      Image {
+      NImageRounded {
         anchors.fill: parent
-        source: root.albumArt
-        fillMode: Image.PreserveAspectCrop
+        imagePath: root.albumArt
+        borderWidth:0
+        radius: Theme.radius.md
+        imageFillMode: Image.PreserveAspectCrop
         visible: root.albumArt !== ""
       }
 
@@ -106,13 +109,12 @@ Rectangle {
         Layout.preferredWidth: 32
         Layout.preferredHeight: 32
         radius: Theme.radius.full
-        color: previousMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
+        color: "transparent"
 
         Text {
           anchors.centerIn: parent
           text: "󰒮"
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
+          font.pixelSize: Theme.typography.lg
           color: Theme.on_surface
         }
 
@@ -127,10 +129,6 @@ Rectangle {
             }
           }
         }
-
-        Behavior on color {
-          ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
-        }
       }
 
       // Play/Pause button
@@ -143,8 +141,7 @@ Rectangle {
         Text {
           anchors.centerIn: parent
           text: root.isPlaying ? "󰏤" : "󰐊"
-          font.pixelSize: Theme.typography.lg
-          font.family: Theme.typography.fontFamily
+          font.pixelSize: Theme.typography.xl
           color: Theme.on_primary
         }
 
@@ -161,7 +158,7 @@ Rectangle {
         }
 
         Behavior on color {
-          ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
+          ColorAnimation { duration: 150 }
         }
       }
 
@@ -170,13 +167,12 @@ Rectangle {
         Layout.preferredWidth: 32
         Layout.preferredHeight: 32
         radius: Theme.radius.full
-        color: nextMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
+        color: "transparent"
 
         Text {
           anchors.centerIn: parent
           text: "󰒭"
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
+          font.pixelSize: Theme.typography.lg
           color: Theme.on_surface
         }
 
@@ -190,10 +186,6 @@ Rectangle {
               root.activePlayer.next()
             }
           }
-        }
-
-        Behavior on color {
-          ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
         }
       }
     }
