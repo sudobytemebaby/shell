@@ -43,10 +43,10 @@ LazyLoader {
     
     Rectangle {
       anchors.fill: parent
-      color: Theme.surface_container_transparent_medium
+      color: Theme.surface_container_transparent_heavy
       radius: Theme.radius.xl
       border.width: 1
-      border.color: Theme.surface_container_high_transparent_light
+      border.color: Theme.surface_container_high
       
       // Hover detection for the whole OSD
       MouseArea {
@@ -80,9 +80,15 @@ LazyLoader {
             icon: loader.manager.currentIcon
             iconSize: Theme.typography.lg
             iconColor: Theme.primary
-            bgColor: Theme.primary_container
+            bgColor: osdSlider.isMuted ? Theme.surface_container_highest : Theme.primary_container
+            Behavior on bgColor{
+              ColorAnimation{
+                duration: 200
+              }
+            }
           }
           
+
           Components.VerticalOsdSlider {
             id: osdSlider
             Layout.alignment: Qt.AlignHCenter

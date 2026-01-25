@@ -29,7 +29,7 @@ Card {
       // Icon container
       IconCircle {
         icon: root.icon
-        bgColor: Theme.surface_container_high
+        bgColor: Theme.surface_container_highest
       }
       
       // Label

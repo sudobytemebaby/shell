@@ -59,7 +59,7 @@ Item {
         width: 6
         height: parent.height
         radius: Theme.radius.sm
-        color: Qt.lighter(Theme.surface_container_high, 1.3)
+        color: Theme.surface_container_highest
         
         // Filled portion
         Rectangle {

@@ -154,8 +154,8 @@ LazyLoader {
       height: 300
       radius: 28
       color: Theme.surface_container_transparent_medium
-      border.width: 1
-      border.color: Qt.lighter(Theme.surface_container, 1.3)
+      border.width: 0.5
+      border.color: Theme.surface_container_high
 
       // Prevent clicks on container from propagating to background (which would close menu)
       MouseArea {
@@ -251,18 +251,10 @@ LazyLoader {
                 }
                 // Hover state: Use surface container high
                 if (optionMouseArea.containsMouse) {
-                  return Theme.surface_container_high
+                  return "transparent"
                 }
                 // Default state: Use transparent surface container low
-                return Theme.surface_container_low_transparent_medium
-              }
-
-              // Smooth color transitions
-              Behavior on color {
-                ColorAnimation {
-                  duration: 200
-                  easing.type: Easing.OutCubic
-                }
+                return "transparent" 
               }
 
               ColumnLayout {

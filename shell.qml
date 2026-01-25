@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import "core/system_state" as Core
+import "core/services" as Services
 import "features/shell_chrome/osd"
 import "features/shell_chrome/bar"
 import "features/notifications"
@@ -23,6 +24,8 @@ ShellRoot {
   Core.SystemStateManager {
     id: systemStateManager
   }
+  
+  
   
   // ============================================================================
   // POWER MENU
@@ -199,5 +202,15 @@ ShellRoot {
     notificationCenterManager: notificationCenterManager
     calendarManager: calendarManager
     systemState: systemStateManager
+  }
+  
+  // ============================================================================
+  // INITIALIZATION
+  // ============================================================================
+  
+  Component.onCompleted: {
+    // Initialize BatteryNotifier singleton with dependencies
+    Services.BatteryNotifier.systemState = systemStateManager
+    Services.BatteryNotifier.notificationManager = notificationManager
   }
 }

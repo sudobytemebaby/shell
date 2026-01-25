@@ -11,6 +11,44 @@ Scope {
   
   required property var manager
   
+  property var windows: []
+
+  Connections {
+    target: manager.notificationQueue
+    
+    function onRowsInserted(parent, start, end) {
+      for (var i = start; i <= end; i++) {
+        var modelData = manager.notificationQueue.get(i)
+        var windowObj = notificationWindowComponent.createObject(root, {
+          notifId: modelData.id,
+          notifSummary: modelData.summary,
+          notifBody: modelData.body,
+          notifApp: modelData.appName
+        })
+        windows.splice(i, 0, windowObj)
+      }
+      updateIndexes()
+    }
+
+    function onRowsRemoved(parent, start, end) {
+      var removed = windows.splice(start, end - start + 1)
+      for (var i = 0; i < removed.length; i++) {
+        if (removed[i]) {
+          removed[i].destroy()
+        }
+      }
+      updateIndexes()
+    }
+  }
+
+  function updateIndexes() {
+    for (var i = 0; i < windows.length; i++) {
+      if (windows[i]) {
+        windows[i].notificationIndex = i
+      }
+    }
+  }
+  
   // Component for a single notification popup
   Component {
     id: notificationWindowComponent
@@ -23,7 +61,7 @@ Scope {
       required property string notifSummary
       required property string notifBody
       required property string notifApp
-      required property int index  // Position in stack
+      property int notificationIndex: -1  // Position in stack, managed by updateIndexes()
       
       active: true
       
@@ -34,7 +72,7 @@ Scope {
         property real stackOffset: {
           var baseOffset = Theme.component.barHeight + Theme.spacing.md
           var perNotifOffset = 160 // Compact spacing
-          return baseOffset + (loader.index * perNotifOffset)
+          return baseOffset + (loader.notificationIndex * perNotifOffset)
         }
         
         anchors {
@@ -97,7 +135,7 @@ Scope {
                    ? Qt.darker(Theme.surface_container_transparent_medium, 1.1) 
                    : Theme.surface_container_transparent_medium
             
-            border.width: 1
+            border.width: 0.5
             border.color: Theme.surface_container_high
             
             property bool hovered: false
@@ -245,30 +283,10 @@ Scope {
       onActiveChanged: {
         if (!active) {
           Qt.callLater(function() {
+            // Just remove from model. The Connections handler will destroy it.
             root.manager.removeFromQueue(loader.notifId)
-            loader.destroy()
           })
         }
-      }
-    }
-  }
-  
-  // Instantiator to create windows for each notification in the queue
-  Instantiator {
-    model: root.manager.notificationQueue
-    
-    delegate: Item {
-      required property var modelData
-      required property int index
-      
-      Component.onCompleted: {
-        var windowObj = notificationWindowComponent.createObject(root, {
-          notifId: modelData.id,
-          notifSummary: modelData.summary,
-          notifBody: modelData.body,
-          notifApp: modelData.appName,
-          index: index
-        })
       }
     }
   }

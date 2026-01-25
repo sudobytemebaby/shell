@@ -38,7 +38,7 @@ ColumnLayout {
       }
       height: 6
       radius: Theme.radius.sm
-      color: Qt.lighter(Theme.surface_container_high, 1.3)
+      color: Theme.surface_container_highest
 
       // Progress fill
       Rectangle {

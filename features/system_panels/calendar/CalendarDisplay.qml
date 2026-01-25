@@ -63,8 +63,8 @@ LazyLoader {
         anchors.fill: parent
         radius: Theme.radius.xl
         color: Theme.surface_container_transparent_medium
-        border.width: 1
-        border.color: Qt.lighter(Theme.surface_container, 1.3)
+        border.width: 0.5
+        border.color: Theme.surface_container_high
 
         // Prevent clicks on panel from closing it
         MouseArea {

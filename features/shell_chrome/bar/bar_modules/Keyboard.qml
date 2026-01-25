@@ -28,7 +28,7 @@ Item {
         anchors.centerIn: parent
         text: root.layout.toUpperCase()
         color: Theme.on_surface
-        font.pixelSize: Theme.fontSizeS
+        font.pixelSize: Theme.typography.sm
         font.family: Theme.typography.fontFamily
         verticalAlignment: Text.AlignVCenter
     }

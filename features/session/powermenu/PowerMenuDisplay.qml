@@ -175,8 +175,8 @@ LazyLoader {
       height: 450
       radius: 28
       color: Theme.surface_container_transparent_medium
-      border.width: 1
-      border.color: Qt.lighter(Theme.surface_container, 1.3)
+      border.width: 0.5
+      border.color: Theme.surface_container_high
 
       // Prevent clicks on container from propagating to background (which would close menu)
       MouseArea {
@@ -270,20 +270,8 @@ LazyLoader {
                 if (index === powerMenuWindow.selectedIndex) {
                   return Theme.tertiary_container
                 }
-                // Hover state: Use surface container high
-                if (optionMouseArea.containsMouse) {
-                  return Theme.surface_container_high
-                }
                 // Default state: Use transparent surface container low
-                return Theme.surface_container_low_transparent_medium
-              }
-
-              // Smooth color transitions
-              Behavior on color {
-                ColorAnimation {
-                  duration: 200
-                  easing.type: Easing.OutCubic
-                }
+                return "transparent" 
               }
 
               ColumnLayout {
@@ -318,7 +306,7 @@ LazyLoader {
                   Layout.fillWidth: true
                   text: modelData.name
                   color: index === powerMenuWindow.selectedIndex ?
-                         Theme.on_tertiary_container : Theme.on_surface
+                         Theme.tertiary: Theme.on_surface
                   font.pixelSize: Theme.typography.lg
                   font.family: Theme.typography.fontFamilyDisplay
                   font.weight: Theme.typography.weightMedium
@@ -337,7 +325,7 @@ LazyLoader {
                   Layout.fillWidth: true
                   text: modelData.description
                   color: index === powerMenuWindow.selectedIndex ?
-                         Theme.on_tertiary_container : Theme.on_surface_variant
+                         Theme.tertiary: Theme.on_surface_variant
                   font.pixelSize: Theme.typography.sm
                   font.family: Theme.typography.fontFamilyDisplay
                   horizontalAlignment: Text.AlignHCenter

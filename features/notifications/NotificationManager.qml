@@ -10,7 +10,7 @@ Scope {
   
   // Queue of notification data to display
   // Each item is { id, summary, body, appName, timestamp }
-  property var notificationQueue: []
+  property ListModel notificationQueue: ListModel {}
   
   // Counter for generating unique IDs
   property int notificationIdCounter: 0
@@ -38,19 +38,16 @@ Scope {
       timestamp: Date.now()
     }
     
-    var newQueue = notificationQueue.slice()
-    newQueue.push(notifData)
-    notificationQueue = newQueue
+    notificationQueue.append(notifData)
   }
   
   // Function to remove a notification from the queue
   function removeFromQueue(notifId) {
-    var newQueue = []
-    for (var i = 0; i < notificationQueue.length; i++) {
-      if (notificationQueue[i].id !== notifId) {
-        newQueue.push(notificationQueue[i])
+    for (var i = 0; i < notificationQueue.count; i++) {
+      if (notificationQueue.get(i).id === notifId) {
+        notificationQueue.remove(i, 1)
+        break
       }
     }
-    notificationQueue = newQueue
   }
 }

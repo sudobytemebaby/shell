@@ -4,38 +4,23 @@ import Quickshell.Hyprland
 import "../../../../shared/theme"
 
 RowLayout {
-  spacing: Theme.spacingS
+  spacing: Theme.spacing.sm
 
   implicitHeight: Theme.barHeight
 
   Repeater {
     model: 5
 
-    Text {
+    Rectangle {
       required property int index
-      id: iconText
+      id: workspaceRect
       
-      // Use Layout properties for proper alignment - NO childrenRect!
-      Layout.preferredWidth: implicitWidth
-      Layout.preferredHeight: Theme.barHeight
+      // Use Layout properties for proper alignment
+      Layout.preferredWidth: Theme.workspaceIndicatorSize
+      Layout.preferredHeight: Theme.workspaceIndicatorSize
       Layout.alignment: Qt.AlignVCenter
       
-      verticalAlignment: Text.AlignVCenter
-      
-      // Icon selection based on workspace state
-      text: {
-        const ws = Hyprland.workspaces.values.find(w => w.id === index + 1)
-        const focused = Hyprland.focusedWorkspace?.id === (index + 1)
-        
-        // Focused workspace
-        if (focused) return "󰄯"  // 
-        
-        // Occupied workspace
-        if (ws) return "󰄯"
-
-        // Empty workspace
-        return "󰻃"  // 
-      }
+      radius: Theme.radius.full
       
       // Color based on state
       color: {
@@ -46,14 +31,11 @@ RowLayout {
         if (focused) return Theme.accent
         
         // Occupied - border color (visible but not bright)
-        if (ws) return Theme.border
+        if (ws) return Theme.outline
         
         // Empty - very dim
-        return Theme.border
+        return Theme.surface_container_highest
       }
-      
-      font.pixelSize: Theme.fontSizeS
-      font.family: Theme.fontFamily
       
       // Smooth color transition
       Behavior on color {
@@ -65,7 +47,7 @@ RowLayout {
 
       MouseArea {
         anchors.fill: parent
-        anchors.margins: -4  // Larger clickable area
+        anchors.margins: -4
         onClicked: (mouse) => Hyprland.dispatch("workspace " + (iconText.index + 1))
         cursorShape: Qt.PointingHandCursor
       }

@@ -145,8 +145,8 @@ PanelWindow {
     color: Theme.surface_container_transparent_medium
 
     // Subtle border for depth
-    border.width: 1
-    border.color: Qt.lighter(Theme.surface_container, 1.2)
+    border.width: 0.5
+    border.color: Theme.surface_container_high
 
     // Slide animation: slides down when showing, slides up when hiding
     transform: Translate {

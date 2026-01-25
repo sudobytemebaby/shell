@@ -110,11 +110,11 @@ Scope {
 
   // Monitor device list changes (when devices connect/disconnect)
   Connections {
-    target: adapter?.devices
+    target: adapter ? adapter.devices : null
     enabled: adapter !== null && adapter.devices !== null
 
-    function onCountChanged() {
-      console.log("[Bluetooth] Device count changed:", adapter.devices.values.length)
+    function onLengthChanged() {
+      console.log("[Bluetooth] Device list changed:", adapter.devices.values.length)
 
       if (!module.changingState && !module.userInteracting) {
         module.bluetoothChangedExternally(

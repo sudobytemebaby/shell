@@ -83,8 +83,8 @@ LazyLoader {
       anchors.fill: parent
       radius: Theme.radius.xl
       color: Theme.surface_container_transparent_medium
-      border.width: 1
-      border.color: Qt.lighter(Theme.bg1, 1.3)
+      border.width: 0.5
+      border.color: Theme.surface_container_high
 
       // Enable layering for the shadow effect
       layer.enabled: true

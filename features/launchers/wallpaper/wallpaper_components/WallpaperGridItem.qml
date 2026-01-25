@@ -80,7 +80,13 @@ Item {
      * - Loads from cachedThumbnailPath set by ImageCacheService
      * - Falls back to wallpaper icon if thumbnail unavailable
      * - PreserveAspectCrop ensures thumbnail fills the cell
-     */
+     *
+    **/
+
+    Elevation {
+      visible: true
+    }
+
     NImageRounded {
       id: imagePreview
       anchors {
@@ -93,6 +99,7 @@ Item {
       borderWidth: 0
       imageFillMode: Image.PreserveAspectCrop
     }
+
 
 
     // ======================================================================

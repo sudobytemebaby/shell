@@ -39,7 +39,7 @@ Rectangle {
       if (variant === "media") {
         return mouseArea.containsMouse ? Theme.surface : "transparent"
       } else {
-        return mouseArea.containsMouse ? Qt.lighter(Theme.surface_container_low, 1.3) : Theme.surface_container_low_transparent_light
+        return mouseArea.containsMouse ? Theme.surface_container_low : Theme.surface_container
       }
     }
   }
@@ -48,7 +48,7 @@ Rectangle {
     if (isPrimary) {
       return variant === "media" ? 2 : 0
     } else {
-      return 1
+      return 0.5
     }
   }
 
@@ -82,27 +82,6 @@ Rectangle {
     NumberAnimation {
       duration: 100
       easing.type: Easing.OutCubic
-    }
-  }
-
-  // ============================================================================
-  // SHADOW (Optional - for media variant)
-  // ============================================================================
-
-  Rectangle {
-    visible: root.isPrimary && root.showShadow
-    anchors.centerIn: parent
-    width: parent.width + 4
-    height: parent.height + 4
-    radius: (width) / 2
-    color: "transparent"
-    border.width: 2
-    border.color: Theme.scrim_transparent
-    z: -1
-    opacity: mouseArea.containsMouse ? 1 : 0.6
-
-    Behavior on opacity {
-      NumberAnimation { duration: 150 }
     }
   }
 

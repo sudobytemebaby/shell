@@ -143,7 +143,7 @@ AnimatedLazyLoader {
       radius: Theme.radius.xl
 
       color: Theme.surface_container_transparent_medium
-      border.width: 1
+      border.width: 0.5
       border.color: Theme.surface_container_high
 
       // Polished appearing animation: subtle scale + fade + slide
@@ -328,7 +328,7 @@ AnimatedLazyLoader {
       // ========== FOOTER WITH HINT ==========
       Text {
         Layout.fillWidth: true
-        text: "↑↓ / Ctrl+P/N Navigate • Enter Select • Home/End Jump • Esc Close"
+        text: "Arrows to Navigate • Enter to Select • Esc to Close"
         color: Theme.on_surface_variant
         font.pixelSize: Theme.typography.sm
         font.family: Theme.typography.fontFamilyDisplay

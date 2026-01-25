@@ -146,6 +146,8 @@ Card {
         RoundIconButton {
           icon: "󰒮"
           onClicked: mediaManager.playerPrevious()
+          border.width: 0
+          color: "transparent"
         }
         
         RoundIconButton {
@@ -157,6 +159,8 @@ Card {
         RoundIconButton {
           icon: "󰒭"
           onClicked: mediaManager.playerNext()
+          border.width: 0
+          color: "transparent"
         }
       }
     }

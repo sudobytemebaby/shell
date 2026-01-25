@@ -19,15 +19,15 @@ Rectangle {
   // Optional: Custom colors (for special cases like recording)
   property color activeIconBg: Theme.primary_container
   property color activeIconColor: Theme.primary
-  property color inactiveIconBg: Theme.surface_container_high
+  property color inactiveIconBg: Theme.surface_container_highest
   property color inactiveIconColor: Theme.on_surface_variant
   
   // ========== APPEARANCE ==========
   radius: Theme.radius.xxl
-  color: Theme.surface_container_low_transparent_light
+  color: Theme.surface_container_transparent_heavy
 
-  border.width: 1
-  border.color: Theme.surface_container_high_transparent_light
+  border.width: 0.5
+  border.color: Theme.surface_container_high
   
   // ========== ANIMATIONS ==========
   Behavior on color {
@@ -43,6 +43,7 @@ Rectangle {
       leftMargin: Theme.padding.lg
       rightMargin: Theme.padding.lg
     }
+
     spacing: Theme.spacing.sm
     
     // Icon container 
