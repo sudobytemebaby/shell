@@ -25,12 +25,12 @@ Scope {
     controlCenterVisible: manager.visible
   }
   
-  Managers.RecordingManager {
-    id: recordingManager
+  Managers.NightLightManager {
+    id: nightLightManager
   }
   
-  Managers.UtilitiesManager {
-    id: utilitiesManager
+  Managers.LauncherManager {
+    id: launcherManager
   }
   
   // ============================================================================
@@ -38,8 +38,8 @@ Scope {
   // ============================================================================
   
   readonly property var media: mediaManager
-  readonly property var recording: recordingManager
-  readonly property var utilities: utilitiesManager
+  readonly property var nightLight: nightLightManager
+  readonly property var launcher: launcherManager
   
   // ============================================================================
   // Audio Adapter (wraps Volume module)

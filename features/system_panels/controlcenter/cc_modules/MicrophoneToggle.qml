@@ -1,15 +1,18 @@
 import QtQuick
+import QtQuick.Layouts
 import "../../../../shared/components"
 
-IconButton {
+Item {
+  id: root
   required property var systemState
 
-  icon: systemState.volume.micIcon
-  title: "Mic State"
-  subtitle: systemState.volume.micMuted ? "Muted" : "Active"
+  Layout.fillWidth: true
+  Layout.preferredHeight: 64
 
-  isStateful: true
-  isActive: !systemState.volume.micMuted
-
-  onClicked: systemState.volume.toggleMicMute()
+  MaterialStateButton {
+    anchors.centerIn: parent
+    icon: systemState.volume.micIcon
+    isActive: !systemState.volume.micMuted
+    onClicked: systemState.volume.toggleMicMute()
+  }
 }

@@ -6,10 +6,8 @@ import "../../../../core/system_state" as Core
 Scope {
   id: manager
   
-  // ========== NIGHT LIGHT STATE ==========
   property bool nightLightActive: false
   
-  // ========== CHECK NIGHT LIGHT STATUS ==========
   Process {
     id: nightLightCheckProcess
     command: ["pgrep", "-x", "hyprsunset"]
@@ -29,7 +27,7 @@ Scope {
   
   // Timer to periodically check night light state
   Timer {
-    interval: 6000  // Check every 2 seconds
+    interval: 6000
     running: true
     repeat: true
     onTriggered: {
@@ -39,7 +37,6 @@ Scope {
     }
   }
   
-  // ========== TOGGLE NIGHT LIGHT ==========
   function toggleNightLight() {
     Core.ProcessUtils.runCommand(
       manager,
@@ -49,7 +46,7 @@ Scope {
         checkStateDelayTimer.restart()
       },
       (code, error) => {
-        console.error("[UtilitiesManager] Failed to toggle night mode:", error)
+        console.error("[NightLightManager] Failed to toggle night mode:", error)
         // Still check state even on error
         checkStateDelayTimer.restart()
       }
@@ -59,30 +56,12 @@ Scope {
   // Delayed state check timer - gives the system time to settle
   Timer {
     id: checkStateDelayTimer
-    interval: 250  // Wait 250ms after toggle
+    interval: 100
     onTriggered: {
       nightLightCheckProcess.running = true
     }
   }
   
-  // ========== LAUNCHER FUNCTIONS ==========
-  function launchColorPicker() {
-    Core.ProcessUtils.runCommandAsync(manager, ["hyprpicker", "-a"])
-  }
-  
-  function takeScreenshot() {
-    Core.ProcessUtils.runCommandAsync(manager, ["hyprshot", "-m", "region"])
-  }
-  
-  function openClipboard() {
-    Core.ProcessUtils.runCommandAsync(manager, ["kitty", "--class", "floating_term_s", "-e", "clipse"])
-  }
-  
-  function updateTheme() {
-    Core.ProcessUtils.runCommandAsync(manager, ["update-matugen"])
-  }
-  
-  // ========== INITIALIZATION ==========
   Component.onCompleted: {
     // Check initial night light state
     nightLightCheckProcess.running = true

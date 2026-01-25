@@ -156,8 +156,8 @@ LazyLoader {
       height: 350
       radius: 28
       color: Theme.surface_container_transparent_medium
-      border.width: 1
-      border.color: Qt.lighter(Theme.surface_container, 1.3)
+      border.width: 0.5
+      border.color: Theme.surface_container_high
 
       // Prevent clicks on container from propagating to background (which would close menu)
       MouseArea {
@@ -211,7 +211,7 @@ LazyLoader {
           // Recording state text
           Text {
             visible: loader.manager.isRecording
-            text: "Recording"
+            text: "Recording..."
             color: "#ff3333"
             font.pixelSize: Theme.typography.md
             font.family: Theme.typography.fontFamily

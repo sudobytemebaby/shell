@@ -78,8 +78,6 @@ Scope {
 
     // Triggers when adapter power state changes
     function onStateChanged() {
-      console.log("[Bluetooth] State changed:", adapter.state)
-
       if (!module.changingState && !module.userInteracting) {
         module.bluetoothChangedExternally(
           module.powered,
@@ -91,8 +89,6 @@ Scope {
 
     // Triggers when enabled property changes
     function onEnabledChanged() {
-      console.log("[Bluetooth] Enabled changed:", adapter.enabled)
-
       if (!module.changingState && !module.userInteracting) {
         module.bluetoothChangedExternally(
           module.powered,
@@ -100,11 +96,6 @@ Scope {
           module.connectedDeviceName
         )
       }
-    }
-
-    // Triggers when discovery state changes
-    function onDiscoveringChanged() {
-      console.log("[Bluetooth] Discovery changed:", adapter.discovering)
     }
   }
 
@@ -114,105 +105,12 @@ Scope {
     enabled: adapter !== null && adapter.devices !== null
 
     function onLengthChanged() {
-      console.log("[Bluetooth] Device list changed:", adapter.devices.values.length)
-
       if (!module.changingState && !module.userInteracting) {
         module.bluetoothChangedExternally(
           module.powered,
           module.hasConnectedDevice,
           module.connectedDeviceName
         )
-      }
-    }
-  }
-
-  // ============================================================================
-  // FALLBACK POLLING (ONLY if native API unavailable)
-  // ============================================================================
-
-  Process {
-    id: bluetoothStateProcess
-    command: ["sh", "-c", "bluetoothctl show 2>/dev/null | grep -i powered | awk '{print $NF}'"]
-
-    stdout: SplitParser {
-      onRead: data => {
-        if (!data) return
-
-        var line = data.trim().toLowerCase()
-        var wasPowered = module.fallbackPowered
-
-        module.fallbackPowered = (line === "yes" || line === "on")
-
-        // If powered, check devices
-        if (module.fallbackPowered) {
-          connectedDevicesProcess.running = true
-        }
-
-        module.fallbackReady = true
-
-        // Emit change if needed
-        if (!module.changingState && !module.userInteracting && wasPowered !== module.fallbackPowered) {
-          module.bluetoothChangedExternally(
-            module.powered,
-            module.hasConnectedDevice,
-            module.connectedDeviceName
-          )
-        }
-      }
-    }
-
-    stderr: SplitParser {
-      onRead: data => {
-        if (data && data.trim()) {
-          console.error("[Bluetooth] Error:", data.trim())
-        }
-      }
-    }
-  }
-
-  // Fallback connected devices check
-  Process {
-    id: connectedDevicesProcess
-    command: ["bluetoothctl", "devices", "Connected"]
-
-    property var fallbackDevices: []
-
-    stdout: SplitParser {
-      onRead: data => {
-        if (!data || !data.trim()) {
-          connectedDevicesProcess.fallbackDevices = []
-          return
-        }
-
-        var lines = data.trim().split('\n').filter(line => line.includes('Device'))
-        var devices = []
-
-        for (var i = 0; i < lines.length; i++) {
-          var lineParts = lines[i].split(' ')
-          if (lineParts.length >= 3) {
-            devices.push({
-              name: lineParts.slice(2).join(' '),
-              address: lineParts[1],
-              icon: "󰂯"
-            })
-          }
-        }
-
-        connectedDevicesProcess.fallbackDevices = devices
-      }
-    }
-  }
-
-  // Fallback polling timer - only runs if native API unavailable
-  Timer {
-    id: fallbackPollTimer
-    interval: 30000  // 30 seconds (much longer than before)
-    running: adapter === null  // Only runs if no native adapter
-    repeat: true
-
-    onTriggered: {
-      if (!bluetoothStateProcess.running) {
-        bluetoothStateProcess.running = true
       }
     }
   }
@@ -231,7 +129,7 @@ Scope {
   }
 
   // ============================================================================
-  // CACHED COMPUTED PROPERTIES (Noctalia Pattern)
+  // CACHED COMPUTED PROPERTIES
   // ============================================================================
 
   readonly property string bluetoothIcon: {

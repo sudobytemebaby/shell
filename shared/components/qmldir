@@ -4,6 +4,8 @@ module shared.components
 # Buttons
 IconButton 1.0 Buttons/IconButton.qml
 RoundIconButton 1.0 Buttons/RoundIconButton.qml
+MaterialStateButton 1.0 Buttons/MaterialStateButton.qml
+MaterialButton 1.0 Buttons/MaterialButton.qml
 
 # Cards
 Card 1.0 Cards/Card.qml

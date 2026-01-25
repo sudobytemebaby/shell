@@ -11,8 +11,12 @@ Scope {
   
   required property var manager
   
+  // Track active popup windows
   property var windows: []
 
+  // --------------------------------------------------------------------------
+  // Queue Management
+  // --------------------------------------------------------------------------
   Connections {
     target: manager.notificationQueue
     
@@ -41,6 +45,7 @@ Scope {
     }
   }
 
+  // Update visual stacking order
   function updateIndexes() {
     for (var i = 0; i < windows.length; i++) {
       if (windows[i]) {
@@ -49,7 +54,9 @@ Scope {
     }
   }
   
-  // Component for a single notification popup
+  // --------------------------------------------------------------------------
+  // Popup Window Component
+  // --------------------------------------------------------------------------
   Component {
     id: notificationWindowComponent
     
@@ -61,17 +68,23 @@ Scope {
       required property string notifSummary
       required property string notifBody
       required property string notifApp
-      property int notificationIndex: -1  // Position in stack, managed by updateIndexes()
+      
+      // Position in stack, managed by updateIndexes()
+      property int notificationIndex: -1
       
       active: true
       
       PanelWindow {
         id: notifWindow
         
+        // ----------------------------------------------------------------------
+        // Window Configuration
+        // ----------------------------------------------------------------------
+        
         // Calculate Y position based on stack index (compact stacking)
         property real stackOffset: {
           var baseOffset = Theme.component.barHeight + Theme.spacing.md
-          var perNotifOffset = 160 // Compact spacing
+          var perNotifOffset = 120 // Compact spacing
           return baseOffset + (loader.notificationIndex * perNotifOffset)
         }
         
@@ -94,7 +107,6 @@ Scope {
         Component.onCompleted: {
           exclusiveZone = 0
           implicitWidth = 340
-          // Let height be determined by content binding below
         }
         
         // Dynamic height binding - this will update as content changes
@@ -108,11 +120,13 @@ Scope {
           }
         }
         
-        // Wrapper item for fade animation
+        // ----------------------------------------------------------------------
+        // Content Wrapper (for Animations)
+        // ----------------------------------------------------------------------
         Item {
           id: wrapper
           width: 340
-          height: background.height  // Size to background
+          height: background.height
           opacity: 0
           
           // Fade in
@@ -123,7 +137,9 @@ Scope {
             easing.type: Easing.OutCubic
           }
           
-          // Main notification container - Material 3 minimalistic
+          // --------------------------------------------------------------------
+          // Notification Card
+          // --------------------------------------------------------------------
           Rectangle {
             id: background
             width: parent.width
@@ -253,6 +269,10 @@ Scope {
             }
           }
         }
+        
+        // ----------------------------------------------------------------------
+        // Animations & Logic
+        // ----------------------------------------------------------------------
         
         // Fade out animation
         NumberAnimation {

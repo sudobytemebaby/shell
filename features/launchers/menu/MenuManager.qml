@@ -122,8 +122,14 @@ Scope {
     {
       icon: "󰊕",
       name: "Calculator",
-      description: "Calc ",
+      description: "Calc nums and not only them",
       command: "foot --app-id floating_term_s -e numbat"
+    },
+    {
+      icon: "󰗊",
+      name: "Translate",
+      description: "Translate using shell",
+      command: "foot --app-id floating_term_s"
     },
     {
       icon: "󰹑",

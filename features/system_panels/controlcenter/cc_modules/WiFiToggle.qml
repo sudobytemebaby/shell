@@ -1,39 +1,18 @@
 import QtQuick
+import QtQuick.Layouts
 import "../../../../shared/components"
 
-IconButton {
+Item {
+  id: root
   required property var systemState
-  
-  // Add property change debugging
-  Component.onCompleted: {
-    console.log("[WiFiToggle] Initial state - wifiEnabled:", systemState.network.wifiEnabled, 
-                "wifiConnected:", systemState.network.wifiConnected,
-                "SSID:", systemState.network.wifiSsid)
+
+  Layout.fillWidth: true
+  Layout.preferredHeight: 64
+
+  MaterialStateButton {
+    anchors.centerIn: parent
+    icon: systemState.network.getNetworkIcon()
+    isActive: systemState.network.wifiEnabled && systemState.network.wifiConnected
+    onClicked: systemState.network.toggleWifi()
   }
-  
-  // Watch for changes
-  Connections {
-    target: systemState.network
-    
-    function onWifiEnabledChanged() {
-      console.log("[WiFiToggle] wifiEnabled changed to:", systemState.network.wifiEnabled)
-    }
-    
-    function onWifiConnectedChanged() {
-      console.log("[WiFiToggle] wifiConnected changed to:", systemState.network.wifiConnected)
-    }
-    
-    function onWifiSsidChanged() {
-      console.log("[WiFiToggle] SSID changed to:", systemState.network.wifiSsid)
-    }
-  }
-  
-  icon: systemState.network.getNetworkIcon()
-  title: "WI-FI"
-  subtitle: systemState.network.getStatusText()
-  
-  isStateful: true
-  isActive: systemState.network.wifiEnabled && systemState.network.wifiConnected
-  
-  onClicked: systemState.network.toggleWifi()
 }

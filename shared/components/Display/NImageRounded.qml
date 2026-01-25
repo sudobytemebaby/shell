@@ -106,7 +106,7 @@ Item {
 
         Text {
           anchors.centerIn: parent
-          text: "󰄉"
+          text: ""
           color: Theme.on_primary_container
           font.pixelSize: Theme.typography.xl
           font.family: Theme.typography.fontFamily

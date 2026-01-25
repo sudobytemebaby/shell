@@ -1,15 +1,18 @@
 import QtQuick
+import QtQuick.Layouts
 import "../../../../shared/components"
 
-IconButton {
+Item {
+  id: root
   required property var systemState
   
-  icon: systemState.bluetooth.powered ? "󰂯" : "󰂲"
-  title: "Bluetooth"
-  subtitle: systemState.bluetooth.getStatusText()
+  Layout.fillWidth: true
+  Layout.preferredHeight: 64
   
-  isStateful: true  // This is a toggle button
-  isActive: systemState.bluetooth.powered
-  
-  onClicked: systemState.bluetooth.togglePower()
+  MaterialStateButton {
+    anchors.centerIn: parent
+    icon: systemState.bluetooth.bluetoothIcon
+    isActive: systemState.bluetooth.powered
+    onClicked: systemState.bluetooth.togglePower()
+  }
 }

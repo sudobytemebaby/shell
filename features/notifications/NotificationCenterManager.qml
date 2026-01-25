@@ -1,16 +1,27 @@
 import QtQuick
 import Quickshell
 
+// ----------------------------------------------------------------------------
+// Notification Center Manager
+// ----------------------------------------------------------------------------
+// Manages the persistent history of notifications shown in the Notification Center panel.
+// Stores notifications in a simple array (no persistence across reboots currently).
+
 Scope {
   id: manager
   
-  // Visibility state
+  // Visibility state of the Notification Center panel
   property bool visible: false
   
-  // List of notifications - no limit anymore!
+  // List of notifications history
+  // Structure: [{ summary, body, appName, appIcon, date, time, id }, ...]
   property var notifications: []
   
-  // Function to add a notification to our history
+  // --------------------------------------------------------------------------
+  // Actions
+  // --------------------------------------------------------------------------
+
+  // Add a notification to history
   function addNotification(notification) {
     // Get current date/time
     var now = new Date()
@@ -37,12 +48,12 @@ Scope {
     notifications = newNotifs
   }
   
-  // Function to clear all notifications
+  // Clear all notifications
   function clearAll() {
     notifications = []
   }
   
-  // Function to remove a single notification
+  // Remove a single notification by index
   function removeNotification(index) {
     var newNotifs = notifications.slice()
     newNotifs.splice(index, 1)
