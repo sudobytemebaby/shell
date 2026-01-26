@@ -46,28 +46,6 @@ Scope {
         // Set isSeeking on the shared state to prevent updates while dragging
         mprisState.isSeeking = true
         mprisState.seek(position)
-        // We need to unset isSeeking eventually. 
-        // Ideally the slider handles this (onPressed/onReleased).
-        // If the UI only calls this on 'moved', we might need `playerSeekStart` and `playerSeekEnd`.
-        // However, the original code didn't have start/end logic, just seek(pos).
-        // But `noctalia` implementation relies on `isSeeking` property.
-        // If the UI doesn't expose start/end events, we can't perfectly control `isSeeking`.
-        // But `Mpris.qml` has `seek(seconds)` which sets `root.position = seconds`.
-        // If we just call seek, it updates.
-        // The `isSeeking` property in `Mpris.qml` is to prevent *timer* updates overwriting the user's drag.
-        // If `MediaManager` doesn't expose `setIsSeeking`, we might have a problem if the UI binds `value` to `playerPosition` and dragging conflicts with updates.
-        // But since we removed the timer from `MediaManager` and `Mpris.qml` timer updates `position`, 
-        // if `playerPosition` updates, the slider might jump.
-        // I will add `playerSeekStart` and `playerSeekEnd` and hope the user updates the UI to use them?
-        // Or, assume `playerSeek` is called on *release*?
-        // Usually sliders call seek on change.
-        // Let's assume `playerSeek` is instantaneous.
-        // To properly support dragging, I should expose `isSeeking` logic.
-        // I'll add a timer to auto-reset isSeeking if not updated? No, that's hacky.
-        // I'll just expose `isSeeking` property and let the UI bind to it if it wants, 
-        // OR just set `mprisState.isSeeking = true` here and rely on `seek` to update position.
-        // Wait, if I set `isSeeking = true` how does it go back to false?
-        // I'll add `function setSeeking(seeking)`.
     }
     
     function playerSeekRelative(offset) {

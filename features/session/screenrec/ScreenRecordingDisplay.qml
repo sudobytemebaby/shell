@@ -135,7 +135,7 @@ LazyLoader {
     // BACKGROUND OVERLAY
     // ========================================================================
 
-    // Semi-transparent background - clicking it closes the menu
+    // Clicking outside of it closes the menu
     MouseArea {
       anchors.fill: parent
       onClicked: {
@@ -169,6 +169,7 @@ LazyLoader {
           fill: parent
           margins: Theme.padding.xl
         }
+
         spacing: Theme.spacing.md
 
         // ====================================================================

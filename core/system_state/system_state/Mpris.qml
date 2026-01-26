@@ -30,13 +30,6 @@ Scope {
     // position is updated by timer to ensure UI smoothness
     property real position: 0
     property real length: currentPlayer ? currentPlayer.length : 0
-
-    Behavior on position {
-        NumberAnimation {
-            duration: 1000
-            easing.type: Easing.Linear
-        }
-    }
     
     // Formatting helpers
     property string positionString: formatTime(position)
