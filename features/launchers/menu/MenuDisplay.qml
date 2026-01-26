@@ -120,11 +120,11 @@ AnimatedLazyLoader {
       }
     }
 
-      // Clicking outside the menu closes it
+    // Clicking outside the menu closes it
     MouseArea {
-        anchors.fill: parent
-        onClicked: loader.manager.visible = false
-      }
+      anchors.fill: parent
+      onClicked: loader.manager.visible = false
+    }
 
     // ========== MAIN CONTAINER ==========
 

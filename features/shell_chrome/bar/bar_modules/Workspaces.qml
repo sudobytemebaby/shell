@@ -48,7 +48,7 @@ RowLayout {
       MouseArea {
         anchors.fill: parent
         anchors.margins: -4
-        onClicked: (mouse) => Hyprland.dispatch("workspace " + (iconText.index + 1))
+        onClicked: (mouse) => Hyprland.dispatch("workspace " + (index + 1))
         cursorShape: Qt.PointingHandCursor
       }
     }

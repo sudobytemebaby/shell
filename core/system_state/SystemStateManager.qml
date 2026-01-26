@@ -44,6 +44,11 @@ Scope {
     userInteracting: manager.userInteracting
   }
 
+  State.Mpris {
+    id: mprisModule
+    userInteracting: manager.userInteracting
+  }
+
   // ============================================================================
   // EXPOSED MODULES (Public API)
   // ============================================================================
@@ -54,4 +59,5 @@ Scope {
   readonly property var bluetooth: bluetoothModule
   readonly property var network: networkModule
   readonly property var keyboardLayout: keyboardLayoutModule
+  readonly property var mpris: mprisModule
 }

@@ -23,6 +23,7 @@ Scope {
   Managers.MediaManager {
     id: mediaManager
     controlCenterVisible: manager.visible
+    mprisState: manager.systemState.mpris
   }
   
   Managers.NightLightManager {

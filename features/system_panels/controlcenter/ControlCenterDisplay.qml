@@ -84,7 +84,7 @@ LazyLoader {
       // Dynamic height calculation based on media player state
       height: {
         const baseHeight = 600
-        const mediaExpansion = loader.manager.media.playerActive ? 158 : 0
+        const mediaExpansion = loader.manager.media.playerActive ? 140 : 0
         return baseHeight + mediaExpansion
       }
 
@@ -100,7 +100,7 @@ LazyLoader {
         id: background
         anchors.fill: parent
         radius: Theme.radius.xl
-        color: Theme.surface_container_transparent_heavy
+        color: Theme.surface_container_transparent_medium
         border.width: 0.5
         border.color: Theme.surface_container_high
 

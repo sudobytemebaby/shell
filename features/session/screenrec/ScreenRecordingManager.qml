@@ -89,7 +89,7 @@ Scope {
    *
    * Order matters: Matches grid layout (left-to-right, top-to-bottom)
    * and keyboard shortcut indices in ScreenRecordingDisplay
-   */
+  **/
   property var recordingOptions: [
     {
       icon: "󰹑",
@@ -131,8 +131,6 @@ Scope {
    * @param option - Recording option object from recordingOptions array
    */
   function executeRecordingOption(option) {
-    console.log("[ScreenRecording] Executing:", option.name, "command:", option.command, "isRecording:", manager.isRecording)
-
     // If already recording, just stop it (toggle behavior)
     if (manager.isRecording) {
       console.log("[ScreenRecording] Already recording, stopping...")

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../../../shared/components"
+import "../../../../shared/components/Display"
 import "../../../../shared/theme"
 
 Card {
@@ -17,19 +18,40 @@ Card {
       Layout.fillWidth: true
       spacing: Theme.spacing.sm
       
-      // Status icon
-      IconCircle {
-        icon: mediaManager.playerActive ? "󰝚" : "󰝛"
+      // Status icon / Album Art
+      Item {
+        Layout.preferredWidth: 40
+        Layout.preferredHeight: 40
 
-        bgColor: mediaManager.playerActive 
-                 ? Theme.primary_container 
-                 : Theme.surface_container_high
-        iconColor: mediaManager.playerActive 
-                   ? Theme.primary 
-                   : Theme.on_surface_variant
-        
-        Behavior on bgColor { ColorAnimation { duration: 200 } }
-        Behavior on iconColor { ColorAnimation { duration: 200 } }
+        // Album Art
+        NImageRounded {
+          anchors.fill: parent
+          imagePath: mediaManager.playerArtUrl
+          borderWidth: 0
+          radius: Theme.radius.md
+          imageFillMode: Image.PreserveAspectCrop
+          visible: mediaManager.playerArtUrl !== ""
+        }
+
+        // Fallback Status Icon
+        IconCircle {
+          anchors.centerIn: parent
+          width: 40
+          height: 40
+          visible: mediaManager.playerArtUrl === ""
+          
+          icon: mediaManager.playerActive ? "󰝚" : "󰝛"
+
+          bgColor: mediaManager.playerActive 
+                   ? Theme.primary_container 
+                   : Theme.surface_container_high
+          iconColor: mediaManager.playerActive 
+                     ? Theme.primary 
+                     : Theme.on_surface_variant
+          
+          Behavior on bgColor { ColorAnimation { duration: 200 } }
+          Behavior on iconColor { ColorAnimation { duration: 200 } }
+        }
       }
       
       // Player name and status
@@ -122,6 +144,12 @@ Card {
             property: "value"
             value: mediaManager.playerPosition
             when: !positionSlider.pressed
+          }
+
+          onPressedChanged: {
+             if (mediaManager.setSeeking) {
+                 mediaManager.setSeeking(pressed)
+             }
           }
           
           onMoved: newValue => {

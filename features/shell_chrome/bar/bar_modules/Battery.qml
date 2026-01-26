@@ -11,6 +11,7 @@ Item {
 
   property string icon: "󰂑"
   property string percentage: "N/A"
+  property color iconColor: Theme.on_surface
   property bool hovered: false
 
   // Width expands when hovered to show the percentage
@@ -34,7 +35,7 @@ Item {
     Text {
       id: iconText
       text: icon
-      color: Theme.fg
+      color: root.iconColor
       font.pixelSize: Theme.fontSizeS
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
@@ -112,6 +113,9 @@ Item {
     
     // Format percentage
     root.percentage = Math.round(battery.percentage * 100) + "%"
+    
+    // Update color (red if low and not charging)
+    root.iconColor = (battery.percentage <= 0.1 && !battery.isCharging) ? Theme.error : Theme.on_surface
   }
   
   // Initial update

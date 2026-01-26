@@ -115,7 +115,7 @@ Scope {
         // Smooth position transitions when notifications above are removed
         Behavior on stackOffset {
           NumberAnimation {
-            duration: 250
+            duration: 200 
             easing.type: Easing.OutCubic
           }
         }

@@ -172,6 +172,7 @@ Scope {
                   // Media widget (only shows if media is playing)
                   Components.MediaWidget {
                     Layout.alignment: Qt.AlignHCenter
+                    systemState: root.systemState
                   }
 
                   // Status indicators (user, battery, keyboard)

@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Services.Mpris
 import "../../../../shared/theme"
 import "../../../../shared/components/Display"
 
@@ -13,15 +12,16 @@ import "../../../../shared/components/Display"
 Rectangle {
   id: root
 
-  readonly property var activePlayer: Mpris.players.values.length > 0
-    ? Mpris.players.values[0]
-    : null
+  required property var systemState
 
-  readonly property bool hasMedia: activePlayer !== null
-  readonly property bool isPlaying: activePlayer?.playbackState === MprisPlaybackState.Playing
-  readonly property string trackTitle: activePlayer?.trackTitle || "No media"
-  readonly property string trackArtist: activePlayer?.trackArtist || ""
-  readonly property string albumArt: activePlayer?.trackArtUrl || ""
+  // Use the shared Mpris state
+  readonly property var mprisState: systemState.mpris
+
+  readonly property bool hasMedia: mprisState.currentPlayer !== null
+  readonly property bool isPlaying: mprisState.isPlaying
+  readonly property string trackTitle: mprisState.title || "No media"
+  readonly property string trackArtist: mprisState.artist || ""
+  readonly property string albumArt: mprisState.artUrl || ""
 
   visible: hasMedia
   width: 380
@@ -51,7 +51,7 @@ Rectangle {
       NImageRounded {
         anchors.fill: parent
         imagePath: root.albumArt
-        borderWidth:0
+        borderWidth: 0
         radius: Theme.radius.md
         imageFillMode: Image.PreserveAspectCrop
         visible: root.albumArt !== ""
@@ -123,11 +123,7 @@ Rectangle {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
-          onClicked: {
-            if (root.activePlayer) {
-              root.activePlayer.previous()
-            }
-          }
+          onClicked: root.mprisState.previous()
         }
       }
 
@@ -150,11 +146,7 @@ Rectangle {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
-          onClicked: {
-            if (root.activePlayer) {
-              root.activePlayer.togglePlaying()
-            }
-          }
+          onClicked: root.mprisState.playPause()
         }
 
         Behavior on color {
@@ -181,11 +173,7 @@ Rectangle {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
-          onClicked: {
-            if (root.activePlayer) {
-              root.activePlayer.next()
-            }
-          }
+          onClicked: root.mprisState.next()
         }
       }
     }
