@@ -2,17 +2,19 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../../shared/components/Buttons"
 
-Item {
+IconButton {
   id: root
   required property var nightLightManager
   
   Layout.fillWidth: true
-  Layout.preferredHeight: 64
+  Layout.preferredHeight: 68
+
+  icon: nightLightManager.nightLightActive ? "󱩌" : "󰹏"
+  title: "Night Mod"
+  subtitle: nightLightManager.nightLightActive ? "On" : "Off"
+
+  isStateful: true
+  isActive: nightLightManager.nightLightActive
   
-  MaterialStateButton {
-    anchors.centerIn: parent
-    icon: nightLightManager.nightLightActive ? "󱩌" : "󰹏"
-    isActive: nightLightManager.nightLightActive
-    onClicked: nightLightManager.toggleNightLight()
-  }
+  onClicked: nightLightManager.toggleNightLight()
 }

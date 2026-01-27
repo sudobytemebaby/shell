@@ -45,7 +45,7 @@ LazyLoader {
       anchors.fill: parent
       color: Theme.surface_container_transparent_heavy
       radius: Theme.radius.xl
-      border.width: 1
+      border.width: 0.5
       border.color: Theme.surface_container_high
       
       // Hover detection for the whole OSD

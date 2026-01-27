@@ -1,18 +1,24 @@
 import QtQuick
 import QtQuick.Layouts
-import "../../../../shared/components"
+import "../../../../shared/components/Buttons"
 
-Item {
+IconButton {
   id: root
   required property var systemState
 
   Layout.fillWidth: true
-  Layout.preferredHeight: 64
+  Layout.preferredHeight: 68
 
-  MaterialStateButton {
-    anchors.centerIn: parent
-    icon: systemState.network.getNetworkIcon()
-    isActive: systemState.network.wifiEnabled && systemState.network.wifiConnected
-    onClicked: systemState.network.toggleWifi()
+  icon: systemState.network.getNetworkIcon()
+  title: "Wireless"
+  subtitle: {
+      if (!systemState.network.wifiEnabled) return "Off";
+      if (!systemState.network.wifiConnected) return "Disconnected";
+      return systemState.network.wifiSsid || "Connected";
   }
+  
+  isStateful: true
+  isActive: systemState.network.wifiEnabled
+  
+  onClicked: systemState.network.toggleWifi()
 }

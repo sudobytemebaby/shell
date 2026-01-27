@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
-import "../../../shared/components"
 import "cc_modules" as Modules
 
 LazyLoader {
@@ -18,9 +17,6 @@ LazyLoader {
   PanelWindow {
     id: panelWindow
 
-    // --------------------------------------------------------------------------
-    // Window Configuration
-    // --------------------------------------------------------------------------
     anchors {
       top: true
       left: true
@@ -28,18 +24,14 @@ LazyLoader {
       right: true
     }
 
-    // LazyLoader handles creation/destruction, so this is implicitly visible when loaded.
-    // However, we explicitly set it to ensure properties are synced.
-    visible: true
+    visible: loader.manager.visible
 
-    WlrLayershell.layer: WlrLayer.Overlay
-    // When loaded, we want exclusive focus
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+  WlrLayershell.layer: WlrLayer.Overlay
+  WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    color: "transparent"
-    mask: null
+  color: "transparent"
+  mask: null
 
-    // Animation for window height changes (if any)
     Behavior on height {
       NumberAnimation {
         duration: 300
@@ -51,9 +43,6 @@ LazyLoader {
       exclusiveZone = 0
     }
 
-    // --------------------------------------------------------------------------
-    // Input Handling
-    // --------------------------------------------------------------------------
     contentItem {
       focus: true
 
@@ -63,28 +52,21 @@ LazyLoader {
           event.accepted = true
         }
       }
-    }
+  }
 
     MouseArea {
       anchors.fill: parent
       onClicked: loader.manager.visible = false
     }
 
-    // --------------------------------------------------------------------------
-    // Main Panel Container
-    // --------------------------------------------------------------------------
     Item {
       id: container
-      
-      // Fixed positioning for now, could be dynamic
       x: 28
       y: 28
       width: 360
-      
-      // Dynamic height calculation based on media player state
       height: {
-        const baseHeight = 600
-        const mediaExpansion = loader.manager.media.playerActive ? 150 : 0
+        let baseHeight = 600
+        let mediaExpansion = loader.manager.media.playerActive ? 110 : 0
         return baseHeight + mediaExpansion
       }
 
@@ -95,172 +77,133 @@ LazyLoader {
         }
       }
 
-      // Background & Content
-      Rectangle {
-        id: background
+    // Main container with Material 3 style
+    Rectangle {
+      id: background
+      anchors.fill: parent
+      radius: Theme.radius.xl
+      color: Theme.surface_container_transparent_medium
+      border.width: 0.5
+      border.color: Theme.surface_container_high
+
+      // Prevent clicks on panel from closing it
+      MouseArea {
         anchors.fill: parent
-        radius: Theme.radius.xl
-        color: Theme.surface_container_transparent_medium
-        border.width: 0.5
-        border.color: Theme.surface_container_high
+      }
 
-        // Prevent clicks on panel from closing it (propagating to the window MouseArea)
-        MouseArea {
-          anchors.fill: parent
+      Column {
+        anchors {
+          fill: parent
+          margins: Theme.padding.xl
         }
 
-        Column {
-          anchors {
-            fill: parent
-            margins: Theme.padding.xl
-          }
-          spacing: Theme.spacing.md
+        // Spacing between modules
+        spacing: Theme.spacing.md
 
-          // ----------------------------------------------------------------------
-          // Header Section
-          // ----------------------------------------------------------------------
-          RowLayout {
-            width: parent.width
-            height: 40
-            spacing: Theme.spacing.sm
+        // ========== HEADER ==========
+        RowLayout {
+          width: parent.width
+          height: 40
+          spacing: 8
 
-            Text {
-              Layout.fillWidth: true
-              Layout.leftMargin: Theme.padding.sm
-              text: "Control Center"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.xl
-              font.family: Theme.typography.fontFamily
-              font.weight: 600
-            }
-
-            Text {
-              Layout.rightMargin: Theme.padding.sm
-              text: "✕"
-              color: Theme.fg
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.fontFamily
-              opacity: closeMouseArea.containsMouse ? 0.7 : 1
-
-              Behavior on opacity {
-                NumberAnimation { duration: 200 }
-              }
-
-              MouseArea {
-                id: closeMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: loader.manager.visible = false
-              }
-            }
+          Text {
+            Layout.fillWidth: true
+            Layout.leftMargin: Theme.padding.sm
+            text: "Control Center"
+            color: Theme.on_surface
+            font.pixelSize: Theme.typography.xl
+            font.family: Theme.typography.fontFamily
+            font.weight: 600
           }
 
-          // ----------------------------------------------------------------------
-          // Quick Toggles Grid
-          // ----------------------------------------------------------------------
-          Card {
-            width: parent.width
-            height: togglesGrid.implicitHeight + (padding * 2)
-            radius: Theme.radius.xl
-            color: Theme.surface_container
-            border.width: 0.5
-            border.color: Theme.surface_container_high
+          Text {
+            Layout.rightMargin: Theme.padding.sm
+            text: "✕"
+            color: Theme.fg
+            font.pixelSize: Theme.typography.lg
+            font.family: Theme.fontFamily
+            opacity: closeMouseArea.containsMouse ? 0.7 : 1
 
-            GridLayout {
-              id: togglesGrid
+            Behavior on opacity {
+              NumberAnimation { duration: 200 }
+            }
+
+            MouseArea {
+              id: closeMouseArea
               anchors.fill: parent
-              columns: 3
-              rowSpacing: Theme.spacing.sm
-              columnSpacing: Theme.spacing.sm
-
-              Modules.WiFiToggle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                systemState: loader.systemState
-              }
-
-              Modules.BluetoothToggle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                systemState: loader.systemState
-              }
-
-              Modules.MicrophoneToggle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                systemState: loader.systemState
-              }
-
-              Modules.NightLightToggle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                nightLightManager: loader.manager.nightLight
-              }
-
-              Modules.ColorPickerToggle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                launcherManager: loader.manager.launcher
-              }
-
-              Modules.ScreenshotToggle{
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                launcherManager: loader.manager.launcher
-              }
-            }
-          }
-
-          // ----------------------------------------------------------------------
-          // Sliders Section (Volume & Brightness)
-          // ----------------------------------------------------------------------
-          Card {
-            width: parent.width
-            height: slidersColumn.implicitHeight + (padding * 2)
-            radius: Theme.radius.xl
-            color: Theme.surface_container
-            border.width: 0.5
-            border.color: Theme.surface_container_high
-            padding: Theme.padding.sm
-
-            Column {
-              id: slidersColumn
-              width: parent.width
-              spacing: Theme.spacing.sm
-
-              Modules.VolumeSlider {
-                width: parent.width
-                height: 108
-                audioManager: loader.manager.audio
-                systemState: loader.systemState
-              }
-
-              Modules.BrightnessSlider {
-                width: parent.width
-                height: 108
-                brightnessManager: loader.manager.brightness
-                systemState: loader.systemState
-              }
-            }
-          }
-
-          // ----------------------------------------------------------------------
-          // Media Player Section
-          // ----------------------------------------------------------------------
-          Modules.PlayerControl {
-            width: parent.width
-            height: loader.manager.media.playerActive ? 220 : 72
-            mediaManager: loader.manager.media
-
-            Behavior on height {
-              NumberAnimation {
-                duration: 300
-                easing.type: Easing.OutCubic
-              }
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onClicked: loader.manager.visible = false
             }
           }
         }
+
+        // ========== TOGGLES GRID ==========
+        GridLayout {
+          width: parent.width
+          columns: 2
+          rowSpacing: 12
+          columnSpacing: 12
+
+          Modules.WiFiToggle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 64
+            systemState: loader.systemState
+          }
+
+          Modules.BluetoothToggle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 64
+            systemState: loader.systemState
+          }
+
+          Modules.PowerButton{
+            Layout.fillWidth: true
+            Layout.preferredHeight: 64
+            powerMenuManager: loader.manager.power
+          }
+
+          Modules.MicrophoneToggle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 64
+            systemState: loader.systemState
+          }
+        }
+
+        // ========== SLIDERS SECTION ==========
+        Column {
+          width: parent.width
+          spacing: 12
+
+          Modules.VolumeSlider {
+            width: parent.width
+            height: 108
+            audioManager: loader.manager.audio
+            systemState: loader.systemState
+          }
+
+          Modules.BrightnessSlider {
+            width: parent.width
+            height: 108
+            brightnessManager: loader.manager.brightness
+            systemState: loader.systemState
+          }
+        }
+
+        // ========== MEDIA PLAYER ==========
+        Modules.PlayerControl {
+          width: parent.width
+          height: loader.manager.media.playerActive ? 220 : 72
+          mediaManager: loader.manager.media
+
+          Behavior on height {
+            NumberAnimation {
+              duration: 300
+              easing.type: Easing.OutCubic
+            }
+          }
+        }
+      }
       }
     }
   }

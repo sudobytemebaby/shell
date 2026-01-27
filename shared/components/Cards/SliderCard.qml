@@ -28,12 +28,6 @@ Card {
     RowLayout {
       Layout.fillWidth: true
       spacing: Theme.spacing.sm
-
-      // Icon container
-      IconCircle {
-        icon: root.icon
-        bgColor: Theme.surface_container_highest
-      }
       
       // Label
       Text {

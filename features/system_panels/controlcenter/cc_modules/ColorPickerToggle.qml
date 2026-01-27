@@ -2,16 +2,14 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../../shared/components/Buttons"
 
-Item {
+RoundIconButton {
   id: root
   required property var launcherManager
   
-  Layout.fillWidth: true
-  Layout.preferredHeight: 64
+  Layout.alignment: Qt.AlignHCenter
+
+  icon: "󰈊"
+  isPrimary: false // Action button, not a state toggle
   
-  MaterialButton {
-    anchors.centerIn: parent
-    icon: "󰈊"
-    onClicked: launcherManager.launchColorPicker()
-  }
+  onClicked: launcherManager.launchColorPicker()
 }

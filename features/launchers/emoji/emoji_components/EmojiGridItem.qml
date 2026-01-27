@@ -35,28 +35,7 @@ Item {
 
     // Dynamic color based on state
     color: {
-      if (root.isSelected) return Theme.primary_container
-      if (itemMouseArea.containsMouse) return Theme.surface_container_high
-      return Theme.surface_container
-    }
-
-    // Click animation - slight scale down when pressed
-    scale: itemMouseArea.pressed ? 0.95 : 1.0
-
-    // Smooth color transition animations
-    Behavior on color {
-      ColorAnimation {
-        duration: 200
-        easing.type: Easing.OutCubic
-      }
-    }
-
-    // Smooth scale transition for click feedback
-    Behavior on scale {
-      NumberAnimation {
-        duration: 100
-        easing.type: Easing.OutCubic
-      }
+      root.isSelected ? Theme.primary_container : "transparent"
     }
 
     // Emoji text display - centered in cell
