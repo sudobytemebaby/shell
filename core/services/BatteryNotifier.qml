@@ -36,23 +36,35 @@ Singleton {
   // BATTERY MONITORING
   // ============================================================================
   
-  // Monitor battery state changes
-  Connections {
-    target: root.systemState?.battery
-    enabled: root.systemState && root.systemState.battery.ready
-    
-    function onPercentageChanged() { 
-      checkBatteryLevels() 
-    }
-    
-    function onStateChanged() { 
-      checkBatteryLevels() 
-    }
-    
-    function onIsChargingChanged() { 
-      resetLowBatteryNotifications()
-      checkBatteryLevels() 
-    }
+  // Monitor battery percentage changes
+  property real lastPercentage: 0.0
+  property var lastState: null
+
+  // Watch for battery percentage changes
+  Binding {
+    target: root
+    property: "lastPercentage"
+    value: root.systemState?.battery?.percentage ?? 0.0
+    when: root.systemState && root.systemState.battery.ready
+  }
+
+  // Watch for battery state changes
+  Binding {
+    target: root
+    property: "lastState"
+    value: root.systemState?.battery?.state ?? null
+    when: root.systemState && root.systemState.battery.ready
+  }
+
+  // Trigger checks when properties change
+  onLastPercentageChanged: {
+    checkBatteryLevels()
+  }
+
+  onLastStateChanged: {
+    // State changes include charging/discharging state changes
+    resetLowBatteryNotifications()
+    checkBatteryLevels()
   }
   
   // ============================================================================
@@ -178,4 +190,3 @@ Singleton {
     console.log("[BatteryNotifier] Thresholds - Low: 20%, Critical: 10%, Emergency: 5%")
   }
 }
-

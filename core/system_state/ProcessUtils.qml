@@ -49,14 +49,19 @@ QtObject {
         
         // Handle exit
         proc.exited.connect(code => {
-            if (code === 0) {
-                if (onSuccess) onSuccess(stdoutData.trim())
-            } else {
-                var errorMsg = stderrData.trim() || "Command failed with code " + code
-                console.error("[ProcessUtils]", command[0], "failed:", errorMsg)
-                if (onError) onError(code, errorMsg)
+            try {
+                if (code === 0) {
+                    if (onSuccess) onSuccess(stdoutData.trim())
+                } else {
+                    var errorMsg = stderrData.trim() || "Command failed with code " + code
+                    console.error("[ProcessUtils]", command[0], "failed:", errorMsg)
+                    if (onError) onError(code, errorMsg)
+                }
+            } catch (e) {
+                console.error("[ProcessUtils] Callback error:", e)
+            } finally {
+                proc.destroy()
             }
-            proc.destroy()
         })
         
         proc.running = true

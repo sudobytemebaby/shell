@@ -32,6 +32,7 @@ Singleton {
   property var pendingRequests: ({})
   property var fallbackQueue: []
   property bool fallbackProcessing: false
+  readonly property int maxFallbackQueueSize: 50
 
   // ============================================================================
   // SIGNALS
@@ -300,6 +301,12 @@ Singleton {
   }
 
   function queueFallbackProcessing(sourcePath, destPath, cacheKey, size) {
+    // Prevent unbounded queue growth
+    if (fallbackQueue.length >= maxFallbackQueueSize) {
+      console.warn("[ImageCacheService] Fallback queue full, dropping oldest request")
+      fallbackQueue.shift()
+    }
+
     fallbackQueue.push({
       sourcePath: sourcePath,
       destPath: destPath,

@@ -1,11 +1,15 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Cards"
 import "cc_modules" as Modules
+
+// ============================================================================
+// CONTROL CENTER DISPLAY
+// ============================================================================
+// Main control center panel with toggles, sliders, and media controls
 
 LazyLoader {
   id: loader
@@ -26,11 +30,11 @@ LazyLoader {
 
     visible: loader.manager.visible
 
-  WlrLayershell.layer: WlrLayer.Overlay
-  WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-  color: "transparent"
-  mask: null
+    color: "transparent"
+    mask: null
 
     Behavior on height {
       NumberAnimation {
@@ -52,12 +56,17 @@ LazyLoader {
           event.accepted = true
         }
       }
-  }
+    }
 
+    // Background overlay - click to close
     MouseArea {
       anchors.fill: parent
       onClicked: loader.manager.visible = false
     }
+
+    // ========================================================================
+    // MAIN CONTAINER
+    // ========================================================================
 
     Item {
       id: container
@@ -65,7 +74,7 @@ LazyLoader {
       y: 28
       width: 360
       height: {
-        let baseHeight = 600
+        let baseHeight = 550
         let mediaExpansion = loader.manager.media.playerActive ? 110 : 0
         return baseHeight + mediaExpansion
       }
@@ -77,133 +86,147 @@ LazyLoader {
         }
       }
 
-    // Main container with Material 3 style
-    Rectangle {
-      id: background
-      anchors.fill: parent
-      radius: Theme.radius.xl
-      color: Theme.surface_container_transparent_medium
-      border.width: 0.5
-      border.color: Theme.surface_container_high
-
-      // Prevent clicks on panel from closing it
-      MouseArea {
+      Rectangle {
+        id: background
         anchors.fill: parent
-      }
+        radius: Theme.radius.xl
+        color: Theme.surface_container_transparent_medium
+        border.width: 0.5
+        border.color: Theme.surface_container_high
 
-      Column {
-        anchors {
-          fill: parent
-          margins: Theme.padding.xl
+        MouseArea {
+          anchors.fill: parent
         }
 
-        // Spacing between modules
-        spacing: Theme.spacing.md
-
-        // ========== HEADER ==========
-        RowLayout {
-          width: parent.width
-          height: 40
-          spacing: 8
-
-          Text {
-            Layout.fillWidth: true
-            Layout.leftMargin: Theme.padding.sm
-            text: "Control Center"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: 600
-          }
-
-          Text {
-            Layout.rightMargin: Theme.padding.sm
-            text: "✕"
-            color: Theme.fg
-            font.pixelSize: Theme.typography.lg
-            font.family: Theme.fontFamily
-            opacity: closeMouseArea.containsMouse ? 0.7 : 1
-
-            Behavior on opacity {
-              NumberAnimation { duration: 200 }
-            }
-
-            MouseArea {
-              id: closeMouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: loader.manager.visible = false
-            }
-          }
-        }
-
-        // ========== TOGGLES GRID ==========
-        GridLayout {
-          width: parent.width
-          columns: 2
-          rowSpacing: 12
-          columnSpacing: 12
-
-          Modules.WiFiToggle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 64
-            systemState: loader.systemState
-          }
-
-          Modules.BluetoothToggle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 64
-            systemState: loader.systemState
-          }
-
-          Modules.PowerButton{
-            Layout.fillWidth: true
-            Layout.preferredHeight: 64
-            powerMenuManager: loader.manager.power
-          }
-
-          Modules.MicrophoneToggle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 64
-            systemState: loader.systemState
-          }
-        }
-
-        // ========== SLIDERS SECTION ==========
         Column {
-          width: parent.width
-          spacing: 12
+          anchors {
+            fill: parent
+            margins: Theme.padding.xl
+          }
+          spacing: Theme.spacing.md
 
-          Modules.VolumeSlider {
+          // ====================================================================
+          // HEADER
+          // ====================================================================
+
+          RowLayout {
             width: parent.width
-            height: 108
-            audioManager: loader.manager.audio
-            systemState: loader.systemState
+            height: 40
+            spacing: 8
+
+            Text {
+              Layout.fillWidth: true
+              Layout.leftMargin: Theme.padding.sm
+              text: "Control Center"
+              color: Theme.on_surface
+              font.pixelSize: Theme.typography.xl
+              font.family: Theme.typography.fontFamily
+              font.weight: 600
+            }
+
+            Text {
+              Layout.rightMargin: Theme.padding.sm
+              text: "✕"
+              color: Theme.on_surface
+              font.pixelSize: Theme.typography.lg
+              font.family: Theme.typography.fontFamily
+              opacity: closeMouseArea.containsMouse ? 0.7 : 1
+
+              Behavior on opacity {
+                NumberAnimation { duration: 200 }
+              }
+
+              MouseArea {
+                id: closeMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: loader.manager.visible = false
+              }
+            }
           }
 
-          Modules.BrightnessSlider {
+          // ====================================================================
+          // QUICK TOGGLES GRID
+          // ====================================================================
+          // WiFi, Bluetooth, Night Mode, Microphone controls
+
+          GridLayout {
             width: parent.width
-            height: 108
-            brightnessManager: loader.manager.brightness
-            systemState: loader.systemState
+            columns: 2
+            rowSpacing: 12
+            columnSpacing: 12
+
+            Modules.WiFiToggle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 64
+              systemState: loader.systemState
+            }
+
+            Modules.BluetoothToggle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 64
+              systemState: loader.systemState
+            }
+
+            Modules.NightModeToggle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 64
+            }
+
+            Modules.MicrophoneToggle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 64
+              systemState: loader.systemState
+            }
           }
-        }
 
-        // ========== MEDIA PLAYER ==========
-        Modules.PlayerControl {
-          width: parent.width
-          height: loader.manager.media.playerActive ? 220 : 72
-          mediaManager: loader.manager.media
+          // ====================================================================
+          // SLIDERS
+          // ====================================================================
+          // Volume and brightness controls
 
-          Behavior on height {
-            NumberAnimation {
-              duration: 300
-              easing.type: Easing.OutCubic
+          Card {
+            width: parent.width
+            height: 220
+            padding: Theme.padding.xs
+
+            Column {
+              anchors.fill: parent
+              //spacing: 4
+
+              Modules.VolumeSlider {
+                width: parent.width
+                height: 100
+                systemState: loader.systemState
+              }
+
+              Modules.BrightnessSlider {
+                width: parent.width
+                height: 100
+                systemState: loader.systemState
+              }
+            }
+          }
+
+          // ====================================================================
+          // MEDIA PLAYER
+          // ====================================================================
+          // MPRIS media controls (playback, album art, etc.)
+
+          Modules.PlayerControl {
+            width: parent.width
+            height: loader.manager.media.playerActive ? 220 : 72
+            mediaManager: loader.manager.media
+
+            Behavior on height {
+              NumberAnimation {
+                duration: 300
+                easing.type: Easing.OutCubic
+              }
             }
           }
         }
-      }
       }
     }
   }

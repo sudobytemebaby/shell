@@ -24,10 +24,10 @@ Rectangle {
 
   // ========== APPEARANCE ==========
   radius: Theme.radius.xxl
-  //color: Theme.surface_container_transparent_medium
-  color: "transparent"
+  color: Theme.surface_container_transparent_light
+  //color: "transparent"
 
-  border.width: 0
+  border.width: 0.5
   border.color: Theme.surface_container_high
 
   // ========== ANIMATIONS ==========

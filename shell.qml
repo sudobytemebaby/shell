@@ -69,7 +69,6 @@ ShellRoot {
   ControlCenterManager {
     id: controlCenterManager
     systemState: systemStateManager
-    powerMenuManager: powerMenuManager
   }
   
   ControlCenterDisplay {

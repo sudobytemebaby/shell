@@ -129,22 +129,26 @@ Scope {
   Process {
     id: sinkNameProcess
     command: ["pactl", "get-default-sink"]
-    
+
     stdout: SplitParser {
       onRead: data => {
         if (!data) return
-        
+
         var sinkName = data.trim()
         module.activeSinkName = sinkName
-        
-        // Chain to get active port
-        activePortProcess.running = true
-        
-        // Chain to get device description
-        deviceDescriptionProcess.running = true
+
+        // Chain to get active port (guard against already running)
+        if (!activePortProcess.running) {
+          activePortProcess.running = true
+        }
+
+        // Chain to get device description (guard against already running)
+        if (!deviceDescriptionProcess.running) {
+          deviceDescriptionProcess.running = true
+        }
       }
     }
-    
+
     stderr: SplitParser {
       onRead: data => {
         if (data && data.trim()) {
@@ -246,33 +250,40 @@ Scope {
   // ============================================================================
   // DEVICE CHANGE DETECTION
   // ============================================================================
-  
+
   // Watch for audio sink node changes (device switches)
   onAudioSinkNodeChanged: {
-    // Device changed - refresh device info
+    // Device changed - refresh device info with debouncing
     if (audioSinkNode !== null) {
-      Qt.callLater(() => {
-        if (!sinkNameProcess.running) {
-          sinkNameProcess.running = true
-        }
-      })
+      deviceDetectionDebounce.restart()
     }
   }
   
   // ============================================================================
   // TIMERS - Reset internal change flags
   // ============================================================================
-  
+
   Timer {
     id: volumeChangeResetTimer
     interval: 200
     onTriggered: module.changingVolume = false
   }
-  
+
   Timer {
     id: micChangeResetTimer
     interval: 200
     onTriggered: module.changingMic = false
+  }
+
+  // Debounce timer for device detection to prevent rapid process chaining
+  Timer {
+    id: deviceDetectionDebounce
+    interval: 300
+    onTriggered: {
+      if (!sinkNameProcess.running) {
+        sinkNameProcess.running = true
+      }
+    }
   }
   
   // ============================================================================
@@ -438,12 +449,26 @@ Scope {
 
   // Get appropriate volume icon based on level, mute state, and device type
   function getVolumeIcon(volume, muted) {
-    return module.volumeIcon
+    // Use the parameters passed in instead of cached properties to avoid race conditions
+    // Muted state
+    if (muted) return "󰖁"
+
+    // Headphones - use headphone icon
+    if (module.isHeadphones) {
+      return "󰋋"  // Headphones icon
+    }
+
+    // Speakers - use volume-based icons
+    if (volume == 0) return "󰕿"
+    if (volume < 0.33) return "󰕿"
+    if (volume < 0.66) return "󰖀"
+    return "󰕾"
   }
 
   // Get microphone icon based on mute state
   function getMicIcon(muted) {
-    return module.micIcon
+    // Use the parameter passed in instead of cached property to avoid race conditions
+    return muted ? "󰍭" : "󰍬"
   }
 
   // Get status text for display (e.g., "Headphones 75%")
@@ -473,6 +498,7 @@ Scope {
     // Stop timers
     volumeChangeResetTimer.stop()
     micChangeResetTimer.stop()
+    deviceDetectionDebounce.stop()
 
     // Stop any running processes
     if (sinkNameProcess.running) sinkNameProcess.running = false

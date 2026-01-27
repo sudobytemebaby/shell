@@ -25,12 +25,12 @@ Scope {
   function addNotification(notification) {
     // Get current date/time
     var now = new Date()
-    var dateStr = String(now.getMonth() + 1).padStart(2, '0') + "." + 
-                  String(now.getDate()).padStart(2, '0') + "." + 
+    var dateStr = String(now.getMonth() + 1).padStart(2, '0') + "." +
+                  String(now.getDate()).padStart(2, '0') + "." +
                   now.getFullYear()
-    var timeStr = String(now.getHours()).padStart(2, '0') + ":" + 
+    var timeStr = String(now.getHours()).padStart(2, '0') + ":" +
                   String(now.getMinutes()).padStart(2, '0')
-    
+
     // Create a plain object copy of the notification data
     var notifCopy = {
       summary: notification.summary,
@@ -41,10 +41,15 @@ Scope {
       time: timeStr,
       id: notification.id
     }
-    
+
     // Add to the beginning of the array (newest first)
     var newNotifs = [notifCopy].concat(notifications)
-    
+
+    // Cap at 100 notifications to prevent unbounded memory growth
+    if (newNotifs.length > 100) {
+      newNotifs.splice(100)
+    }
+
     notifications = newNotifs
   }
   

@@ -35,16 +35,16 @@ Card {
         text: root.label
         color: Theme.on_surface
         font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamilyDisplay
+        font.family: Theme.fontFamily
         font.weight: Font.Medium
       }
-      
+
       // Percentage
       Text {
         text: Math.round(root.value * 100) + "%"
         color: Theme.outline
         font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamilyDisplay
+        font.family: Theme.fontFamily
         font.weight: Font.Medium
       }
     }

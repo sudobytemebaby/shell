@@ -1,2 +1,3 @@
 singleton ImageCacheService 1.0 ImageCacheService.qml
 singleton BatteryNotifier 1.0 BatteryNotifier.qml
+singleton WeatherService 1.0 WeatherService.qml
