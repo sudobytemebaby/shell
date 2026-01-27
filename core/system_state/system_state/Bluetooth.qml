@@ -32,23 +32,23 @@ Scope {
 
   // Connected devices computed from adapter
   readonly property var connectedDevices: {
-    if (!adapter || !adapter.devices) return []
+    if (adapter && adapter.devices) {
+      var devices = []
+      var deviceValues = adapter.devices.values
 
-    var devices = []
-    var deviceValues = adapter.devices.values
-
-    for (var i = 0; i < deviceValues.length; i++) {
-      var dev = deviceValues[i]
-      if (dev && dev.connected) {
-        devices.push({
-          name: dev.name || "Unknown Device",
-          address: dev.address || "",
-          icon: "󰂯"
-        })
+      for (var i = 0; i < deviceValues.length; i++) {
+        var dev = deviceValues[i]
+        if (dev && dev.connected) {
+          devices.push({
+            name: dev.name || "Unknown Device",
+            address: dev.address || "",
+            icon: "󰂯"
+          })
+        }
       }
+      return devices
     }
-
-    return devices
+    return fallbackConnectedDevices
   }
 
   readonly property bool hasConnectedDevice: connectedDevices.length > 0
@@ -67,6 +67,7 @@ Scope {
 
   property bool fallbackPowered: false
   property bool fallbackReady: false
+  property var fallbackConnectedDevices: []
 
   // ============================================================================
   // REACTIVE STATE MONITORING (Event-Driven!)
@@ -99,12 +100,8 @@ Scope {
     }
   }
 
-  // Monitor device list changes (when devices connect/disconnect)
-  Connections {
-    target: adapter ? adapter.devices : null
-    enabled: adapter !== null && adapter.devices !== null
-
-    function onLengthChanged() {
+  // Monitor connected devices changes
+  onConnectedDevicesChanged: {
       if (!module.changingState && !module.userInteracting) {
         module.bluetoothChangedExternally(
           module.powered,
@@ -112,7 +109,6 @@ Scope {
           module.connectedDeviceName
         )
       }
-    }
   }
 
   // ============================================================================
@@ -309,8 +305,7 @@ Scope {
       console.log("[Bluetooth] Initial state:", adapter.enabled ? "enabled" : "disabled")
       console.log("[Bluetooth] Initial devices:", adapter.devices ? adapter.devices.values.length : 0)
     } else {
-      console.warn("[Bluetooth] Native API unavailable, using fallback polling mode (30s interval)")
-      bluetoothStateProcess.running = true
+      console.warn("[Bluetooth] Native API unavailable. Fallback polling disabled.")
     }
   }
 
@@ -320,11 +315,6 @@ Scope {
 
   Component.onDestruction: {
     // Stop timers
-    fallbackPollTimer.stop()
     stateChangeResetTimer.stop()
-
-    // Stop any running fallback processes
-    if (bluetoothStateProcess.running) bluetoothStateProcess.running = false
-    if (connectedDevicesProcess.running) connectedDevicesProcess.running = false
   }
 }

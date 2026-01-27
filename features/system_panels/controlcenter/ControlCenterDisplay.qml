@@ -84,7 +84,7 @@ LazyLoader {
       // Dynamic height calculation based on media player state
       height: {
         const baseHeight = 600
-        const mediaExpansion = loader.manager.media.playerActive ? 140 : 0
+        const mediaExpansion = loader.manager.media.playerActive ? 150 : 0
         return baseHeight + mediaExpansion
       }
 
@@ -163,6 +163,9 @@ LazyLoader {
             width: parent.width
             height: togglesGrid.implicitHeight + (padding * 2)
             radius: Theme.radius.xl
+            color: Theme.surface_container
+            border.width: 0.5
+            border.color: Theme.surface_container_high
 
             GridLayout {
               id: togglesGrid
@@ -212,22 +215,33 @@ LazyLoader {
           // ----------------------------------------------------------------------
           // Sliders Section (Volume & Brightness)
           // ----------------------------------------------------------------------
-          Column {
+          Card {
             width: parent.width
-            spacing: Theme.spacing.md
+            height: slidersColumn.implicitHeight + (padding * 2)
+            radius: Theme.radius.xl
+            color: Theme.surface_container
+            border.width: 0.5
+            border.color: Theme.surface_container_high
+            padding: Theme.padding.sm
 
-            Modules.VolumeSlider {
+            Column {
+              id: slidersColumn
               width: parent.width
-              height: 108
-              audioManager: loader.manager.audio
-              systemState: loader.systemState
-            }
+              spacing: Theme.spacing.sm
 
-            Modules.BrightnessSlider {
-              width: parent.width
-              height: 108
-              brightnessManager: loader.manager.brightness
-              systemState: loader.systemState
+              Modules.VolumeSlider {
+                width: parent.width
+                height: 108
+                audioManager: loader.manager.audio
+                systemState: loader.systemState
+              }
+
+              Modules.BrightnessSlider {
+                width: parent.width
+                height: 108
+                brightnessManager: loader.manager.brightness
+                systemState: loader.systemState
+              }
             }
           }
 

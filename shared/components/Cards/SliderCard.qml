@@ -7,8 +7,8 @@ Card {
   id: root
 
   // Public API
-  required property string icon
-  required property string label
+  property string icon: ""
+  property string label: ""
   required property real value        // 0.0 to 1.0
   signal moved(real newValue)         // Custom signal to avoid conflict
 
@@ -16,6 +16,9 @@ Card {
   property real minimumValue: 0.0
   property real maximumValue: 1.0
   property int tickCount: 11          // 0%, 10%, ..., 100%
+
+  color: "transparent"
+  border.width: 0
 
   ColumnLayout {
     anchors.fill: parent

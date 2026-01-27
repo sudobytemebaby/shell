@@ -13,9 +13,9 @@ Rectangle {
   default property alias contentItem: content.data
 
   radius: Theme.radius.xl
-  color: Theme.surface_container_transparent_heavy
+  color: Theme.surface_container
 
-  border.width: 1
+  border.width: 0.5
   border.color: Theme.surface_container_high
 
   // Content area

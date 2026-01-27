@@ -15,6 +15,7 @@ import "features/launchers/emoji"
 import "features/session/lockscreen"
 import "features/session/screenshot"
 import "features/session/screenrec"
+import "features/weather"
 
 ShellRoot {
   // ============================================================================
@@ -159,6 +160,7 @@ ShellRoot {
     lockscreenManager: lockscreenManager
     screenshotManager: screenshotManager
     screenRecordingManager: screenRecordingManager
+    weatherManager: weatherManager
   }
   
   MenuDisplay {
@@ -175,6 +177,18 @@ ShellRoot {
   
   CalendarDisplay {
     manager: calendarManager
+  }
+
+  // ============================================================================
+  // WEATHER WIDGET
+  // ============================================================================
+
+  WeatherManager {
+    id: weatherManager
+  }
+
+  WeatherDisplay {
+    manager: weatherManager
   }
 
   // ============================================================================

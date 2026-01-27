@@ -23,7 +23,7 @@ Rectangle {
   
   radius: Theme.radius.lg
 
-  color: mouseArea.pressed ? Theme.surface_container_highest : Theme.surface_container_high
+  color: mouseArea.pressed ? Theme.surface_container_highest : Theme.surface_container_highest
 
   // ============================================================================
   // ANIMATIONS

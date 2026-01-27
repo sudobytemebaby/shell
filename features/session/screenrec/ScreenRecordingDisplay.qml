@@ -30,8 +30,7 @@ import "../../../shared/theme"
  * - Escape: Close menu
  */
 
-// ========== LAZY LOADING ==========
-
+// Lazy loading is crucial
 LazyLoader {
   id: loader
 
@@ -41,7 +40,6 @@ LazyLoader {
   active: manager.visible
 
   // ========== WINDOW CONFIGURATION ==========
-
   PanelWindow {
     id: recordingWindow
 
@@ -303,20 +301,8 @@ LazyLoader {
                 if (index === recordingWindow.selectedIndex) {
                   return Theme.tertiary_container
                 }
-                // Hover state: Use surface container high
-                if (optionMouseArea.containsMouse) {
-                  return Theme.surface_container_high
-                }
                 // Default state: Use transparent surface container low
-                return Theme.surface_container_low_transparent_medium
-              }
-
-              // Smooth color transitions
-              Behavior on color {
-                ColorAnimation {
-                  duration: 200
-                  easing.type: Easing.OutCubic
-                }
+                return "transparent" 
               }
 
               ColumnLayout {

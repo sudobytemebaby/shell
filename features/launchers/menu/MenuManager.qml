@@ -66,6 +66,9 @@ Scope {
   // Reference to screen recording manager (for the Screen Recording item)
   required property var screenRecordingManager
 
+  // Reference to weather manager (for the Weather item)
+  required property var weatherManager
+
   // ========== ERROR STATE ==========
 
   // Error message from last failed operation (empty if no error)
@@ -144,6 +147,12 @@ Scope {
       command: "screenrec"  // Special command to trigger screen recording menu
     },
     {
+      icon: "󰖐",
+      name: "Weather",
+      description: "View weather information",
+      command: "weather"  // Special command to trigger weather overlay
+    },
+    {
       icon: "󰌾",
       name: "Lock Screen",
       description: "Lock your screen",
@@ -212,6 +221,10 @@ Scope {
     "screenrec": () => {
       manager.visible = false
       screenRecordingManager.visible = true
+    },
+    "weather": () => {
+      manager.visible = false
+      weatherManager.visible = true
     }
   })
 

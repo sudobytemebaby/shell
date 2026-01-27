@@ -25,7 +25,7 @@ Rectangle {
   
   radius: isActive ? Theme.radius.full : Theme.radius.lg
 
-  color: isActive ? Theme.primary : Theme.surface_container_high
+  color: isActive ? Theme.primary : Theme.surface_container_highest
 
   // ============================================================================
   // ANIMATIONS

@@ -72,7 +72,7 @@ Item {
 
     onClicked: {
       Quickshell.execDetached({
-        command: ["sh", "-c", "kitty --class floating_term_l -e battop"]
+        command: ["sh", "-c", "foot --app-id floating_term_l -e battop"]
       })
     }
   }

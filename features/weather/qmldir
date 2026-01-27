@@ -1,0 +1,4 @@
+module features.weather
+
+WeatherManager 1.0 WeatherManager.qml
+WeatherDisplay 1.0 WeatherDisplay.qml

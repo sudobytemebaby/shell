@@ -84,7 +84,7 @@ Scope {
         // Calculate Y position based on stack index (compact stacking)
         property real stackOffset: {
           var baseOffset = Theme.component.barHeight + Theme.spacing.md
-          var perNotifOffset = 120 // Compact spacing
+          var perNotifOffset = 130 // Compact spacing
           return baseOffset + (loader.notificationIndex * perNotifOffset)
         }
         
@@ -133,7 +133,7 @@ Scope {
           NumberAnimation on opacity {
             from: 0
             to: 1
-            duration: 200
+            duration: 350
             easing.type: Easing.OutCubic
           }
           
