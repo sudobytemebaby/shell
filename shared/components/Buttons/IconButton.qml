@@ -19,13 +19,12 @@ Rectangle {
   // Optional: Custom colors (for special cases like recording)
   property color activeIconBg: Theme.primary_container
   property color activeIconColor: Theme.primary
-  property color inactiveIconBg: Theme.surface_container_highest
+  property color inactiveIconBg: Theme.surface_container_high
   property color inactiveIconColor: Theme.on_surface_variant
 
   // ========== APPEARANCE ==========
   radius: Theme.radius.xxl
-  color: Theme.surface_container_transparent_light
-  //color: "transparent"
+  color: Theme.surface_container_low
 
   border.width: 0.5
   border.color: Theme.surface_container_high

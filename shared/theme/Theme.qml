@@ -78,40 +78,36 @@ QtObject {
     // TRANSPARENT VARIANTS - FOR BLUR EFFECTS
     // ============================================================================
     // Use these with Hyprland blur for beautiful frosted glass effects!
-    // Light = 50-65% opacity (subtle blur)
-    // Medium = 70-80% opacity (balanced blur)
-    // Heavy = 85-92% opacity (strong blur, more opaque)
-    
+    // Light = 60-65% opacity (subtle blur, good visibility)
+    // Medium = 75-80% opacity (balanced blur, most common)
+    // Heavy = 90-92% opacity (strong blur, near-opaque)
+
     // --- Primary Transparencies ---
-    readonly property color primary_transparent: Qt.rgba(primary.r, primary.g, primary.b, 0.12)
-    readonly property color primary_transparent_medium: Qt.rgba(primary.r, primary.g, primary.b, 0.25)
-    readonly property color primary_transparent_heavy: Qt.rgba(primary.r, primary.g, primary.b, 0.40)
-    
+    readonly property color primary_transparent_light: Qt.rgba(primary.r, primary.g, primary.b, 0.25)
+    readonly property color primary_transparent_medium: Qt.rgba(primary.r, primary.g, primary.b, 0.40)
+    readonly property color primary_transparent_heavy: Qt.rgba(primary.r, primary.g, primary.b, 0.60)
+
     // --- Surface Transparencies (for backgrounds) ---
-    readonly property color surface_transparent: Qt.rgba(surface.r, surface.g, surface.b, 0.12)
     readonly property color surface_transparent_light: Qt.rgba(surface.r, surface.g, surface.b, 0.50)
     readonly property color surface_transparent_medium: Qt.rgba(surface.r, surface.g, surface.b, 0.70)
     readonly property color surface_transparent_heavy: Qt.rgba(surface.r, surface.g, surface.b, 0.85)
-    
+
     // --- Surface Container Transparencies (for main panels/popups) ---
-    // RECOMMENDED: Use these for Control Center, Calendar, Launcher, etc.
-    readonly property color surface_container_transparent: Qt.rgba(surface_container.r, surface_container.g, surface_container.b, 0.12)
     readonly property color surface_container_transparent_light: Qt.rgba(surface_container.r, surface_container.g, surface_container.b, 0.60)
     readonly property color surface_container_transparent_medium: Qt.rgba(surface_container.r, surface_container.g, surface_container.b, 0.75)
     readonly property color surface_container_transparent_heavy: Qt.rgba(surface_container.r, surface_container.g, surface_container.b, 0.90)
-    
-    // --- Surface Container Low Transparencies (for cards/items) ---
-    readonly property color surface_container_low_transparent_light: Qt.rgba(surface_container_low.r, surface_container_low.g, surface_container_low.b, 0.65)
-    readonly property color surface_container_low_transparent_medium: Qt.rgba(surface_container_low.r, surface_container_low.g, surface_container_low.b, 0.80)
-    readonly property color surface_container_low_transparent_heavy: Qt.rgba(surface_container_low.r, surface_container_low.g, surface_container_low.b, 0.92)
 
-    // --- Surface Container High Transparencies (for cards/items) ---
-    readonly property color surface_container_high_transparent_light: Qt.rgba(surface_container_high.r, surface_container_high.g, surface_container_high.b, 0.65)
-    readonly property color surface_container_high_transparent_medium: Qt.rgba(surface_container_high.r, surface_container_high.g, surface_container_high.b, 0.80)
-    readonly property color surface_container_high_transparent_heavy: Qt.rgba(surface_container_high.r, surface_container_high.g, surface_container_high.b, 0.92)
-    
+    // --- Surface Container Low Transparencies (for lower elevation cards) ---
+    readonly property color surface_container_low_transparent_light: Qt.rgba(surface_container_low.r, surface_container_low.g, surface_container_low.b, 0.50)
+    readonly property color surface_container_low_transparent_medium: Qt.rgba(surface_container_low.r, surface_container_low.g, surface_container_low.b, 0.65)
+    readonly property color surface_container_low_transparent_heavy: Qt.rgba(surface_container_low.r, surface_container_low.g, surface_container_low.b, 0.80)
+
+    // --- Surface Container High Transparencies (for higher elevation cards) ---
+    readonly property color surface_container_high_transparent_light: Qt.rgba(surface_container_high.r, surface_container_high.g, surface_container_high.b, 0.70)
+    readonly property color surface_container_high_transparent_medium: Qt.rgba(surface_container_high.r, surface_container_high.g, surface_container_high.b, 0.85)
+    readonly property color surface_container_high_transparent_heavy: Qt.rgba(surface_container_high.r, surface_container_high.g, surface_container_high.b, 0.95)
+
     // --- Scrim Transparencies (for modal overlays) ---
-    readonly property color scrim_transparent: Qt.rgba(scrim.r, scrim.g, scrim.b, 0.32)
     readonly property color scrim_transparent_light: Qt.rgba(scrim.r, scrim.g, scrim.b, 0.15)
     readonly property color scrim_transparent_medium: Qt.rgba(scrim.r, scrim.g, scrim.b, 0.45)
     readonly property color scrim_transparent_heavy: Qt.rgba(scrim.r, scrim.g, scrim.b, 0.65)
@@ -121,12 +117,12 @@ QtObject {
     // ============================================================================
     
     readonly property QtObject spacing: QtObject {
-        readonly property int xs: 4
-        readonly property int sm: 8
-        readonly property int md: 12
-        readonly property int lg: 18
-        readonly property int xl: 26 
-        readonly property int xxl: 48
+      readonly property int xs: 4
+      readonly property int sm: 8
+      readonly property int md: 12
+      readonly property int lg: 18
+      readonly property int xl: 26 
+      readonly property int xxl: 48
     }
     
     // ============================================================================
@@ -134,11 +130,11 @@ QtObject {
     // ============================================================================
     
     readonly property QtObject padding: QtObject {
-        readonly property int xs: 4
-        readonly property int sm: 8
-        readonly property int md: 12
-        readonly property int lg: 18
-        readonly property int xl: 20
+      readonly property int xs: 4
+      readonly property int sm: 8
+      readonly property int md: 12
+      readonly property int lg: 18
+      readonly property int xl: 20
     }
     
     // ============================================================================
@@ -146,20 +142,20 @@ QtObject {
     // ============================================================================
     
     readonly property QtObject typography: QtObject {
-        readonly property string fontFamily: "Google Sans"
-        readonly property string fontFamilyDisplay: "Google Sans"
+      readonly property string fontFamily: "Google Sans"
+      readonly property string fontFamilyDisplay: "Google Sans"
         
-        readonly property int xs: 10
-        readonly property int sm: 12
-        readonly property int md: 14
-        readonly property int lg: 16
-        readonly property int xl: 18
-        readonly property int xxl: 24
-        readonly property int xxxl: 32
+      readonly property int xs: 10
+      readonly property int sm: 12
+      readonly property int md: 14
+      readonly property int lg: 16
+      readonly property int xl: 18
+      readonly property int xxl: 24
+      readonly property int xxxl: 32
         
-        readonly property int weightNormal: 400
-        readonly property int weightMedium: 500
-        readonly property int weightBold: 700
+      readonly property int weightNormal: 400
+      readonly property int weightMedium: 500
+      readonly property int weightBold: 700
     }
     
     // ============================================================================
@@ -167,13 +163,13 @@ QtObject {
     // ============================================================================
     
     readonly property QtObject radius: QtObject {
-        readonly property int none: 0
-        readonly property int sm: 6
-        readonly property int md: 12
-        readonly property int lg: 20
-        readonly property int xl: 32 
-        readonly property int xxl: 40
-        readonly property int full: 9999
+      readonly property int none: 0
+      readonly property int sm: 6
+      readonly property int md: 12
+      readonly property int lg: 20
+      readonly property int xl: 32 
+      readonly property int xxl: 40
+      readonly property int full: 9999
     }
     
     // ============================================================================
@@ -181,10 +177,10 @@ QtObject {
     // ============================================================================
     
     readonly property QtObject component: QtObject {
-        readonly property int barHeight: 26
-        readonly property int workspaceIndicatorSize: 10
-        readonly property int buttonHeight: 36
-        readonly property int inputHeight: 40
+      readonly property int barHeight: 26
+      readonly property int workspaceIndicatorSize: 10
+      readonly property int buttonHeight: 36
+      readonly property int inputHeight: 40
     }
     
     // ============================================================================
@@ -193,12 +189,12 @@ QtObject {
     // These allow your existing code to work without changes
     
     readonly property color accent: primary
-    readonly property color accentTransparent: primary_transparent
+    readonly property color accentTransparent: primary_transparent_light
     readonly property color accentFixed: primary_fixed
     readonly property color bg0: surface
-    readonly property color bg0transparent: surface_transparent
+    readonly property color bg0transparent: surface_transparent_light
     readonly property color bg1: surface_container
-    readonly property color bg1transparent: surface_container_transparent
+    readonly property color bg1transparent: surface_container_transparent_light
     readonly property color bg1transparentLauncher: surface_container_transparent_medium
     readonly property color bg2: surface_container_low
     readonly property color bg2transparent: surface_container_low_transparent_medium
@@ -210,7 +206,7 @@ QtObject {
     readonly property color border: outline
     readonly property color borderStrong: primary
     readonly property color borderDim: outline_variant
-    readonly property color backgroundTransparent: surface_transparent
+    readonly property color backgroundTransparent: surface_transparent_light
     
     // Spacing aliases
     readonly property int spacingXSmall: spacing.xs

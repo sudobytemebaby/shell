@@ -1,5 +1,6 @@
 import QtQuick
 import "../../theme"
+import "../../components"
 
 Rectangle {
   id: root
@@ -13,8 +14,7 @@ Rectangle {
   default property alias contentItem: content.data
 
   radius: Theme.radius.xl
-  color: Theme.surface_container_transparent_light
-  //color: "transparent"
+  color: Theme.surface_container_low
 
   border.width: 0.5
   border.color: Theme.surface_container_high

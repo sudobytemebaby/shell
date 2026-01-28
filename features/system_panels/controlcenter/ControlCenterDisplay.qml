@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import "../../../shared/theme"
-import "../../../shared/components/Cards"
+import "../../../shared/components"
 import "cc_modules" as Modules
 
 // ============================================================================
@@ -73,18 +73,7 @@ LazyLoader {
       x: 28
       y: 28
       width: 360
-      height: {
-        let baseHeight = 550
-        let mediaExpansion = loader.manager.media.playerActive ? 110 : 0
-        return baseHeight + mediaExpansion
-      }
-
-      Behavior on height {
-        NumberAnimation {
-          duration: 150
-          easing.type: Easing.OutCubic
-        }
-      }
+      height: 680
 
       Rectangle {
         id: background
@@ -193,7 +182,6 @@ LazyLoader {
 
             Column {
               anchors.fill: parent
-              //spacing: 4
 
               Modules.VolumeSlider {
                 width: parent.width
@@ -216,15 +204,8 @@ LazyLoader {
 
           Modules.PlayerControl {
             width: parent.width
-            height: loader.manager.media.playerActive ? 220 : 72
+            height: 180
             mediaManager: loader.manager.media
-
-            Behavior on height {
-              NumberAnimation {
-                duration: 300
-                easing.type: Easing.OutCubic
-              }
-            }
           }
         }
       }
