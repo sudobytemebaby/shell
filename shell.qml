@@ -15,13 +15,34 @@ import "features/launchers/emoji"
 import "features/session/lockscreen"
 import "features/session/screenshot"
 import "features/session/screenrec"
+import "features/session/matugen"
 import "features/weather"
 
 ShellRoot {
   // ============================================================================
+  // CONFIG RELOAD HANDLING
+  // ============================================================================
+
+  // Suppress the default "CONFIG RELOADED" popup notification
+  // This prevents the reload popup from blocking other notifications (OSD, matugen, etc.)
+  Connections {
+    target: Quickshell
+
+    function onReloadCompleted() {
+      Quickshell.inhibitReloadPopup()
+      console.log("[Shell] Config reloaded successfully (popup suppressed)")
+    }
+
+    function onReloadFailed(error) {
+      Quickshell.inhibitReloadPopup()
+      console.error("[Shell] Config reload failed:", error)
+    }
+  }
+
+  // ============================================================================
   // SYSTEM STATE - Single Source of Truth
   // ============================================================================
-  
+
   Core.SystemStateManager {
     id: systemStateManager
   }
@@ -60,6 +81,18 @@ ShellRoot {
 
   ScreenRecordingDisplay {
     manager: screenRecordingManager
+  }
+
+  // ============================================================================
+  // MATUGEN COLOR SCHEME MENU
+  // ============================================================================
+
+  MatugenManager {
+    id: matugenManager
+  }
+
+  MatugenDisplay {
+    manager: matugenManager
   }
 
   // ============================================================================
@@ -160,6 +193,7 @@ ShellRoot {
     screenshotManager: screenshotManager
     screenRecordingManager: screenRecordingManager
     weatherManager: weatherManager
+    matugenManager: matugenManager
   }
   
   MenuDisplay {

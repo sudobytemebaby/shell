@@ -69,6 +69,9 @@ Scope {
   // Reference to weather manager (for the Weather item)
   required property var weatherManager
 
+  // Reference to matugen manager (for the Matugen item)
+  required property var matugenManager
+
   // ========== ERROR STATE ==========
 
   // Error message from last failed operation (empty if no error)
@@ -121,6 +124,12 @@ Scope {
       name: "Wallpapers",
       description: "Change wallpaper",
       command: "wallpapers"  // Special command to trigger wallpaper picker
+    },
+    {
+      icon: "󰏘",
+      name: "Matugen Colors",
+      description: "Apply color scheme from wallpaper",
+      command: "matugen"  // Special command to trigger matugen menu
     },
     {
       icon: "󰊕",
@@ -225,6 +234,10 @@ Scope {
     "weather": () => {
       manager.visible = false
       weatherManager.visible = true
+    },
+    "matugen": () => {
+      manager.visible = false
+      matugenManager.visible = true
     }
   })
 
