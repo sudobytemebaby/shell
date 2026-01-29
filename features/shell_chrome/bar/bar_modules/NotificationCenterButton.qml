@@ -27,14 +27,14 @@ Item {
   RowLayout {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: Theme.spacingS
-    
+    spacing: Theme.spacing.sm
+
     // Bell icon
     Text {
       id: iconText
       text: notificationCount > 0 ? "󱥁" : "󰍩"  // Bell with/without badge
-      color: mouseArea.containsMouse ? Qt.darker(Theme.fg, 1.3) : Theme.fg
-      font.pixelSize: Theme.fontSizeS
+      color: mouseArea.containsMouse ? Qt.darker(Theme.on_surface, 1.3) : Theme.on_surface
+      font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
       
@@ -48,18 +48,18 @@ Item {
     
     // Notification count badge
     Rectangle {
-      Layout.preferredWidth: countText.implicitWidth + Theme.spacingS
+      Layout.preferredWidth: countText.implicitWidth + Theme.spacing.sm
       Layout.preferredHeight: 12
       radius: 8
-      color: Qt.darker(Theme.fg, 1.2)
+      color: Qt.darker(Theme.on_surface, 1.2)
       visible: notificationCount > 0
-      
+
       Text {
         id: countText
         anchors.centerIn: parent
         text: notificationCount > 99 ? "99+" : notificationCount
-        color: Theme.bg1
-        font.pixelSize: Theme.fontSizeXS - 3
+        color: Theme.surface_container
+        font.pixelSize: Theme.typography.xs - 3
         font.family: Theme.fontFamily
         font.bold: true
       }

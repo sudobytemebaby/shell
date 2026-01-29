@@ -98,7 +98,7 @@ LazyLoader {
             Text {
               Layout.rightMargin: Theme.padding.sm
               text: "✕"
-              color: Theme.fg
+              color: Theme.on_surface
               font.pixelSize: Theme.typography.lg
               font.family: Theme.fontFamily
               opacity: closeMouseArea.containsMouse ? 0.7 : 1

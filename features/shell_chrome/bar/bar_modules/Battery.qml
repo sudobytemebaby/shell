@@ -29,24 +29,24 @@ Item {
   RowLayout {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: Theme.spacingS
-    
+    spacing: Theme.spacing.sm
+
     // Icon (always visible)
     Text {
       id: iconText
       text: icon
       color: root.iconColor
-      font.pixelSize: Theme.fontSizeS
+      font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
     }
-    
+
     // Percentage (only visible on hover)
     Text {
       id: percentageText
       text: percentage
-      color: Theme.fgMuted
-      font.pixelSize: Theme.fontSizeS
+      color: Theme.on_surface_variant
+      font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
       visible: hovered && percentage !== "N/A"

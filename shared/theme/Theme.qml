@@ -182,76 +182,13 @@ QtObject {
       readonly property int buttonHeight: 36
       readonly property int inputHeight: 40
     }
-    
+
     // ============================================================================
-    // LEGACY ALIASES (for backward compatibility)
+    // CONVENIENCE ALIASES
     // ============================================================================
-    // These allow your existing code to work without changes
-    
-    readonly property color accent: primary
-    readonly property color accentTransparent: primary_transparent
-    readonly property color accentFixed: primary_fixed
-    readonly property color bg0: surface
-    readonly property color bg0transparent: surface_transparent
-    readonly property color bg1: surface_container
-    readonly property color bg1transparent: surface_container_transparent
-    readonly property color bg1transparentLauncher: surface_container_transparent_medium
-    readonly property color bg2: surface_container_low
-    readonly property color bg2transparent: surface_container_low_transparent_medium
-    readonly property color bgBright: surface_bright
-    readonly property color bgDim: surface_dim
-    readonly property color fg: on_surface
-    readonly property color fgStrong: on_surface
-    readonly property color fgMuted: on_surface_variant
-    readonly property color border: outline
-    readonly property color borderStrong: primary
-    readonly property color borderDim: outline_variant
-    readonly property color backgroundTransparent: surface_transparent
-    
-    // Spacing aliases
-    readonly property int spacingXSmall: spacing.xs
-    readonly property int spacingSmall: spacing.sm
-    readonly property int spacingMedium: spacing.md
-    readonly property int spacingLarge: spacing.lg
-    readonly property int spacingXLarge: spacing.xl
-    readonly property int spacingXS: spacing.xs
-    readonly property int spacingS: spacing.sm
-    readonly property int spacingM: spacing.md
-    readonly property int spacingL: spacing.lg
-    readonly property int spacingXL: spacing.xl
-    
-    // Margin aliases
-    readonly property int marginXSmall: padding.xs
-    readonly property int marginSmall: padding.sm
-    readonly property int marginMedium: padding.md
-    readonly property int marginLarge: padding.lg
-    readonly property int marginXLarge: padding.xl
-    readonly property int marginXS: padding.xs
-    readonly property int marginS: padding.sm
-    readonly property int marginM: padding.md
-    readonly property int marginL: padding.lg
-    readonly property int marginXL: padding.xl
-    
-    // Font aliases
+    // Common top-level shortcuts to avoid nested property access
+
     readonly property string fontFamily: typography.fontFamily
-    readonly property int fontSizeXSmall: typography.xs
-    readonly property int fontSizeSmall: typography.sm
-    readonly property int fontSizeMedium: typography.md
-    readonly property int fontSizeLarge: typography.lg
-    readonly property int fontSizeXLarge: typography.xl
-    readonly property int fontSizeXS: typography.xs
-    readonly property int fontSizeS: typography.sm
-    readonly property int fontSizeM: typography.md
-    readonly property int fontSizeL: typography.lg
-    readonly property int fontSizeXL: typography.xl
-    
-    // Radius aliases
-    readonly property int radiusSmall: radius.sm
-    readonly property int radiusMedium: radius.md
-    readonly property int radiusLarge: radius.lg
-    readonly property int radiusXLarge: radius.xl
-    
-    // Component aliases
     readonly property int barHeight: component.barHeight
     readonly property int workspaceIndicatorSize: component.workspaceIndicatorSize
 }

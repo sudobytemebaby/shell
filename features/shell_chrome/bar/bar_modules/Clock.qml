@@ -13,8 +13,8 @@ Item {
   Text {
     id: clock
     anchors.centerIn: parent
-    color: mouseArea.containsMouse ? Qt.darker(Theme.fg, 1.3) : Theme.fg
-    font.pixelSize: Theme.fontSizeS
+    color: mouseArea.containsMouse ? Qt.darker(Theme.on_surface, 1.3) : Theme.on_surface
+    font.pixelSize: Theme.typography.sm
     font.family: Theme.fontFamilyDisplay || "sans-serif"
     font.bold: false
     verticalAlignment: Text.AlignVCenter

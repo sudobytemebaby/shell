@@ -28,22 +28,22 @@ Item {
   RowLayout {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: Theme.spacingS
+    spacing: Theme.spacing.sm
 
     Text {
       id: iconText
       text: icon
-      color: Theme.fg
-      font.pixelSize: Theme.fontSizeS
+      color: Theme.on_surface
+      font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
     }
 
     Text {
       id: statusText
-      text: status 
-      color: Theme.fgMuted
-      font.pixelSize: Theme.fontSizeS
+      text: status
+      color: Theme.on_surface_variant
+      font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
       visible: hovered && status !== "N/A"

@@ -26,9 +26,9 @@ RowLayout {
       color: {
         const focused = Hyprland.focusedWorkspace?.id === (index + 1)
         const ws = Hyprland.workspaces.values.find(w => w.id === index + 1)
-        
+
         // Focused - accent color
-        if (focused) return Theme.accent
+        if (focused) return Theme.primary
         
         // Occupied - border color (visible but not bright)
         if (ws) return Theme.outline
