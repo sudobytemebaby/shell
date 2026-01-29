@@ -32,6 +32,8 @@ Rectangle {
   Layout.preferredHeight: 40
   radius: Theme.radius.full
   color: Theme.surface_container_high
+  border.width: 0.5
+  border.color: Theme.surface_container_high
 
   /**
    * List of options to display.

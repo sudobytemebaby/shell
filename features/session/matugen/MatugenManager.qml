@@ -75,7 +75,7 @@ Scope {
    */
   property var colorSchemes: [
     {
-      icon: "",
+      icon: "󰸉",
       name: "Content",
       description: "Content-based extraction",
       scheme: "scheme-content"
@@ -111,7 +111,7 @@ Scope {
       scheme: "scheme-neutral"
     },
     {
-      icon: "",
+      icon: "󰏘",
       name: "Rainbow",
       description: "Full spectrum colors",
       scheme: "scheme-rainbow"

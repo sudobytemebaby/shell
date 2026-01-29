@@ -124,10 +124,10 @@ LazyLoader {
     // Centered modal dialog with Material 3 styling
     Rectangle {
       id: container
-      x: (parent.width - 800) / 2
-      y: (parent.height - 700) / 2
-      width: 800
-      height: 700
+      x: (parent.width - 650) / 2
+      y: (parent.height - 580) / 2
+      width: 650
+      height: 580
       radius: 28
       color: Theme.surface_container_transparent_medium
       border.width: 0.5
@@ -155,47 +155,56 @@ LazyLoader {
         }
 
         // ====================================================================
-        // SUBTITLE WITH WALLPAPER PATH
+        // TOOLBAR (Wallpaper info + Theme Switcher)
         // ====================================================================
 
-        Text {
+        RowLayout {
           Layout.fillWidth: true
-          Layout.leftMargin: Theme.padding.xs
-          text: {
-            if (loader.manager.currentWallpaperPath) {
-              // Extract filename from path
-              var parts = loader.manager.currentWallpaperPath.split("/")
-              var filename = parts[parts.length - 1]
-              return "Apply color scheme from: " + filename
+          spacing: Theme.spacing.lg
+
+          Text {
+            text: {
+              if (loader.manager.currentWallpaperPath) {
+                var parts = loader.manager.currentWallpaperPath.split("/")
+                var filename = parts[parts.length - 1]
+                return "Source: " + filename
+              }
+              return "Loading wallpaper..."
             }
-            return "Loading wallpaper..."
+            color: Theme.on_surface_variant
+            font.pixelSize: Theme.typography.sm
+            font.family: Theme.typography.fontFamily
+            opacity: 0.7
+            elide: Text.ElideMiddle
           }
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          opacity: 0.7
-          elide: Text.ElideMiddle
+
+          Item { Layout.fillWidth: true }
+
+          SegmentedButton {
+            Layout.preferredWidth: 180
+            Layout.preferredHeight: 36
+
+            options: [
+              { icon: "󰖔", text: "Dark" },
+              { icon: "󰖙", text: "Light" }
+            ]
+
+            currentIndex: loader.manager.lightMode ? 1 : 0
+
+            onClicked: index => {
+              loader.manager.lightMode = (index === 1)
+            }
+          }
         }
 
-        // ====================================================================
-        // LIGHT/DARK MODE TOGGLE
-        // ====================================================================
-
-        SegmentedButton {
-          Layout.alignment: Qt.AlignHCenter
-          Layout.topMargin: Theme.spacing.sm
-          
-          options: [
-            { icon: "󰖔", text: "Dark" },
-            { icon: "󰖙", text: "Light" }
-          ]
-
-          // 0 = Dark, 1 = Light
-          currentIndex: loader.manager.lightMode ? 1 : 0
-          
-          onClicked: index => {
-            loader.manager.lightMode = (index === 1)
-          }
+        // Divider
+        Rectangle {
+          Layout.fillWidth: true
+          Layout.topMargin: 4
+          Layout.bottomMargin: 4
+          height: 1
+          color: Theme.surface_container_high
+          opacity: 0.5
         }
 
         // ====================================================================
@@ -206,8 +215,8 @@ LazyLoader {
           Layout.fillWidth: true
           Layout.fillHeight: true
           columns: 3
-          rowSpacing: Theme.spacing.md
-          columnSpacing: Theme.spacing.md
+          rowSpacing: Theme.spacing.sm
+          columnSpacing: Theme.spacing.sm
 
           Repeater {
             model: loader.manager.colorSchemes
@@ -219,41 +228,36 @@ LazyLoader {
 
               Layout.fillWidth: true
               Layout.fillHeight: true
-              Layout.preferredHeight: 140
+              Layout.preferredHeight: 120
 
               radius: Theme.radius.xl
 
-              // Color logic: Use tertiary color for selection, hover for mouse interaction
               color: {
-                // Selected state: Use tertiary container color
                 if (index === matugenWindow.selectedIndex) {
                   return Theme.tertiary_container
                 }
-                // Hover state: Use transparent for minimal hover effect
-                if (optionMouseArea.containsMouse) {
-                  return "transparent"
-                }
-                // Default state: Use transparent
                 return "transparent"
               }
 
-              ColumnLayout {
-                anchors {
-                  fill: parent
-                  margins: Theme.spacing.md
+              Behavior on color {
+                ColorAnimation {
+                  duration: 150
+                  easing.type: Easing.OutCubic
                 }
+              }
+
+              ColumnLayout {
+                anchors.fill: parent
                 spacing: Theme.spacing.sm
 
                 Item { Layout.fillHeight: true }
 
-                // Color scheme icon
                 Text {
                   Layout.alignment: Qt.AlignHCenter
                   text: modelData.icon
-                  // Use on_tertiary_container color when selected, otherwise on_surface
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface
-                  font.pixelSize: 48
+                  font.pixelSize: 40
                   font.family: Theme.typography.fontFamily
 
                   Behavior on color {
@@ -264,13 +268,12 @@ LazyLoader {
                   }
                 }
 
-                // Color scheme name
                 Text {
                   Layout.fillWidth: true
                   text: modelData.name
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface
-                  font.pixelSize: Theme.typography.lg
+                  font.pixelSize: Theme.typography.md
                   font.family: Theme.typography.fontFamilyDisplay
                   font.weight: Theme.typography.weightMedium
                   horizontalAlignment: Text.AlignHCenter
@@ -283,17 +286,15 @@ LazyLoader {
                   }
                 }
 
-                // Color scheme description
                 Text {
                   Layout.fillWidth: true
                   text: modelData.description
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
+                  font.pixelSize: Theme.typography.xs
                   font.family: Theme.typography.fontFamilyDisplay
                   horizontalAlignment: Text.AlignHCenter
-                  wrapMode: Text.WordWrap
-                  opacity: index === matugenWindow.selectedIndex ? 0.9 : 0.7
+                  opacity: index === matugenWindow.selectedIndex ? 0.8 : 0.6
 
                   Behavior on color {
                     ColorAnimation {

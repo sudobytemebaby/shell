@@ -16,7 +16,7 @@ Rectangle {
   radius: Theme.radius.xl
   color: Theme.surface_container_low
 
-  border.width: 0.5
+  border.width: 0
   border.color: Theme.surface_container_high
 
   // Content area
