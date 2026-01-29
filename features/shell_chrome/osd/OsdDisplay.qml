@@ -79,7 +79,7 @@ LazyLoader {
             Layout.alignment: Qt.AlignHCenter
             icon: loader.manager.currentIcon
             iconSize: Theme.typography.lg
-            iconColor: Theme.primary
+            iconColor: osdSlider.isMuted ? Theme.outline : Theme.primary
             bgColor: osdSlider.isMuted ? Theme.surface_container_highest : Theme.primary_container
             Behavior on bgColor{
               ColorAnimation{

@@ -73,7 +73,7 @@ LazyLoader {
       x: 28
       y: 28
       width: 360
-      height: 680
+      height: 640
 
       Rectangle {
         id: background
@@ -177,7 +177,7 @@ LazyLoader {
 
           Card {
             width: parent.width
-            height: 220
+            height: 210
             padding: Theme.padding.xs
 
             Column {
@@ -198,14 +198,26 @@ LazyLoader {
           }
 
           // ====================================================================
-          // MEDIA PLAYER
+          // MEDIA PLAYER & QUICK ACTIONS
           // ====================================================================
-          // MPRIS media controls (playback, album art, etc.)
-
-          Modules.PlayerControl {
+          RowLayout {
             width: parent.width
-            height: 180
-            mediaManager: loader.manager.media
+            height: 168
+            spacing: Theme.spacing.sm
+
+            // MPRIS media controls (playback, album art, etc.)
+            Modules.PlayerControl {
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              mediaManager: loader.manager.media
+            }
+
+            // Quick action button grid (2x2)
+            Modules.QuickActions {
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              quickActionsManager: loader.manager.quickActions
+            }
           }
         }
       }

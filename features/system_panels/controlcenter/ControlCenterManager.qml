@@ -8,6 +8,7 @@ Scope {
   property bool visible: false
 
   required property var systemState
+  required property var matugen
 
   Managers.MediaManager {
     id: mediaManager
@@ -15,5 +16,12 @@ Scope {
     mprisState: manager.systemState.mpris
   }
 
+  Managers.QuickActionsManager {
+    id: quickActionsManager
+    matugen: manager.matugen
+    controlCenter: manager
+  }
+
   readonly property var media: mediaManager
+  readonly property var quickActions: quickActionsManager
 }

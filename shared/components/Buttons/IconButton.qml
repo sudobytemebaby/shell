@@ -23,7 +23,7 @@ Rectangle {
   property color inactiveIconColor: Theme.on_surface_variant
 
   // ========== APPEARANCE ==========
-  radius: Theme.radius.xxl
+  radius: Theme.radius.full
   color: Theme.surface_container_low
 
   border.width: 0.5

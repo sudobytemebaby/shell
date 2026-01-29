@@ -303,7 +303,7 @@ LazyLoader {
                   color: !loader.manager.lightMode ? Theme.on_tertiary_container : Theme.on_surface_variant
                   font.pixelSize: Theme.typography.sm
                   font.family: Theme.typography.fontFamily
-                  font.weight: !loader.manager.lightMode ? Theme.typography.weightMedium : Theme.typography.weightRegular
+                  font.weight: !loader.manager.lightMode ? Theme.typography.weightMedium : Theme.typography.weightNormal
                 }
               }
 
@@ -352,7 +352,7 @@ LazyLoader {
                   color: loader.manager.lightMode ? Theme.on_tertiary_container : Theme.on_surface_variant
                   font.pixelSize: Theme.typography.sm
                   font.family: Theme.typography.fontFamily
-                  font.weight: loader.manager.lightMode ? Theme.typography.weightMedium : Theme.typography.weightRegular
+                  font.weight: loader.manager.lightMode ? Theme.typography.weightMedium : Theme.typography.weightNormal
                 }
               }
 

@@ -83,10 +83,6 @@ Item {
      *
     **/
 
-    Elevation {
-      visible: true
-    }
-
     NImageRounded {
       id: imagePreview
       anchors {

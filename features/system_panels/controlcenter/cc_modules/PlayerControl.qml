@@ -5,14 +5,13 @@ import "../../../../shared/components/Display"
 import "../../../../shared/theme"
 
 /**
- * PlayerControl - Modern media player widget for Control Center
+ * PlayerControl - Compact media player widget for Control Center
  *
- * Apple Music inspired design with horizontal layout:
- * - Album art on the left (80x80px)
- * - Track info and progress bar in the center
- * - Playback controls and timestamps at the bottom
- * - Fixed height, no expanding animations
- * - Clean, minimal design with smooth transitions
+ * Compact design optimized for half-width layout (180x180px):
+ * - Album art (56x56px) and track info in horizontal row at top
+ * - Progress bar with timestamps in the middle
+ * - Playback controls centered at the bottom
+ * - Fixed size, clean minimal design with smooth transitions
  *
  * States:
  * - Idle: Shows "No Media Playing" with music icon
@@ -27,21 +26,22 @@ Card {
 
   ColumnLayout {
     anchors.fill: parent
-    spacing: Theme.spacing.md
+    spacing: Theme.spacing.sm
 
     // ====================================================================
-    // MAIN CONTENT ROW (Album Art + Track Info)
+    // ALBUM ART & TRACK INFO COLUMN
     // ====================================================================
 
-    RowLayout {
+    ColumnLayout {
       Layout.fillWidth: true
-      spacing: Theme.spacing.lg
+      Layout.alignment: Qt.AlignHCenter
+      spacing: Theme.spacing.sm
 
       // Album art
       Item {
-        Layout.preferredWidth: 80
-        Layout.preferredHeight: 80
-        Layout.alignment: Qt.AlignVCenter
+        Layout.preferredWidth: 48
+        Layout.preferredHeight: 48 
+        Layout.alignment: Qt.AlignLeft
 
         NImageRounded {
           anchors.fill: parent
@@ -56,8 +56,10 @@ Card {
           anchors.fill: parent
           visible: !mediaManager.playerActive || mediaManager.playerArtUrl === ""
 
+          radius: Theme.radius.full
+
           icon: mediaManager.playerActive ? "󰝚" : "󰝛"
-          iconSize: Theme.typography.xxl
+          iconSize: Theme.typography.xl
 
           bgColor: mediaManager.playerActive
                    ? Theme.primary_container
@@ -80,8 +82,8 @@ Card {
       // Track info
       ColumnLayout {
         Layout.fillWidth: true
-        Layout.alignment: Qt.AlignVCenter
-        spacing: 4
+        Layout.alignment: Qt.AlignLeft
+        spacing: 2
 
         Text {
           Layout.fillWidth: true
@@ -93,6 +95,7 @@ Card {
           font.family: Theme.typography.fontFamilyDisplay
           font.weight: Theme.typography.weightMedium
           elide: Text.ElideRight
+          horizontalAlignment: Text.AlignLeft
         }
 
         Text {
@@ -101,10 +104,11 @@ Card {
                 ? (mediaManager.playerArtist || "Unknown Artist")
                 : "Idle"
           color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
+          font.pixelSize: Theme.typography.xs
           font.family: Theme.typography.fontFamily
           elide: Text.ElideRight
-          opacity: 0.8
+          horizontalAlignment: Text.AlignLeft
+          opacity: 0.7
         }
       }
     }
@@ -117,7 +121,6 @@ Card {
       Layout.fillWidth: true
       Layout.preferredHeight: 4
       visible: mediaManager.playerActive
-
       opacity: mediaManager.playerActive ? 1 : 0
 
       Behavior on opacity {
@@ -138,7 +141,8 @@ Card {
         }
         width: {
           if (mediaManager.playerLength > 0) {
-            return parent.width * (mediaManager.playerPosition / mediaManager.playerLength)
+            let progress = Math.min(Math.max(mediaManager.playerPosition / mediaManager.playerLength, 0), 1)
+            return Math.min(parent.width * progress, parent.width)
           }
           return 0
         }
@@ -164,64 +168,84 @@ Card {
     }
 
     // ====================================================================
-    // PLAYBACK CONTROLS & TIME
+    // PLAYBACK CONTROLS
     // ====================================================================
 
     RowLayout {
       Layout.fillWidth: true
-      spacing: Theme.spacing.sm
+      Layout.alignment: Qt.AlignHCenter
+      spacing: Theme.spacing.lg
       visible: mediaManager.playerActive
-
       opacity: mediaManager.playerActive ? 1 : 0
 
       Behavior on opacity {
         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
       }
 
+      // Previous button
       Text {
-        text: mediaManager.formatTime(mediaManager.playerPosition)
-        color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.sm
+        text: "󰒮"
+        color: Theme.on_surface
+        font.pixelSize: Theme.typography.xl
         font.family: Theme.typography.fontFamily
-        opacity: 0.7
-      }
+        opacity: prevMouseArea.containsMouse ? 0.7 : 1
 
-      Item { Layout.fillWidth: true }
+        Behavior on opacity {
+          NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+        }
 
-      RowLayout {
-        Layout.alignment: Qt.AlignHCenter
-        spacing: Theme.spacing.sm
-
-        RoundIconButton {
-          size: 32
-          icon: "󰒮"
-          isPrimary: false
+        MouseArea {
+          id: prevMouseArea
+          anchors.fill: parent
+          anchors.margins: -4
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
           onClicked: mediaManager.playerPrevious()
         }
+      }
 
-        RoundIconButton {
-          size: 36
-          icon: mediaManager.playerPlaying ? "󰏤" : "󰼛"
-          isPrimary: true
-          onClicked: mediaManager.playerPlayPause()
+      // Play/Pause button
+      Text {
+        text: mediaManager.playerPlaying ? "󰏤" : "󰐊"
+        color: Theme.on_surface
+        font.pixelSize: Theme.typography.xxl
+        font.family: Theme.typography.fontFamily
+        opacity: playMouseArea.containsMouse ? 0.7 : 1
+
+        Behavior on opacity {
+          NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
         }
 
-        RoundIconButton {
-          size: 32
-          icon: "󰒭"
-          isPrimary: false
-          onClicked: mediaManager.playerNext()
+        MouseArea {
+          id: playMouseArea
+          anchors.fill: parent
+          anchors.margins: -4
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: mediaManager.playerPlayPause()
         }
       }
 
-      Item { Layout.fillWidth: true }
-
+      // Next button
       Text {
-        text: mediaManager.formatTime(mediaManager.playerLength)
-        color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.sm
+        text: "󰒭"
+        color: Theme.on_surface
+        font.pixelSize: Theme.typography.xl
         font.family: Theme.typography.fontFamily
-        opacity: 0.7
+        opacity: nextMouseArea.containsMouse ? 0.7 : 1
+
+        Behavior on opacity {
+          NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+        }
+
+        MouseArea {
+          id: nextMouseArea
+          anchors.fill: parent
+          anchors.margins: -4
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onClicked: mediaManager.playerNext()
+        }
       }
     }
   }

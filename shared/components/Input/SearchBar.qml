@@ -24,10 +24,10 @@ Rectangle {
   // ============================================================================
 
   radius: Theme.radius.full
-  color: Theme.surface_container
+  color: Theme.surface_container_high
 
   border.width: 1
-  border.color: Theme.surface_container_high
+  border.color: Theme.surface_container_highest
 
   // ============================================================================
   // INPUT FIELD

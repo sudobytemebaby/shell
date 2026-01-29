@@ -98,12 +98,13 @@ ShellRoot {
   // ============================================================================
   // CONTROL CENTER
   // ============================================================================
-  
+
   ControlCenterManager {
     id: controlCenterManager
     systemState: systemStateManager
+    matugen: matugenManager
   }
-  
+
   ControlCenterDisplay {
     manager: controlCenterManager
     systemState: systemStateManager
