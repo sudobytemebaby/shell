@@ -56,9 +56,6 @@ Item {
     visible: style === "rounded"
     color: mouseArea.containsMouse ? Theme.surface_container_high : "transparent"
 
-    Behavior on color {
-      ColorAnimation { duration: 150 }
-    }
   }
 
   // Close icon (X)
@@ -66,9 +63,13 @@ Item {
     id: closeText
     anchors.centerIn: parent
     text: "✕"
-    color: Theme.on_surface
+    color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface
     font.pixelSize: Theme.typography.lg
     font.family: Theme.typography.fontFamily
+
+    Behavior on color {
+      ColorAnimation { duration: 150 }
+    }
   }
 
   // Interactive area

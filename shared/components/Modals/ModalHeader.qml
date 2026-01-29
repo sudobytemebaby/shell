@@ -124,19 +124,20 @@ RowLayout {
       Layout.preferredWidth: 32
       Layout.preferredHeight: 32
       radius: Theme.radius.full
-      color: actionMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
+      color: "transparent"
 
-      Behavior on color {
-        ColorAnimation { duration: 150 }
-      }
 
       Text {
         id: actionIcon
         anchors.centerIn: parent
         text: modelData.icon || ""
-        color: Theme.on_surface
+        color: actionMouseArea.containsMouse ? Theme.outline : Theme.on_surface
         font.pixelSize: Theme.typography.lg
         font.family: Theme.typography.fontFamily
+
+        Behavior on color {
+          ColorAnimation { duration: 150 }
+        }
       }
 
       MouseArea {
