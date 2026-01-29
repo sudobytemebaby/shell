@@ -75,12 +75,12 @@ Loader {
 
     KeyboardNavigationHandler {
       id: navHandler
-      currentIndex: 0  // Not used directly (appListComponent manages its own index)
-      itemCount: 0     // Not used directly
+      currentIndex: appListComponent.currentIndex
+      itemCount: appListComponent.count
       enableCtrlPN: true
 
-      onNavigateUp: appListComponent.moveUp()
-      onNavigateDown: appListComponent.moveDown()
+      onNavigateUp: newIndex => appListComponent.currentIndex = newIndex
+      onNavigateDown: newIndex => appListComponent.currentIndex = newIndex
 
       onSelectCurrent: {
         const selectedApp = appListComponent.getCurrentApp()

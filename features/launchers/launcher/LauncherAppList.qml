@@ -49,6 +49,10 @@ Item {
   // Emitted when an application is successfully launched
   signal appLaunched()
 
+  // Expose list state for keyboard navigation handler
+  property alias currentIndex: appList.currentIndex
+  readonly property alias count: appList.count
+
   clip: true
 
   // ========== SEARCH FILTER UTILITIES ==========
