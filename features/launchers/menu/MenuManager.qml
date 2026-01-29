@@ -76,7 +76,7 @@ Scope {
 
   // Error message from last failed operation (empty if no error)
   property string errorMessage: ""
-  
+
   onVisibleChanged: {
     if (visible) {
       searchText = "" // Reset search when opening

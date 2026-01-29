@@ -1,0 +1,5 @@
+module Modals
+
+FooterHint 1.0 FooterHint.qml
+CloseButton 1.0 CloseButton.qml
+ModalHeader 1.0 ModalHeader.qml
