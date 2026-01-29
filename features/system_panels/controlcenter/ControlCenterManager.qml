@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import "managers" as Managers
 
 Scope {
@@ -24,4 +25,20 @@ Scope {
 
   readonly property var media: mediaManager
   readonly property var quickActions: quickActionsManager
+
+  IpcHandler {
+    target: "controlcenter"
+
+    function toggle(): void {
+      manager.visible = !manager.visible
+    }
+
+    function open(): void {
+      manager.visible = true
+    }
+
+    function close(): void {
+      manager.visible = false
+    }
+  }
 }

@@ -22,6 +22,7 @@ import "../../../../shared/theme"
 Card {
   id: root
   padding: Theme.padding.md
+  color: "transparent"
 
   required property var quickActionsManager
 

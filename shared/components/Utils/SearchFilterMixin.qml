@@ -84,11 +84,12 @@ QtObject {
   }
 
   /**
-   * Keyword match - match against array of keywords/tags
+   * Keyword match - match against array of keywords/tags or string
    * Returns true if query matches any keyword
    *
    * Example:
    * - keywordMatch(["smile", "happy", "emotion"], "hap") => true
+   * - keywordMatch("smile happy emotion", "hap") => true
    *
    * Used in: Emoji picker
    */
@@ -97,6 +98,13 @@ QtObject {
     if (!keywords || keywords.length === 0) return false
 
     const lowerQuery = query.toLowerCase()
+
+    // Handle string keywords - treat as single keyword
+    if (typeof keywords === 'string') {
+      return keywords.toLowerCase().includes(lowerQuery)
+    }
+
+    // Handle array of keywords
     return keywords.some(keyword => {
       return keyword.toLowerCase().includes(lowerQuery)
     })

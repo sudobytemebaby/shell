@@ -7,111 +7,118 @@ import "../../../../shared/theme"
 /**
  * PlayerControl - Compact media player widget for Control Center
  *
- * Layout:
- * [ Album Art | Title  ]
- * [           | Artist ]
- * [ ------------------ ] (Progress)
- * [   <<   |>   >>     ] (Controls)
+ * Layout with background album art:
+ * Background: Album art with dark overlay
+ * Overlay: Track info and controls
  */
 
 Card {
   id: root
-  padding: Theme.padding.lg
+  padding: 0
 
   required property var mediaManager
 
+  // ====================================================================
+  // BACKGROUND: ALBUM ART
+  // ====================================================================
+
+  // Album art background with rounded corners using NImageRounded
+  NImageRounded {
+    id: alblumBg
+    anchors.fill: parent
+    imagePath: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
+               ? mediaManager.playerArtUrl
+               : ""
+    radius: Theme.radius.xl
+    borderWidth: 0
+    imageFillMode: Image.PreserveAspectCrop
+    visible: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
+  }
+
+  // Dark overlay for better text contrast
+  Rectangle {
+    anchors.fill: parent
+    color: "#000000"
+    opacity: 0.7
+    radius: Theme.radius.xl
+    visible: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
+  }
+
+  // ====================================================================
+  // CONTENT OVERLAY
+  // ====================================================================
+
+  // Idle state - centered icon and text
+  ColumnLayout {
+    anchors.centerIn: parent
+    width: parent.width - Theme.padding.md * 2
+    spacing: Theme.spacing.md
+    visible: !mediaManager.playerActive
+
+    IconCircle {
+      Layout.alignment: Qt.AlignHCenter
+      Layout.preferredWidth: 60
+      Layout.preferredHeight: 60
+
+      radius: Theme.radius.lg
+      icon: "󰝛"
+      iconSize: Theme.typography.xxl
+      bgColor: Theme.surface_container_highest
+      iconColor: Theme.on_surface_variant
+    }
+
+    Text {
+      Layout.fillWidth: true
+      text: "No Media Playing"
+      color: Theme.on_surface
+      font.pixelSize: Theme.typography.md
+      font.family: Theme.typography.fontFamilyDisplay
+      font.weight: Theme.typography.weightMedium
+      horizontalAlignment: Text.AlignHCenter
+    }
+  }
+
+  // Active state - album art background with controls
   ColumnLayout {
     anchors.fill: parent
+    anchors.margins: Theme.padding.lg
     spacing: Theme.spacing.md
+    visible: mediaManager.playerActive
 
-    // ====================================================================
-    // TOP ROW: ALBUM ART & INFO
-    // ====================================================================
-
-    RowLayout {
+    // Track Info
+    ColumnLayout {
       Layout.fillWidth: true
-      Layout.fillHeight: true // Push controls to bottom if space allows
-      spacing: Theme.spacing.md
+      Layout.alignment: Qt.AlignBottom
+      spacing: 2
 
-      // Album Art
-      Item {
-        Layout.preferredWidth: 50
-        Layout.preferredHeight: 50
-        
-        NImageRounded {
-          anchors.fill: parent
-          imagePath: mediaManager.playerArtUrl
-          borderWidth: 0
-          radius: Theme.radius.lg
-          imageFillMode: Image.PreserveAspectCrop
-          visible: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
-        }
-
-        IconCircle {
-          anchors.fill: parent
-          visible: !mediaManager.playerActive || mediaManager.playerArtUrl === ""
-
-          radius: Theme.radius.lg // Match image radius for consistency
-
-          icon: mediaManager.playerActive ? "󰝚" : "󰝛"
-          iconSize: Theme.typography.xl
-
-          bgColor: mediaManager.playerActive
-                   ? Theme.primary_container
-                   : Theme.surface_container_highest
-
-          iconColor: mediaManager.playerActive
-                     ? Theme.primary
-                     : Theme.on_surface_variant
-
-          Behavior on bgColor { ColorAnimation { duration: 200 } }
-          Behavior on iconColor { ColorAnimation { duration: 200 } }
-        }
+      Text {
+        Layout.fillWidth: true
+        text: mediaManager.playerTitle || "Unknown Title"
+        color: Theme.on_surface
+        font.pixelSize: Theme.typography.lg
+        font.family: Theme.typography.fontFamilyDisplay
+        font.weight: Theme.typography.weightMedium
+        elide: Text.ElideRight
       }
 
-      // Track Info
-      ColumnLayout {
+      Text {
         Layout.fillWidth: true
-        Layout.alignment: Qt.AlignVCenter
-        spacing: 2
-
-        Text {
-          Layout.fillWidth: true
-          text: mediaManager.playerActive
-                ? (mediaManager.playerTitle || "Unknown Title")
-                : "No Media Playing"
-          color: Theme.on_surface
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamilyDisplay
-          font.weight: Theme.typography.weightMedium
-          elide: Text.ElideRight
-        }
-
-        Text {
-          Layout.fillWidth: true
-          text: mediaManager.playerActive
-                ? (mediaManager.playerArtist || "Unknown Artist")
-                : "Idle"
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          elide: Text.ElideRight
-          opacity: 0.8
-        }
+        text: mediaManager.playerArtist || "Unknown Artist"
+        color: Theme.on_surface_variant
+        font.pixelSize: Theme.typography.md
+        font.family: Theme.typography.fontFamily
+        elide: Text.ElideRight
+        opacity: 0.8
       }
     }
 
     // ====================================================================
-    // MIDDLE: PROGRESS BAR
+    // PROGRESS BAR
     // ====================================================================
 
     Item {
       Layout.fillWidth: true
       Layout.preferredHeight: 4
-      visible: mediaManager.playerActive
-      opacity: mediaManager.playerActive ? 1 : 0
-
-      Behavior on opacity { NumberAnimation { duration: 200 } }
 
       // Background track
       Rectangle {
@@ -125,7 +132,7 @@ Card {
         height: parent.height
         radius: 2
         color: Theme.primary
-        
+
         width: {
           if (mediaManager.playerLength > 0) {
             let progress = Math.min(Math.max(mediaManager.playerPosition / mediaManager.playerLength, 0), 1)
@@ -154,25 +161,23 @@ Card {
     }
 
     // ====================================================================
-    // BOTTOM: CONTROLS
+    // CONTROLS
     // ====================================================================
 
     RowLayout {
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
-      spacing: Theme.spacing.md
-      visible: mediaManager.playerActive
-      opacity: mediaManager.playerActive ? 1 : 0
-
-      Behavior on opacity { NumberAnimation { duration: 200 } }
+      spacing: Theme.spacing.lg
 
       // Previous
       Text {
         text: "󰒮"
         color: Theme.on_surface
-        font.pixelSize: 20
+        font.pixelSize: 24
         font.family: Theme.typography.fontFamily
         opacity: prevMouse.containsMouse ? 0.7 : 1
+
+        Behavior on opacity { NumberAnimation { duration: 100 } }
 
         MouseArea {
           id: prevMouse
@@ -186,8 +191,8 @@ Card {
 
       // Play/Pause (Larger)
       Rectangle {
-        Layout.preferredWidth: 36
-        Layout.preferredHeight: 36
+        Layout.preferredWidth: 40
+        Layout.preferredHeight: 40
         radius: 20
         color: Theme.primary_container
 
@@ -195,7 +200,7 @@ Card {
           anchors.centerIn: parent
           text: mediaManager.playerPlaying ? "󰏤" : "󰐊"
           color: Theme.primary
-          font.pixelSize: 18
+          font.pixelSize: 20
           font.family: Theme.typography.fontFamily
         }
 
@@ -218,6 +223,8 @@ Card {
         font.pixelSize: 24
         font.family: Theme.typography.fontFamily
         opacity: nextMouse.containsMouse ? 0.7 : 1
+
+        Behavior on opacity { NumberAnimation { duration: 100 } }
 
         MouseArea {
           id: nextMouse

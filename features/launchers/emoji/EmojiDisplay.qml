@@ -111,8 +111,12 @@ AnimatedLazyLoader {
         item.inVisible = matches
       }
 
-      // Reset selection to first item when filter changes
+      // Reset selection to first item after filtering completes
+      // This ensures highlight is always on the first visible item
       emojiWindow.selectedIndex = 0
+      if (gridView.count > 0) {
+        gridView.positionViewAtBeginning()
+      }
     }
 
     // ========== DELEGATE MODEL WITH FILTERING ==========
@@ -146,8 +150,7 @@ AnimatedLazyLoader {
           emoji: model.emoji
           name: model.name
           itemIndex: model.index
-          isSelected: delegateModel.filterOnGroup === "visible" ?
-                      (DelegateModel.itemsIndex === emojiWindow.selectedIndex) : false
+          isSelected: false  // Highlight is now handled by GridView.highlight
 
           onClicked: {
             // Update selection to the filtered index
@@ -169,6 +172,7 @@ AnimatedLazyLoader {
     Connections {
       target: loader.manager
       function onSelectedGroupChanged() {
+        emojiWindow.selectedIndex = 0
         emojiWindow.scheduleFilter()
       }
     }
@@ -285,14 +289,21 @@ AnimatedLazyLoader {
 
         // Search input with debouncing - filters emojis by name/keywords
         SearchBar {
+          id: searchBar
           Layout.fillWidth: true
           Layout.preferredHeight: 48
           placeholder: "Search emojis..."
           debounceInterval: 0  // Disable SearchBar's debounce, using DelegateModel's instead
+          forwardNavigationKeys: true  // Allow navigation keys to control grid instead of text cursor
 
           onSearchChanged: text => {
             emojiWindow.searchText = text
             emojiWindow.scheduleFilter()
+          }
+
+          // Handle navigation keys forwarded from SearchBar
+          onNavigationKeyPressed: event => {
+            navHandler.handleKeyPress(event)
           }
         }
         
@@ -428,9 +439,59 @@ AnimatedLazyLoader {
           model: delegateModel
           currentIndex: emojiWindow.selectedIndex
 
+          // Visual highlight that follows the currently selected item
+          highlight: Item {
+            width: 70
+            height: 70
+
+            Rectangle {
+              anchors {
+                fill: parent
+                margins: Theme.spacing.xs
+              }
+              radius: Theme.radius.xl
+              color: Theme.primary_container
+            }
+          }
+
+          // Critical: This ensures the highlight automatically moves with currentIndex
+          highlightFollowsCurrentItem: true
+
           // Smooth scrolling configuration
           maximumFlickVelocity: 2000
           flickDeceleration: 1500
+
+          // Ensure currentIndex stays within valid bounds when model changes
+          onCountChanged: {
+            if (count > 0) {
+              if (emojiWindow.selectedIndex >= count) {
+                emojiWindow.selectedIndex = count - 1
+              } else if (emojiWindow.selectedIndex < 0) {
+                emojiWindow.selectedIndex = 0
+              }
+            } else {
+              emojiWindow.selectedIndex = -1
+            }
+          }
+
+          // Automatically scroll to keep the current item visible
+          onCurrentIndexChanged: {
+            if (currentIndex >= 0 && currentIndex < count) {
+              positionViewAtIndex(currentIndex, GridView.Contain)
+            }
+          }
+
+          // Reset selection IMMEDIATELY when search changes (before filtering)
+          // This prevents highlight from "flying" during the debounce period
+          Connections {
+            target: emojiWindow
+            function onSearchTextChanged() {
+              emojiWindow.selectedIndex = 0
+              if (gridView.count > 0) {
+                gridView.positionViewAtBeginning()
+              }
+            }
+          }
 
           // Note: delegate is defined in DelegateModel above for proper filtering support
         }

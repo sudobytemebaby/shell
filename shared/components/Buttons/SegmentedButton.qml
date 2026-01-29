@@ -31,7 +31,7 @@ Rectangle {
   Layout.preferredWidth: 200
   Layout.preferredHeight: 40
   radius: Theme.radius.full
-  color: Theme.surface_container_high
+  color: Theme.surface_container_low
   border.width: 0.5
   border.color: Theme.surface_container_high
 
@@ -65,20 +65,13 @@ Rectangle {
 
         Layout.fillHeight: true
         Layout.fillWidth: true
-        Layout.margins: 4
+        Layout.margins: 6
         
         radius: Theme.radius.full
         
         // Active state: Tertiary container
         // Inactive state: Transparent
         color: index === root.currentIndex ? Theme.tertiary_container : "transparent"
-
-        Behavior on color {
-          ColorAnimation {
-            duration: 200
-            easing.type: Easing.OutCubic
-          }
-        }
 
         RowLayout {
           anchors.centerIn: parent

@@ -16,8 +16,10 @@ Rectangle {
   property int debounceInterval: 0  // 0 = no debounce, >0 = debounce in ms
   property bool showElevation: true
   property bool autoFocus: true
+  property bool forwardNavigationKeys: false  // When true, navigation keys are forwarded instead of handled
 
   signal searchChanged(string text)
+  signal navigationKeyPressed(var event)  // Emitted when navigation keys are pressed (if forwardNavigationKeys is true)
 
   // ============================================================================
   // APPEARANCE
@@ -62,6 +64,19 @@ Rectangle {
         debounceTimer.restart()
       } else {
         root.searchChanged(text)
+      }
+    }
+
+    // Forward navigation keys when enabled
+    Keys.onPressed: event => {
+      if (root.forwardNavigationKeys) {
+        if (event.key === Qt.Key_Up || event.key === Qt.Key_Down ||
+            event.key === Qt.Key_Left || event.key === Qt.Key_Right ||
+            event.key === Qt.Key_Return || event.key === Qt.Key_Enter ||
+            event.key === Qt.Key_Escape) {
+          root.navigationKeyPressed(event)
+          event.accepted = true
+        }
       }
     }
 

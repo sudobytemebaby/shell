@@ -48,10 +48,10 @@ Item {
     
     // Notification count badge
     Rectangle {
-      Layout.preferredWidth: countText.implicitWidth + Theme.spacing.sm
+      Layout.preferredWidth: 12
       Layout.preferredHeight: 12
-      radius: 8
-      color: Qt.darker(Theme.on_surface, 1.2)
+      radius: Theme.radius.full
+      color: Theme.on_surface_variant
       visible: notificationCount > 0
 
       Text {
@@ -59,9 +59,9 @@ Item {
         anchors.centerIn: parent
         text: notificationCount > 99 ? "99+" : notificationCount
         color: Theme.surface_container
-        font.pixelSize: Theme.typography.xs - 3
+        font.pixelSize: 8
         font.family: Theme.fontFamily
-        font.bold: true
+        font.weight: Theme.typography.weightBold
       }
     }
   }

@@ -239,19 +239,13 @@ LazyLoader {
                 return "transparent"
               }
 
-              Behavior on color {
-                ColorAnimation {
-                  duration: 150
-                  easing.type: Easing.OutCubic
-                }
-              }
-
               ColumnLayout {
                 anchors.fill: parent
-                spacing: Theme.spacing.sm
+                spacing: Theme.spacing.xs
 
                 Item { Layout.fillHeight: true }
 
+                // Icon
                 Text {
                   Layout.alignment: Qt.AlignHCenter
                   text: modelData.icon
@@ -268,6 +262,7 @@ LazyLoader {
                   }
                 }
 
+                // Title
                 Text {
                   Layout.fillWidth: true
                   text: modelData.name
@@ -286,12 +281,13 @@ LazyLoader {
                   }
                 }
 
+                // Description
                 Text {
                   Layout.fillWidth: true
                   text: modelData.description
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.xs
+                  font.pixelSize: Theme.typography.sm
                   font.family: Theme.typography.fontFamilyDisplay
                   horizontalAlignment: Text.AlignHCenter
                   opacity: index === matugenWindow.selectedIndex ? 0.8 : 0.6

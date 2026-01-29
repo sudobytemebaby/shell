@@ -74,17 +74,25 @@ Scope {
 
   /**
    * Launch color picker tool (hyprpicker)
-   * Opens hyprpicker with the -p flag to print color to stdout
+   * Executes 'pick-color' script which handles picking and notification
    */
   function executeColorPicker() {
     manager.controlCenter.visible = false
-    try {
-      Quickshell.execDetached({
-        command: ["sh", "hyprpicker", "-p"]
-      })
-    } catch (error) {
-      console.error("[QuickActionsManager] Failed to launch color picker:", error)
-    }
+    
+    // Use a small delay to ensure the window is hidden and focus is released 
+    // before hyprpicker tries to grab the input
+    const timer = Qt.createQmlObject("import QtQuick; Timer { interval: 100; repeat: false; }", manager)
+    timer.triggered.connect(function() {
+      try {
+        Quickshell.execDetached({
+          command: ["pick-color"]
+        })
+      } catch (error) {
+        console.error("[QuickActionsManager] Failed to launch color picker:", error)
+      }
+      timer.destroy()
+    })
+    timer.start()
   }
 
   /**
