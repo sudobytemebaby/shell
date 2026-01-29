@@ -4,6 +4,8 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
 
 /**
  * PowerMenuDisplay - UI display for the power menu system
@@ -74,79 +76,71 @@ LazyLoader {
     // KEYBOARD NAVIGATION & SHORTCUTS
     // ========================================================================
 
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: powerMenuWindow.selectedIndex
+      itemCount: loader.manager.powerOptions.length
+      columns: 3
+      wrapAround: true
+
+      onNavigateUp: newIndex => powerMenuWindow.selectedIndex = newIndex
+      onNavigateDown: newIndex => powerMenuWindow.selectedIndex = newIndex
+      onNavigateLeft: newIndex => powerMenuWindow.selectedIndex = newIndex
+      onNavigateRight: newIndex => powerMenuWindow.selectedIndex = newIndex
+
+      onSelectCurrent: {
+        var selected = loader.manager.powerOptions[powerMenuWindow.selectedIndex]
+        loader.manager.executePowerOption(selected)
+      }
+
+      onClose: loader.manager.visible = false
+    }
+
     contentItem {
       focus: true
 
       // Handle keyboard shortcuts for navigation and quick actions
       Keys.onPressed: event => {
-        // Close menu on Escape
-        if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-        // Arrow key navigation: Up/Left moves to previous option
-        else if (event.key === Qt.Key_Up || event.key === Qt.Key_Left) {
-          if (powerMenuWindow.selectedIndex > 0) {
-            powerMenuWindow.selectedIndex--
-          } else {
-            // Wrap around to last option
-            powerMenuWindow.selectedIndex = loader.manager.powerOptions.length - 1
-          }
-          event.accepted = true
-        }
-        // Arrow key navigation: Down/Right moves to next option
-        else if (event.key === Qt.Key_Down || event.key === Qt.Key_Right) {
-          if (powerMenuWindow.selectedIndex < loader.manager.powerOptions.length - 1) {
-            powerMenuWindow.selectedIndex++
-          } else {
-            // Wrap around to first option
-            powerMenuWindow.selectedIndex = 0
-          }
-          event.accepted = true
-        }
-        // Execute selected option on Enter
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          var selected = loader.manager.powerOptions[powerMenuWindow.selectedIndex]
-          loader.manager.executePowerOption(selected)
-          event.accepted = true
-        }
         // Letter key shortcuts for quick access
         // S: Shutdown
-        else if (event.key === Qt.Key_S) {
-          // Find shutdown option (index 0)
+        if (event.key === Qt.Key_S) {
           loader.manager.executePowerOption(loader.manager.powerOptions[0])
           event.accepted = true
+          return
         }
         // R: Reboot
         else if (event.key === Qt.Key_R) {
-          // Find reboot option (index 1)
           loader.manager.executePowerOption(loader.manager.powerOptions[1])
           event.accepted = true
+          return
         }
         // O: Logout
         else if (event.key === Qt.Key_O) {
-          // Find logout option (index 2)
           loader.manager.executePowerOption(loader.manager.powerOptions[2])
           event.accepted = true
+          return
         }
         // L: Lock
         else if (event.key === Qt.Key_L) {
-          // Find lock option (index 3)
           loader.manager.executePowerOption(loader.manager.powerOptions[3])
           event.accepted = true
+          return
         }
         // U: Suspend
         else if (event.key === Qt.Key_U) {
-          // Find suspend option (index 4)
           loader.manager.executePowerOption(loader.manager.powerOptions[4])
           event.accepted = true
+          return
         }
         // H: Hibernate
         else if (event.key === Qt.Key_H) {
-          // Find hibernate option (index 5)
           loader.manager.executePowerOption(loader.manager.powerOptions[5])
           event.accepted = true
+          return
         }
+
+        // Delegate standard navigation to handler
+        navHandler.handleKeyPress(event)
       }
     }
 
@@ -194,49 +188,9 @@ LazyLoader {
         // HEADER
         // ====================================================================
 
-        RowLayout {
-          Layout.fillWidth: true
-          Layout.preferredHeight: 40
-          spacing: Theme.spacing.sm
-
-          // Title text
-          Text {
-            Layout.fillWidth: true
-            Layout.leftMargin: Theme.padding.xs
-            text: "Power Options"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
-          }
-
-          // Close button (X icon)
-          Rectangle {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            Layout.rightMargin: Theme.padding.xs
-            radius: Theme.radius.full
-            color: closeMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
-
-            Text {
-              anchors.centerIn: parent
-              text: "✕"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.typography.fontFamily
-            }
-
-            MouseArea {
-              id: closeMouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-
-              onClicked: {
-                loader.manager.visible = false
-              }
-            }
-          }
+        ModalHeader {
+          title: "Power Options"
+          onCloseClicked: loader.manager.visible = false
         }
 
         // ====================================================================
@@ -369,14 +323,8 @@ LazyLoader {
         // FOOTER WITH KEYBOARD SHORTCUTS
         // ====================================================================
 
-        Text {
-          Layout.fillWidth: true
-          text: "S Shutdown • R Reboot • O Logout • L Lock • U Suspend • H Hibernate • Esc Close"
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          horizontalAlignment: Text.AlignHCenter
-          opacity: 0.7
+        FooterHint {
+          hint: "S Shutdown • R Reboot • O Logout • L Lock • U Suspend • H Hibernate • Esc Close"
         }
       }
     }

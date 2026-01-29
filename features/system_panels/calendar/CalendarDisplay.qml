@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Modals"
 import "cal_modules" as CalModules
 
 LazyLoader {
@@ -79,42 +80,9 @@ LazyLoader {
           spacing: Theme.spacing.md
 
           // ========== HEADER ==========
-          RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            spacing: Theme.spacing.sm
-
-            Text {
-              Layout.fillWidth: true
-              Layout.leftMargin: Theme.padding.xs
-              text: "Calendar"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.xl
-              font.family: Theme.typography.fontFamily
-              font.weight: Theme.typography.weightMedium
-            }
-
-            // Close button
-            Text {
-              Layout.rightMargin: Theme.padding.sm
-              text: "✕"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.fontFamily
-              opacity: closeMouseArea.containsMouse ? 0.7 : 1
-
-              Behavior on opacity {
-                NumberAnimation { duration: 200 }
-              }
-
-              MouseArea {
-                id: closeMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: loader.manager.visible = false
-              }
-            }
+          ModalHeader {
+            title: "Calendar"
+            onCloseClicked: loader.manager.visible = false
           }
 
           // ========== CURRENT TIME & DATE ==========

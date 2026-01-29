@@ -7,6 +7,9 @@ import "../../../shared/theme"
 import "../../../shared/components"
 import "../../../shared/components/Input"
 import "../../../shared/components/Lists"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
+import "../../../shared/components/Utils"
 
 /**
  * MenuDisplay
@@ -78,46 +81,30 @@ AnimatedLazyLoader {
 
     // ========== KEYBOARD NAVIGATION ==========
 
-    contentItem {
-      focus: true
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: menuList.currentIndex
+      itemCount: menuList.count
+      enableCtrlPN: true
+      enableHomeEnd: true
 
-      // Handle all keyboard shortcuts for menu navigation
-      Keys.onPressed: event => {
-        if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier))) {
-          if (menuList.currentIndex > 0) {
-            menuList.currentIndex--
-          }
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier))) {
-          if (menuList.currentIndex < menuList.count - 1) {
-            menuList.currentIndex++
-          }
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          const filteredItems = menuList.model.values
-          if (menuList.currentIndex >= 0 && menuList.currentIndex < filteredItems.length) {
-            const selectedItem = filteredItems[menuList.currentIndex]
-            loader.manager.executeItem(selectedItem)
-          }
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Home) {
-          menuList.currentIndex = 0
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_End) {
-          if (menuList.count > 0) {
-            menuList.currentIndex = menuList.count - 1
-          }
-          event.accepted = true
+      onNavigateUp: newIndex => menuList.currentIndex = newIndex
+      onNavigateDown: newIndex => menuList.currentIndex = newIndex
+
+      onSelectCurrent: {
+        const filteredItems = menuList.model.values
+        if (menuList.currentIndex >= 0 && menuList.currentIndex < filteredItems.length) {
+          const selectedItem = filteredItems[menuList.currentIndex]
+          loader.manager.executeItem(selectedItem)
         }
       }
+
+      onClose: loader.manager.visible = false
+    }
+
+    contentItem {
+      focus: true
+      Keys.onPressed: event => navHandler.handleKeyPress(event)
     }
 
     // Clicking outside the menu closes it
@@ -147,13 +134,19 @@ AnimatedLazyLoader {
       border.color: Theme.surface_container_high
 
       // Polished appearing animation: subtle scale + fade + slide
-      scale: 0.9 + (loader.animationProgress * 0.1)  // Scale from 0.94 to 1.0
+      scale: 0.8 + (loader.animationProgress * 0.2)  // Scale from 0.94 to 1.0
       opacity: loader.animationProgress  // Fade from 0 to 1
 
       // Prevent clicks on menu from closing it (only background clicks close)
       MouseArea {
         anchors.fill: parent
       }
+
+    // ========== SEARCH FILTER UTILITIES ==========
+
+    SearchFilterMixin {
+      id: filterMixin
+    }
 
     ColumnLayout {
       anchors {
@@ -163,36 +156,10 @@ AnimatedLazyLoader {
       spacing: Theme.spacing.md
 
       // ========== HEADER ==========
-      RowLayout {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 40
-        spacing: Theme.spacing.sm
 
-        Text {
-          Layout.fillWidth: true
-          Layout.leftMargin: Theme.padding.xs
-          text: "Menu"
-          color: Theme.on_surface
-          font.pixelSize: Theme.typography.xl
-          font.family: Theme.typography.fontFamily
-          font.weight: Theme.typography.weightMedium
-        }
-
-        // Close button
-        Text {
-          Layout.rightMargin: Theme.padding.sm
-          text: "✕"
-          color: Theme.on_surface
-          font.pixelSize: Theme.typography.lg
-          font.family: Theme.typography.fontFamily
-
-          MouseArea {
-            id: closeMouseArea
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: loader.manager.visible = false
-          }
-        }
+      ModalHeader {
+        title: "Menu"
+        onCloseClicked: loader.manager.visible = false
       }
 
       // ========== SEARCH BAR ==========
@@ -234,23 +201,25 @@ AnimatedLazyLoader {
           highlightFollowsCurrentItem: true
 
           // Dynamic model that filters menu items based on search text
-          // Filters by matching search against item name or description
+          // Uses SearchFilterMixin for consistent multi-field matching and relevance sorting
           model: ScriptModel {
             values: {
-              const search = loader.manager.searchText.toLowerCase()
               const allItems = loader.manager.menuItems
 
-              if (!search) {
+              // No search term: return all items
+              if (!loader.manager.searchText) {
                 return allItems
               }
 
-              const filtered = allItems.filter(item => {
-                const name = (item.name || "").toLowerCase()
-                const description = (item.description || "").toLowerCase()
-                return name.includes(search) || description.includes(search)
-              })
+              // Filter using multi-field match (name and description)
+              const filtered = filterMixin.filterByMultiField(
+                allItems,
+                loader.manager.searchText,
+                ["name", "description"]
+              )
 
-              return filtered
+              // Sort by relevance for better UX (exact matches first, then starts-with, etc.)
+              return filterMixin.sortByRelevance(filtered, loader.manager.searchText, "name")
             }
           }
 
@@ -326,14 +295,9 @@ AnimatedLazyLoader {
       }
 
       // ========== FOOTER WITH HINT ==========
-      Text {
-        Layout.fillWidth: true
-        text: "Arrows to Navigate • Enter to Select • Esc to Close"
-        color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamilyDisplay
-        horizontalAlignment: Text.AlignHCenter
-        opacity: 0.7
+
+      FooterHint {
+        hint: "Ctrl+P/N to Navigate • Enter to Select • Esc to Close"
       }
     }
   }

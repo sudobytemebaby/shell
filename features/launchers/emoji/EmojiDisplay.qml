@@ -6,14 +6,22 @@ import Quickshell.Wayland
 import "../../../shared/theme"
 import "../../../shared/components"
 import "../../../shared/components/Input"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
+import "../../../shared/components/Utils"
 import "emoji_components" as Components
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
+  show: manager.visible
 
   required property var manager
 
-  active: manager.visible
+  // Polished animation timings
+  openDuration: 150
+  closeDuration: 0
+  openEasingType: Easing.OutCubic
+  closeEasingType: Easing.InOutCubic
 
   PanelWindow {
     id: emojiWindow
@@ -26,6 +34,8 @@ LazyLoader {
       right: true
     }
 
+    visible: loader.active
+
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
@@ -33,7 +43,6 @@ LazyLoader {
     mask: null
 
     Component.onCompleted: {
-      console.log("[EmojiDisplay] Window loaded")
       exclusiveZone = 0
     }
 
@@ -48,6 +57,12 @@ LazyLoader {
     // Calculate columns dynamically based on grid width
     // Safety check: ensure at least 1 column to prevent division by zero
     readonly property int columns: Math.max(1, Math.floor(gridView.width / gridView.cellWidth))
+
+    // ========== SEARCH FILTER UTILITIES ==========
+
+    SearchFilterMixin {
+      id: filterMixin
+    }
 
     // ========== FILTERING DEBOUNCE TIMER ==========
 
@@ -87,8 +102,8 @@ LazyLoader {
         if (group && item.model.group !== group) {
           matches = false
         }
-        // Apply search filter
-        else if (search && item.model.keywords.indexOf(search) === -1) {
+        // Apply search filter using SearchFilterMixin for consistent keyword matching
+        else if (search && !filterMixin.keywordMatch(item.model.keywords, search)) {
           matches = false
         }
 
@@ -160,82 +175,70 @@ LazyLoader {
     
     // ========== KEYBOARD NAVIGATION ==========
 
-    contentItem {
-      focus: true
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: emojiWindow.selectedIndex
+      itemCount: delegateModel.items.count
+      columns: emojiWindow.columns
 
-      Keys.onPressed: event => {
-        // Close picker on Escape
-        if (event.key === Qt.Key_Escape) {
+      onNavigateUp: newIndex => {
+        emojiWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onNavigateDown: newIndex => {
+        emojiWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onNavigateLeft: newIndex => {
+        emojiWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onNavigateRight: newIndex => {
+        emojiWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onSelectCurrent: {
+        // Get the actual item from the delegate model
+        if (emojiWindow.selectedIndex >= 0 &&
+            emojiWindow.selectedIndex < delegateModel.items.count) {
+          var item = delegateModel.items.get(emojiWindow.selectedIndex)
+          console.log("[EmojiDisplay] Selected via Enter:", item.model.emoji)
+
+          // Null safety check
           if (loader.manager) {
-            loader.manager.visible = false
+            loader.manager.copyEmoji(item.model.emoji)
           }
-          event.accepted = true
-        }
-        // Select and copy current emoji on Enter
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          // Get the actual item from the delegate model
-          if (emojiWindow.selectedIndex >= 0 &&
-              emojiWindow.selectedIndex < delegateModel.items.count) {
-            var item = delegateModel.items.get(emojiWindow.selectedIndex)
-            console.log("[EmojiDisplay] Selected via Enter:", item.model.emoji)
-
-            // Null safety check
-            if (loader.manager) {
-              loader.manager.copyEmoji(item.model.emoji)
-            }
-          }
-          event.accepted = true
-        }
-        // Navigate up by one row (calculated columns)
-        else if (event.key === Qt.Key_Up) {
-          var newIndex = emojiWindow.selectedIndex - emojiWindow.columns
-          if (newIndex >= 0) {
-            emojiWindow.selectedIndex = newIndex
-            gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Navigate down by one row (calculated columns)
-        else if (event.key === Qt.Key_Down) {
-          var newIndex = emojiWindow.selectedIndex + emojiWindow.columns
-          if (newIndex < delegateModel.items.count) {
-            emojiWindow.selectedIndex = newIndex
-            gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Navigate left
-        else if (event.key === Qt.Key_Left) {
-          if (emojiWindow.selectedIndex > 0) {
-            emojiWindow.selectedIndex--
-            gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Navigate right
-        else if (event.key === Qt.Key_Right) {
-          if (emojiWindow.selectedIndex < delegateModel.items.count - 1) {
-            emojiWindow.selectedIndex++
-            gridView.positionViewAtIndex(emojiWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
         }
       }
+
+      onClose: {
+        if (loader.manager) {
+          loader.manager.visible = false
+        }
+      }
+    }
+
+    contentItem {
+      focus: true
+      Keys.onPressed: event => navHandler.handleKeyPress(event)
     }
     
     // ========== BACKGROUND OVERLAY ==========
 
     // Semi-transparent scrim overlay - clicking it closes the picker
-
-      MouseArea {
-        anchors.fill: parent
-        onClicked: {
-          // Null safety check
-          if (loader.manager) {
-            loader.manager.visible = false
-          }
+    MouseArea {
+      anchors.fill: parent
+      onClicked: {
+        // Null safety check
+        if (loader.manager) {
+          loader.manager.visible = false
         }
       }
+    }
     
     // ========== MAIN PICKER CONTAINER ==========
 
@@ -246,10 +249,14 @@ LazyLoader {
       y: (parent.height - 550) / 2
       width: 460
       height: 550
-      radius: 28
+      radius: Theme.radius.xl
       color: Theme.surface_container_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high
+
+      // Polished appearing animation: subtle scale + fade + slide
+      scale: 0.95 + (loader.animationProgress * 0.05)
+      opacity: loader.animationProgress
 
       // Prevent clicks on container from propagating to background (which would close picker)
       MouseArea {
@@ -265,41 +272,11 @@ LazyLoader {
         
         // ========== HEADER ==========
 
-        RowLayout {
-          Layout.fillWidth: true
-          Layout.preferredHeight: 40
-          spacing: Theme.spacing.sm
-
-          // Title text
-          Text {
-            Layout.fillWidth: true
-            Layout.leftMargin: Theme.padding.xs
-            text: "Emoji Picker"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
-          }
-
-          // Close button (X icon)
-          Text {
-            Layout.rightMargin: Theme.padding.sm
-            text: "✕"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.lg
-            font.family: Theme.typography.fontFamily
-
-            MouseArea {
-              id: closeMouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: {
-                // Null safety check
-                if (loader.manager) {
-                  loader.manager.visible = false
-                }
-              }
+        ModalHeader {
+          title: "Emoji Picker"
+          onCloseClicked: {
+            if (loader.manager) {
+              loader.manager.visible = false
             }
           }
         }
@@ -523,15 +500,8 @@ LazyLoader {
 
         // ========== FOOTER WITH KEYBOARD HINTS ==========
 
-        // Shows keyboard shortcuts when emojis are visible
-        Text {
-          Layout.fillWidth: true
-          text: "↑↓←→ Navigate • Enter Copy • Esc Close"
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          horizontalAlignment: Text.AlignHCenter
-          opacity: 0.7
+        FooterHint {
+          hint: "Arrows to Navigate • Enter to Copy • Esc to Close"
           visible: delegateModel.items.count > 0
         }
       }

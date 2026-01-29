@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../../shared/theme"
+import "../../../shared/components/Modals"
 
 // ----------------------------------------------------------------------------
 // Weather Footer
@@ -59,13 +60,10 @@ ColumnLayout {
     Layout.preferredHeight: 20
 
     // Centered keyboard shortcut hints
-    Text {
+    FooterHint {
       anchors.centerIn: parent
-      text: "Arrows to Switch • Esc Close"
-      color: Theme.on_surface_variant
-      font.pixelSize: Theme.typography.sm
-      font.family: Theme.typography.fontFamily
-      opacity: 0.7
+      width: parent.width
+      hint: "Arrows to Switch • Esc Close"
     }
 
     // Right-aligned last update timestamp

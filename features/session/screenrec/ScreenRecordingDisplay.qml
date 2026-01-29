@@ -4,6 +4,8 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
 
 /**
  * ScreenRecordingDisplay - UI display for the screen recording menu system
@@ -71,61 +73,53 @@ LazyLoader {
     // KEYBOARD NAVIGATION & SHORTCUTS
     // ========================================================================
 
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: recordingWindow.selectedIndex
+      itemCount: loader.manager.recordingOptions.length
+      columns: 3
+      wrapAround: true
+
+      onNavigateUp: newIndex => recordingWindow.selectedIndex = newIndex
+      onNavigateDown: newIndex => recordingWindow.selectedIndex = newIndex
+      onNavigateLeft: newIndex => recordingWindow.selectedIndex = newIndex
+      onNavigateRight: newIndex => recordingWindow.selectedIndex = newIndex
+
+      onSelectCurrent: {
+        var selected = loader.manager.recordingOptions[recordingWindow.selectedIndex]
+        loader.manager.executeRecordingOption(selected)
+      }
+
+      onClose: loader.manager.visible = false
+    }
+
     contentItem {
       focus: true
 
       // Handle keyboard shortcuts for navigation and quick actions
       Keys.onPressed: event => {
-        // Close menu on Escape
-        if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-        // Arrow key navigation: Up/Left moves to previous option
-        else if (event.key === Qt.Key_Up || event.key === Qt.Key_Left) {
-          if (recordingWindow.selectedIndex > 0) {
-            recordingWindow.selectedIndex--
-          } else {
-            // Wrap around to last option
-            recordingWindow.selectedIndex = loader.manager.recordingOptions.length - 1
-          }
-          event.accepted = true
-        }
-        // Arrow key navigation: Down/Right moves to next option
-        else if (event.key === Qt.Key_Down || event.key === Qt.Key_Right) {
-          if (recordingWindow.selectedIndex < loader.manager.recordingOptions.length - 1) {
-            recordingWindow.selectedIndex++
-          } else {
-            // Wrap around to first option
-            recordingWindow.selectedIndex = 0
-          }
-          event.accepted = true
-        }
-        // Execute selected option on Enter
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          var selected = loader.manager.recordingOptions[recordingWindow.selectedIndex]
-          loader.manager.executeRecordingOption(selected)
-          event.accepted = true
-        }
         // Letter key shortcuts for quick access
         // F: Fullscreen
-        else if (event.key === Qt.Key_F) {
-          // Find fullscreen option (index 0)
+        if (event.key === Qt.Key_F) {
           loader.manager.executeRecordingOption(loader.manager.recordingOptions[0])
           event.accepted = true
+          return
         }
         // W: Window
         else if (event.key === Qt.Key_W) {
-          // Find window option (index 1)
           loader.manager.executeRecordingOption(loader.manager.recordingOptions[1])
           event.accepted = true
+          return
         }
         // S: Region/Section
         else if (event.key === Qt.Key_R) {
-          // Find region option (index 2)
           loader.manager.executeRecordingOption(loader.manager.recordingOptions[2])
           event.accepted = true
+          return
         }
+
+        // Delegate standard navigation to handler
+        navHandler.handleKeyPress(event)
       }
     }
 
@@ -416,16 +410,10 @@ LazyLoader {
         // FOOTER WITH KEYBOARD SHORTCUTS
         // ====================================================================
 
-        Text {
-          Layout.fillWidth: true
-          text: loader.manager.isRecording ?
+        FooterHint {
+          hint: loader.manager.isRecording ?
                 "F/W/S Stop recording • Esc Close" :
                 "F Fullscreen • W Window • R Region • Esc Close"
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          horizontalAlignment: Text.AlignHCenter
-          opacity: 0.7
         }
       }
     }

@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import "../../../shared/theme"
 import "../../../shared/components/Lists"
+import "../../../shared/components/Utils"
 
 /**
  * LauncherAppList
@@ -50,6 +51,12 @@ Item {
 
   clip: true
 
+  // ========== SEARCH FILTER UTILITIES ==========
+
+  SearchFilterMixin {
+    id: filterMixin
+  }
+
   // ========== APPLICATION LIST ==========
 
   ListView {
@@ -95,28 +102,22 @@ Item {
     }
 
     // Dynamic model that filters applications based on search text
-    // Filters by matching search against app name or comment/description
+    // Uses SearchFilterMixin for consistent multi-field matching and relevance sorting
     model: ScriptModel {
       values: {
-        const search = root.searchTerm.toLowerCase()
+        // Get all non-hidden desktop applications
+        const allApps = DesktopEntries.applications.values.filter(app => !app.hidden)
 
-        // Get all desktop applications from DesktopEntries
-        const allApps = DesktopEntries.applications.values
-
-        // Return all apps if no search term
-        if (!search) {
+        // No search term: return all apps
+        if (!root.searchTerm) {
           return allApps
         }
 
-        // Filter apps by name and comment
-        const filtered = allApps.filter(app => {
-          if (app.hidden) return false  // Skip hidden apps
-          const name = (app.name || "").toLowerCase()
-          const comment = (app.comment || "").toLowerCase()
-          return name.includes(search) || comment.includes(search)
-        })
+        // Filter using multi-field match (name and comment)
+        const filtered = filterMixin.filterByMultiField(allApps, root.searchTerm, ["name", "comment"])
 
-        return filtered
+        // Sort by relevance for better UX (exact matches first, then starts-with, etc.)
+        return filterMixin.sortByRelevance(filtered, root.searchTerm, "name")
       }
     }
 

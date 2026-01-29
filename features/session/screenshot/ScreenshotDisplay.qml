@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Navigation"
 
 /**
  * ScreenshotDisplay - Compact OSD-style screenshot menu
@@ -42,47 +43,49 @@ LazyLoader {
 
     property int selectedIndex: 0
 
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: screenshotWindow.selectedIndex
+      itemCount: loader.manager.screenshotOptions.length
+      columns: 3
+      wrapAround: true
+
+      onNavigateUp: newIndex => screenshotWindow.selectedIndex = newIndex
+      onNavigateDown: newIndex => screenshotWindow.selectedIndex = newIndex
+      onNavigateLeft: newIndex => screenshotWindow.selectedIndex = newIndex
+      onNavigateRight: newIndex => screenshotWindow.selectedIndex = newIndex
+
+      onSelectCurrent: {
+        var selected = loader.manager.screenshotOptions[screenshotWindow.selectedIndex]
+        loader.manager.executeScreenshotOption(selected)
+      }
+
+      onClose: loader.manager.visible = false
+    }
+
     contentItem {
       focus: true
 
       Keys.onPressed: event => {
-        if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Up || event.key === Qt.Key_Left) {
-          if (screenshotWindow.selectedIndex > 0) {
-            screenshotWindow.selectedIndex--
-          } else {
-            screenshotWindow.selectedIndex = loader.manager.screenshotOptions.length - 1
-          }
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Down || event.key === Qt.Key_Right) {
-          if (screenshotWindow.selectedIndex < loader.manager.screenshotOptions.length - 1) {
-            screenshotWindow.selectedIndex++
-          } else {
-            screenshotWindow.selectedIndex = 0
-          }
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          var selected = loader.manager.screenshotOptions[screenshotWindow.selectedIndex]
-          loader.manager.executeScreenshotOption(selected)
-          event.accepted = true
-        }
-        else if (event.key === Qt.Key_F) {
+        // Custom shortcuts
+        if (event.key === Qt.Key_F) {
           loader.manager.executeScreenshotOption(loader.manager.screenshotOptions[0])
           event.accepted = true
+          return
         }
         else if (event.key === Qt.Key_W) {
           loader.manager.executeScreenshotOption(loader.manager.screenshotOptions[1])
           event.accepted = true
+          return
         }
         else if (event.key === Qt.Key_R) {
           loader.manager.executeScreenshotOption(loader.manager.screenshotOptions[2])
           event.accepted = true
+          return
         }
+
+        // Delegate standard navigation to handler
+        navHandler.handleKeyPress(event)
       }
     }
 

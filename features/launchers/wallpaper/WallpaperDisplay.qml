@@ -5,30 +5,46 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
 import "../../../shared/components/Input"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
+import "../../../shared/components/Utils"
 import "wallpaper_components" as Components
 
 /**
- * WallpaperGrid - Main UI display for the wallpaper picker
+ * WallpaperDisplay
  *
- * This component provides:
+ * UI display component for the wallpaper picker.
+ *
+ * ARCHITECTURE:
+ * This component implements the Display pattern, handling all visual presentation
+ * while delegating state management and logic to WallpaperManager.qml. The UI is
+ * lazy-loaded for performance and uses Material 3 design principles.
+ *
+ * FEATURES:
  * - Full-screen overlay wallpaper picker interface
  * - Fuzzy search filtering for wallpaper names
  * - Comprehensive keyboard navigation (arrow keys, Home/End, Ctrl+P/N)
  * - Visual states: loading, error, empty, grid view
  * - Material 3 design with smooth animations
  *
- * Architecture:
- * - LazyLoader ensures UI only loads when visible
- * - WallpaperManager handles data and business logic
- * - This component is purely presentational
- * - Uses fuzzy matching algorithm for search (allows "out of order" character matches)
+ * KEYBOARD SHORTCUTS:
+ * - Up/Down/Left/Right or Ctrl+P/N: Navigate through wallpapers
+ * - Home/End: Jump to first/last item
+ * - Enter: Select wallpaper
+ * - Escape: Close picker
+ * - Type to search: Filter wallpapers
  */
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
+  show: manager.visible
 
   required property var manager
 
-  active: manager.visible
+  // Polished animation timings
+  openDuration: 150
+  closeDuration: 0
+  openEasingType: Easing.OutCubic
+  closeEasingType: Easing.InOutCubic
 
   PanelWindow {
     id: wallpaperWindow
@@ -41,11 +57,31 @@ LazyLoader {
       right: true
     }
 
+    visible: loader.active
+
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     color: "transparent"
     mask: null
+
+    Component.onCompleted: {
+      exclusiveZone = 0
+
+      // Initialize filtered wallpapers if already loaded
+      // Null safety check before accessing wallpapers
+      if (loader.manager && loader.manager.wallpapers && loader.manager.wallpapers.length > 0) {
+        wallpaperWindow.updateFilteredWallpapers()
+      }
+    }
+
+    // ========================================================================
+    // SEARCH FILTER UTILITIES
+    // ========================================================================
+
+    SearchFilterMixin {
+      id: filterMixin
+    }
 
     // ========================================================================
     // SEARCH AND SELECTION STATE
@@ -62,6 +98,7 @@ LazyLoader {
     /**
      * Filter wallpapers based on search query using fuzzy matching
      *
+     * Uses SearchFilterMixin for consistent fuzzy matching across all pickers.
      * Fuzzy matching allows characters to appear in order but not necessarily
      * consecutively. For example, "nod" would match "nord_outerspace.png"
      *
@@ -73,39 +110,20 @@ LazyLoader {
     function updateFilteredWallpapers() {
       // Null safety check - prevent crashes if manager is not available
       if (!loader.manager || !loader.manager.wallpapers) {
-        console.warn("[WallpaperGrid] Manager or wallpapers not available")
+        console.warn("[WallpaperDisplay] Manager or wallpapers not available")
         wallpaperWindow.filteredWallpapers = []
         return
       }
 
-      var search = wallpaperWindow.searchText.toLowerCase()
-
-      if (!search) {
+      if (!wallpaperWindow.searchText) {
         // No search query - show all wallpapers
         wallpaperWindow.filteredWallpapers = loader.manager.wallpapers
       } else {
-        // Apply fuzzy search algorithm
-        var filtered = []
-
-        for (var i = 0; i < loader.manager.wallpapers.length; i++) {
-          var name = loader.manager.wallpapers[i].toLowerCase()
-
-          // Fuzzy matching: check if all search characters appear in order
-          // Example: search "nrd" matches "nord_space.png"
-          var searchIdx = 0
-          for (var j = 0; j < name.length && searchIdx < search.length; j++) {
-            if (name[j] === search[searchIdx]) {
-              searchIdx++
-            }
-          }
-
-          // If we found all search characters in order, include this wallpaper
-          if (searchIdx === search.length) {
-            filtered.push(loader.manager.wallpapers[i])
-          }
-        }
-
-        wallpaperWindow.filteredWallpapers = filtered
+        // Apply fuzzy search using SearchFilterMixin for consistent behavior
+        wallpaperWindow.filteredWallpapers = filterMixin.filterByFuzzy(
+          loader.manager.wallpapers,
+          wallpaperWindow.searchText
+        )
       }
 
       // Reset selection to first item when filter changes
@@ -128,113 +146,61 @@ LazyLoader {
         wallpaperWindow.updateFilteredWallpapers()
       }
     }
-
-    // ========================================================================
-    // INITIALIZATION
-    // ========================================================================
-
-    // Initialize window and perform initial filtering
-    Component.onCompleted: {
-      exclusiveZone = 0
-
-      // Initialize filtered wallpapers if already loaded
-      // Null safety check before accessing wallpapers
-      if (loader.manager && loader.manager.wallpapers && loader.manager.wallpapers.length > 0) {
-        wallpaperWindow.updateFilteredWallpapers()
-      }
-    }
     
     // ========================================================================
     // KEYBOARD NAVIGATION
     // ========================================================================
 
-    contentItem {
-      focus: true
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: wallpaperWindow.selectedIndex
+      itemCount: wallpaperWindow.filteredWallpapers.length
+      columns: gridView.columnsPerRow
+      enableCtrlPN: true
+      enableHomeEnd: true
 
-      Keys.onPressed: event => {
-        // Calculate columns dynamically based on current grid width
-        // This is used for up/down navigation to move by full rows
-        var columnsPerRow = gridView.columnsPerRow
+      onNavigateUp: newIndex => {
+        wallpaperWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
 
-        // Close picker on Escape
-        if (event.key === Qt.Key_Escape) {
-          // Null safety check
+      onNavigateDown: newIndex => {
+        wallpaperWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onNavigateLeft: newIndex => {
+        wallpaperWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onNavigateRight: newIndex => {
+        wallpaperWindow.selectedIndex = newIndex
+        gridView.positionViewAtIndex(newIndex, GridView.Contain)
+      }
+
+      onSelectCurrent: {
+        if (wallpaperWindow.selectedIndex >= 0 &&
+            wallpaperWindow.selectedIndex < wallpaperWindow.filteredWallpapers.length) {
+          var selected = wallpaperWindow.filteredWallpapers[wallpaperWindow.selectedIndex]
+
+          // Null safety check before calling manager method
           if (loader.manager) {
-            loader.manager.visible = false
+            loader.manager.setWallpaper(selected)
           }
-          event.accepted = true
-        }
-        // Select and apply current wallpaper on Enter
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          if (wallpaperWindow.selectedIndex >= 0 &&
-              wallpaperWindow.selectedIndex < wallpaperWindow.filteredWallpapers.length) {
-            var selected = wallpaperWindow.filteredWallpapers[wallpaperWindow.selectedIndex]
-
-            // Null safety check before calling manager method
-            if (loader.manager) {
-              loader.manager.setWallpaper(selected)
-            }
-          }
-          event.accepted = true
-        }
-        // Navigate up by one row (also Ctrl+P for Emacs-style navigation)
-        else if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier))) {
-          if (wallpaperWindow.selectedIndex >= columnsPerRow) {
-            // Move up one full row
-            wallpaperWindow.selectedIndex -= columnsPerRow
-            gridView.positionViewAtIndex(wallpaperWindow.selectedIndex, GridView.Contain)
-          } else if (wallpaperWindow.selectedIndex > 0) {
-            // Already in first row - jump to first item
-            wallpaperWindow.selectedIndex = 0
-            gridView.positionViewAtIndex(0, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Navigate down by one row (also Ctrl+N for Emacs-style navigation)
-        else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier))) {
-          var newIndex = wallpaperWindow.selectedIndex + columnsPerRow
-          if (newIndex < wallpaperWindow.filteredWallpapers.length) {
-            // Move down one full row
-            wallpaperWindow.selectedIndex = newIndex
-            gridView.positionViewAtIndex(wallpaperWindow.selectedIndex, GridView.Contain)
-          } else if (wallpaperWindow.selectedIndex < wallpaperWindow.filteredWallpapers.length - 1) {
-            // Already in last row - jump to last item
-            wallpaperWindow.selectedIndex = wallpaperWindow.filteredWallpapers.length - 1
-            gridView.positionViewAtIndex(wallpaperWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Navigate left
-        else if (event.key === Qt.Key_Left) {
-          if (wallpaperWindow.selectedIndex > 0) {
-            wallpaperWindow.selectedIndex--
-            gridView.positionViewAtIndex(wallpaperWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Navigate right
-        else if (event.key === Qt.Key_Right) {
-          if (wallpaperWindow.selectedIndex < wallpaperWindow.filteredWallpapers.length - 1) {
-            wallpaperWindow.selectedIndex++
-            gridView.positionViewAtIndex(wallpaperWindow.selectedIndex, GridView.Contain)
-          }
-          event.accepted = true
-        }
-        // Jump to first wallpaper
-        else if (event.key === Qt.Key_Home) {
-          wallpaperWindow.selectedIndex = 0
-          gridView.positionViewAtIndex(0, GridView.Beginning)
-          event.accepted = true
-        }
-        // Jump to last wallpaper
-        else if (event.key === Qt.Key_End) {
-          if (wallpaperWindow.filteredWallpapers.length > 0) {
-            wallpaperWindow.selectedIndex = wallpaperWindow.filteredWallpapers.length - 1
-            gridView.positionViewAtIndex(wallpaperWindow.selectedIndex, GridView.End)
-          }
-          event.accepted = true
         }
       }
+
+      onClose: {
+        if (loader.manager) {
+          loader.manager.visible = false
+        }
+      }
+    }
+
+    contentItem {
+      focus: true
+      Keys.onPressed: event => navHandler.handleKeyPress(event)
     }
     
     // ========================================================================
@@ -262,10 +228,14 @@ LazyLoader {
       y: (parent.height - 700) / 2
       width: 900
       height: 700
-      radius: 28
-      color: Theme.surface_transparent_medium
+      radius: Theme.radius.xl
+      color: Theme.surface_container_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high
+
+      // Polished appearing animation: subtle scale + fade + slide
+      scale: 0.95 + (loader.animationProgress * 0.05)
+      opacity: loader.animationProgress
 
       // Prevent clicks on container from propagating to background (which would close picker)
       MouseArea {
@@ -283,80 +253,24 @@ LazyLoader {
         // HEADER
         // ====================================================================
 
-        RowLayout {
-          Layout.fillWidth: true
-          Layout.preferredHeight: 40
-          spacing: Theme.spacing.sm
+        ModalHeader {
+          title: "Wallpapers"
 
-          // Title text
-          Text {
-            Layout.fillWidth: true
-            Layout.leftMargin: Theme.padding.xs
-            text: "Wallpapers"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
-          }
-
-          // Refresh button (rescans wallpaper directory)
-          Rectangle {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            radius: Theme.radius.full
-            color: refreshMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
-
-            Text {
-              anchors.centerIn: parent
-              text: "󰑐"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.typography.fontFamily
-            }
-
-            MouseArea {
-              id: refreshMouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-
-              onClicked: {
-                // Null safety check
+          actionButtons: [
+            {
+              icon: "󰑐",
+              tooltip: "Refresh wallpapers",
+              onClicked: () => {
                 if (loader.manager) {
                   loader.manager.refreshWallpapers()
                 }
               }
             }
-          }
+          ]
 
-          // Close button (X icon)
-          Rectangle {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            Layout.rightMargin: Theme.padding.xs
-            radius: Theme.radius.full
-            color: closeMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
-
-            Text {
-              anchors.centerIn: parent
-              text: "✕"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.typography.fontFamily
-            }
-
-            MouseArea {
-              id: closeMouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-
-              onClicked: {
-                // Null safety check
-                if (loader.manager) {
-                  loader.manager.visible = false
-                }
-              }
+          onCloseClicked: {
+            if (loader.manager) {
+              loader.manager.visible = false
             }
           }
         }
@@ -586,36 +500,14 @@ LazyLoader {
         // FOOTER
         // ====================================================================
 
-        // Keyboard shortcuts hint and wallpaper count
-        RowLayout {
-          Layout.fillWidth: true
-          spacing: Theme.spacing.md
+        // Keyboard shortcuts hint
+        FooterHint {
           visible: {
             // Null safety check
             if (!loader.manager) return false
             return !loader.manager.isLoading && wallpaperWindow.filteredWallpapers.length > 0
           }
-
-          // Keyboard shortcuts hint
-          Text {
-            Layout.fillWidth: true
-            text: "Arrows to Navigate • Enter to Select • Esc to Close"
-            color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
-            font.family: Theme.typography.fontFamily
-            horizontalAlignment: Text.AlignHCenter
-            opacity: 0.7
-          }
-
-          // Wallpaper count indicator
-          Text {
-            text: wallpaperWindow.filteredWallpapers.length + " wallpaper" +
-                  (wallpaperWindow.filteredWallpapers.length === 1 ? "" : "s")
-            color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
-            font.family: Theme.typography.fontFamily
-            opacity: 0.7
-          }
+          hint: "Ctrl+P/N Navigate • Enter Select • Esc Close"
         }
       }
     }

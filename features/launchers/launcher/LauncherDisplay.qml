@@ -5,6 +5,8 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
 import "../../../shared/components/Input"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
 
 /**
  * LauncherDisplay
@@ -71,51 +73,44 @@ Loader {
 
     // ========== KEYBOARD NAVIGATION ==========
 
-    contentItem {
-      focus: true
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: 0  // Not used directly (appListComponent manages its own index)
+      itemCount: 0     // Not used directly
+      enableCtrlPN: true
 
-      // Handle all keyboard shortcuts for launcher navigation
-      Keys.onPressed: event => {
-          if (event.key === Qt.Key_Escape) {
+      onNavigateUp: appListComponent.moveUp()
+      onNavigateDown: appListComponent.moveDown()
+
+      onSelectCurrent: {
+        const selectedApp = appListComponent.getCurrentApp()
+        if (selectedApp) {
+          // Try app.execute() first (preferred method)
+          try {
+            selectedApp.execute()
             loader.manager.visible = false
-            event.accepted = true
-          }
-          else if (event.key === Qt.Key_Up || (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier))) {
-            appListComponent.moveUp()
-            event.accepted = true
-          }
-          else if (event.key === Qt.Key_Down || (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier))) {
-            appListComponent.moveDown()
-            event.accepted = true
-          }
-          else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-            event.accepted = true
-
-            const selectedApp = appListComponent.getCurrentApp()
-
-            if (selectedApp) {
-              // Try app.execute() first (preferred method)
-              try {
-                selectedApp.execute()
-                loader.manager.visible = false
-              } catch (error) {
-                // Fallback: try execDetached if execute() fails
-                try {
-                  Quickshell.execDetached({
-                    command: selectedApp.command,
-                    workingDirectory: selectedApp.workingDirectory || ""
-                  })
-                  loader.manager.visible = false
-                } catch (fallbackError) {
-                  console.error("[LauncherDisplay] Both launch methods failed:", fallbackError)
-                }
-              }
+          } catch (error) {
+            // Fallback: try execDetached if execute() fails
+            try {
+              Quickshell.execDetached({
+                command: selectedApp.command,
+                workingDirectory: selectedApp.workingDirectory || ""
+              })
+              loader.manager.visible = false
+            } catch (fallbackError) {
+              console.error("[LauncherDisplay] Both launch methods failed:", fallbackError)
             }
+          }
         }
       }
+
+      onClose: loader.manager.visible = false
     }
 
-    // ========== BACKGROUND OVERLAY ==========
+    contentItem {
+      focus: true
+      Keys.onPressed: event => navHandler.handleKeyPress(event)
+    }
 
     // Clicking outside the launcher closes it
     MouseArea {
@@ -149,36 +144,10 @@ Loader {
         spacing: Theme.spacing.md
 
         // ========== HEADER ==========
-        RowLayout {
-          Layout.fillWidth: true
-          Layout.preferredHeight: 40
-          spacing: Theme.spacing.sm
 
-          Text {
-            Layout.fillWidth: true
-            Layout.leftMargin: Theme.padding.xs
-            text: "Applications"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
-          }
-
-          // Close button (clickable X icon)
-          Text {
-            Layout.rightMargin: Theme.padding.sm
-            text: "✕"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.lg
-            font.family: Theme.typography.fontFamily
-
-            MouseArea {
-              id: closeMouseArea
-              anchors.fill: parent
-              cursorShape: Qt.PointingHandCursor
-              onClicked: loader.manager.visible = false
-            }
-          }
+        ModalHeader {
+          title: "Applications"
+          onCloseClicked: loader.manager.visible = false
         }
 
         // ========== SEARCH BAR ==========
@@ -212,14 +181,9 @@ Loader {
         }
 
         // ========== FOOTER WITH HINT ==========
-        Text {
-          Layout.fillWidth: true
-          text: "↑↓ / Ctrl+P/N Navigate • Enter Launch • Esc Close"
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          horizontalAlignment: Text.AlignHCenter
-          opacity: 0.7
+
+        FooterHint {
+          hint: "Ctrl+P/N Navigate • Enter Launch • Esc Close"
         }
       }
     }

@@ -127,7 +127,7 @@ Scope {
     },
     {
       icon: "󰏘",
-      name: "Matugen Colors",
+      name: "Themes",
       description: "Apply color scheme from wallpaper",
       command: "matugen"  // Special command to trigger matugen menu
     },

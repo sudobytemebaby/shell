@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import "../../../shared/theme"
 import "../../../shared/components"
+import "../../../shared/components/Modals"
 import "cc_modules" as Modules
 
 // ============================================================================
@@ -73,7 +74,7 @@ LazyLoader {
       x: 28
       y: 28
       width: 360
-      height: 640
+      height: 620
 
       Rectangle {
         id: background
@@ -87,7 +88,7 @@ LazyLoader {
           anchors.fill: parent
         }
 
-        Column {
+        ColumnLayout {
           anchors {
             fill: parent
             margins: Theme.padding.xl
@@ -98,41 +99,9 @@ LazyLoader {
           // HEADER
           // ====================================================================
 
-          RowLayout {
-            width: parent.width
-            height: 40
-            spacing: 8
-
-            Text {
-              Layout.fillWidth: true
-              Layout.leftMargin: Theme.padding.sm
-              text: "Control Center"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.xl
-              font.family: Theme.typography.fontFamily
-              font.weight: 600
-            }
-
-            Text {
-              Layout.rightMargin: Theme.padding.sm
-              text: "✕"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.typography.fontFamily
-              opacity: closeMouseArea.containsMouse ? 0.7 : 1
-
-              Behavior on opacity {
-                NumberAnimation { duration: 200 }
-              }
-
-              MouseArea {
-                id: closeMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: loader.manager.visible = false
-              }
-            }
+          ModalHeader {
+            title: "Control Center"
+            onCloseClicked: loader.manager.visible = false
           }
 
           // ====================================================================
@@ -141,7 +110,7 @@ LazyLoader {
           // WiFi, Bluetooth, Night Mode, Microphone controls
 
           GridLayout {
-            width: parent.width
+            Layout.fillWidth: true
             columns: 2
             rowSpacing: 12
             columnSpacing: 12
@@ -176,7 +145,7 @@ LazyLoader {
           // Volume and brightness controls
 
           Card {
-            width: parent.width
+            Layout.fillWidth: true
             height: 210
             padding: Theme.padding.xs
 
@@ -201,7 +170,7 @@ LazyLoader {
           // MEDIA PLAYER & QUICK ACTIONS
           // ====================================================================
           RowLayout {
-            width: parent.width
+            Layout.fillWidth: true
             height: 168
             spacing: Theme.spacing.sm
 

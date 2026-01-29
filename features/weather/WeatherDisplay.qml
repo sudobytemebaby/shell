@@ -4,6 +4,8 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../shared/theme"
+import "../../shared/components/Modals"
+import "../../shared/components/Navigation"
 import "weather_modules" as Modules
 
 // ----------------------------------------------------------------------------
@@ -52,34 +54,44 @@ LazyLoader {
     // KEYBOARD NAVIGATION
     // ========================================================================
 
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: viewStack.currentIndex
+      itemCount: 3
+      columns: 3
+      wrapAround: true
+
+      onNavigateLeft: newIndex => viewStack.currentIndex = newIndex
+      onNavigateRight: newIndex => viewStack.currentIndex = newIndex
+      
+      onClose: loader.manager.visible = false
+    }
+
     contentItem {
       focus: true
       Keys.onPressed: event => {
-        // Close on Escape
-        if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-
-        // Navigate forward (Right/Down arrows)
-        else if (event.key === Qt.Key_Right || event.key === Qt.Key_Down) {
-          if (viewStack.currentIndex < 2) {
-            viewStack.currentIndex++
-          } else {
-            viewStack.currentIndex = 0 // Wrap to first
-          }
-          event.accepted = true
-        }
-
-        // Navigate backward (Left/Up arrows)
-        else if (event.key === Qt.Key_Left || event.key === Qt.Key_Up) {
+        // Manual Up/Down navigation (Next/Prev behavior to match Left/Right)
+        if (event.key === Qt.Key_Up) {
           if (viewStack.currentIndex > 0) {
             viewStack.currentIndex--
           } else {
-            viewStack.currentIndex = 2 // Wrap to last
+            viewStack.currentIndex = 2
           }
           event.accepted = true
+          return
         }
+        else if (event.key === Qt.Key_Down) {
+          if (viewStack.currentIndex < 2) {
+            viewStack.currentIndex++
+          } else {
+            viewStack.currentIndex = 0
+          }
+          event.accepted = true
+          return
+        }
+
+        // Delegate Left/Right/Escape/Home/End to handler
+        navHandler.handleKeyPress(event)
       }
     }
 
@@ -124,15 +136,25 @@ LazyLoader {
         // HEADER
         // ====================================================================
 
-        Modules.WeatherHeader {
+        ModalHeader {
           title: {
             if (viewStack.currentIndex === 0) return "Current Weather"
             if (viewStack.currentIndex === 1) return "Hourly Forecast"
             return "Weekly Forecast"
           }
+          
+          animateTitle: true
+          fadeDuration: 150
+          
+          actionButtons: [
+            {
+              icon: "󰑐",
+              tooltip: "Refresh",
+              onClicked: () => { loader.manager.fetchWeather() }
+            }
+          ]
 
           onCloseClicked: loader.manager.visible = false
-          onRefreshClicked: loader.manager.fetchWeather()
         }
 
         // ====================================================================

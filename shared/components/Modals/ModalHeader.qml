@@ -53,10 +53,17 @@ RowLayout {
   property bool animateTitle: false
 
   /**
+   * Duration of the fade out/in animation in milliseconds.
+   * Total animation time = 2 * fadeDuration (out + in).
+   * Default: 100ms
+   */
+  property int fadeDuration: 100
+
+  /**
    * Style for the close button: "minimal" or "rounded"
    * Default: "rounded" for modern, emphasized appearance
    */
-  property string closeButtonStyle: "rounded"
+  property string closeButtonStyle: "minimal"
 
   /**
    * Array of action button definitions
@@ -96,9 +103,9 @@ RowLayout {
     Behavior on text {
       enabled: root.animateTitle
       SequentialAnimation {
-        NumberAnimation { target: headerText; property: "opacity"; to: 0; duration: 100 }
+        NumberAnimation { target: headerText; property: "opacity"; to: 0; duration: root.fadeDuration }
         PropertyAction { target: headerText; property: "text" }
-        NumberAnimation { target: headerText; property: "opacity"; to: 1; duration: 100 }
+        NumberAnimation { target: headerText; property: "opacity"; to: 1; duration: root.fadeDuration }
       }
     }
   }

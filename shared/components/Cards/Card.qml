@@ -19,7 +19,6 @@ Rectangle {
   border.width: 0.5
   border.color: Theme.surface_container_high
 
-
   // Content area
   Item {
     id: content

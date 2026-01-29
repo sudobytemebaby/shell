@@ -77,7 +77,6 @@ Scope {
    * Opens hyprpicker with the -p flag to print color to stdout
    */
   function executeColorPicker() {
-    console.log("[QuickActionsManager] Launching color picker")
     manager.controlCenter.visible = false
     try {
       Quickshell.execDetached({
@@ -93,7 +92,6 @@ Scope {
    * Opens in a floating terminal window
    */
   function executeClipboard() {
-    console.log("[QuickActionsManager] Launching clipboard manager")
     manager.controlCenter.visible = false
     try {
       Quickshell.execDetached({

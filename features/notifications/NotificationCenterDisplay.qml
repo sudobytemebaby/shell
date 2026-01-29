@@ -5,6 +5,7 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../shared/theme"
 import "../../shared/components"
+import "../../shared/components/Modals"
 
 LazyLoader {
   id: loader
@@ -94,83 +95,19 @@ LazyLoader {
           // ----------------------------------------------------------------------
           // Header Section
           // ----------------------------------------------------------------------
-          RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            spacing: Theme.spacing.sm
-
-            Text {
-              Layout.fillWidth: true
-              Layout.leftMargin: Theme.padding.xs
-              text: "Notifications"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.xl
-              font.family: Theme.typography.fontFamily
-              font.weight: 600 
-            }
-
-            // Clear All button - only visible when there are notifications
-            Rectangle {
-              Layout.preferredWidth: 74
-              Layout.preferredHeight: 32
-              radius: Theme.radius.full
-              visible: loader.manager.notifications.length > 0
-
-              color: Theme.surface_container
-
-              border.width: 1
-              border.color: Theme.surface_container_high
-
-              scale: clearMouseArea.pressed ? 0.95 : 1.0
-
-              Behavior on color { ColorAnimation { duration: 150 } }
-              Behavior on border.color { ColorAnimation { duration: 150 } }
-              Behavior on scale {
-                NumberAnimation {
-                  duration: 100
-                  easing.type: Easing.OutCubic
-                }
+          ModalHeader {
+            title: "Notifications"
+            
+            // Show "Clear All" action button only when there are notifications
+            actionButtons: loader.manager.notifications.length > 0 ? [
+              {
+                icon: "󰆴",  // Trash can icon
+                tooltip: "Clear All",
+                onClicked: () => { loader.manager.clearAll() }
               }
+            ] : []
 
-              Text {
-                anchors.centerIn: parent
-                text: "Clear All"
-                color: Theme.on_surface
-                font.pixelSize: Theme.typography.sm
-                font.family: Theme.typography.fontFamily
-                font.weight: Theme.typography.weightMedium
-              }
-
-              MouseArea {
-                id: clearMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: loader.manager.clearAll()
-              }
-            }
-
-            // Close button
-            Text {
-              Layout.rightMargin: Theme.padding.sm
-              text: "✕"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.typography.fontFamily
-              opacity: closeMouseArea.containsMouse ? 0.7 : 1
-
-              Behavior on opacity {
-                NumberAnimation { duration: 200 }
-              }
-
-              MouseArea {
-                id: closeMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: loader.manager.visible = false
-              }
-            }
+            onCloseClicked: loader.manager.visible = false
           }
 
           // ----------------------------------------------------------------------
@@ -215,9 +152,9 @@ LazyLoader {
                 radius: Theme.radius.lg
 
                 // Subtle transparent background
-                color: Theme.surface_container
+                color: Theme.surface_container_low
 
-                border.width: 1
+                border.width: 0.5
                 border.color: Theme.surface_container_high
 
                 property bool hovered: false

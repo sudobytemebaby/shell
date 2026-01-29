@@ -4,6 +4,9 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Modals"
+import "../../../shared/components/Navigation"
+import "../../../shared/components/Buttons"
 
 /**
  * MatugenDisplay - UI display for the matugen color scheme menu system
@@ -72,82 +75,33 @@ LazyLoader {
     // KEYBOARD NAVIGATION & SHORTCUTS
     // ========================================================================
 
+    KeyboardNavigationHandler {
+      id: navHandler
+      currentIndex: matugenWindow.selectedIndex
+      itemCount: loader.manager.colorSchemes.length
+      columns: 3
+      wrapAround: true
+      enableTabNavigation: true
+
+      onNavigateUp: newIndex => matugenWindow.selectedIndex = newIndex
+      onNavigateDown: newIndex => matugenWindow.selectedIndex = newIndex
+      onNavigateLeft: newIndex => matugenWindow.selectedIndex = newIndex
+      onNavigateRight: newIndex => matugenWindow.selectedIndex = newIndex
+
+      onSelectCurrent: {
+        var selected = loader.manager.colorSchemes[matugenWindow.selectedIndex]
+        loader.manager.executeColorScheme(selected)
+      }
+
+      onClose: loader.manager.visible = false
+    }
+
     contentItem {
       focus: true
 
       // Handle keyboard shortcuts for navigation and quick actions
       Keys.onPressed: event => {
-        // Close menu on Escape
-        if (event.key === Qt.Key_Escape) {
-          loader.manager.visible = false
-          event.accepted = true
-        }
-        // Arrow key navigation: Up moves to previous row
-        else if (event.key === Qt.Key_Up) {
-          if (matugenWindow.selectedIndex >= 3) {
-            matugenWindow.selectedIndex -= 3
-          } else {
-            // Wrap to bottom row
-            matugenWindow.selectedIndex = (matugenWindow.selectedIndex + 6) % 9
-          }
-          event.accepted = true
-        }
-        // Arrow key navigation: Down moves to next row
-        else if (event.key === Qt.Key_Down) {
-          if (matugenWindow.selectedIndex < 6) {
-            matugenWindow.selectedIndex += 3
-          } else {
-            // Wrap to top row
-            matugenWindow.selectedIndex = matugenWindow.selectedIndex % 3
-          }
-          event.accepted = true
-        }
-        // Arrow key navigation: Left moves to previous column
-        else if (event.key === Qt.Key_Left) {
-          if (matugenWindow.selectedIndex > 0) {
-            matugenWindow.selectedIndex--
-          } else {
-            // Wrap around to last option
-            matugenWindow.selectedIndex = loader.manager.colorSchemes.length - 1
-          }
-          event.accepted = true
-        }
-        // Arrow key navigation: Right moves to next column
-        else if (event.key === Qt.Key_Right) {
-          if (matugenWindow.selectedIndex < loader.manager.colorSchemes.length - 1) {
-            matugenWindow.selectedIndex++
-          } else {
-            // Wrap around to first option
-            matugenWindow.selectedIndex = 0
-          }
-          event.accepted = true
-        }
-        // Tab navigation: Move to next option
-        else if (event.key === Qt.Key_Tab && !(event.modifiers & Qt.ShiftModifier)) {
-          if (matugenWindow.selectedIndex < loader.manager.colorSchemes.length - 1) {
-            matugenWindow.selectedIndex++
-          } else {
-            // Wrap around to first option
-            matugenWindow.selectedIndex = 0
-          }
-          event.accepted = true
-        }
-        // Shift+Tab navigation: Move to previous option
-        else if (event.key === Qt.Key_Backtab || (event.key === Qt.Key_Tab && (event.modifiers & Qt.ShiftModifier))) {
-          if (matugenWindow.selectedIndex > 0) {
-            matugenWindow.selectedIndex--
-          } else {
-            // Wrap around to last option
-            matugenWindow.selectedIndex = loader.manager.colorSchemes.length - 1
-          }
-          event.accepted = true
-        }
-        // Execute selected option on Enter
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-          var selected = loader.manager.colorSchemes[matugenWindow.selectedIndex]
-          loader.manager.executeColorScheme(selected)
-          event.accepted = true
-        }
+        navHandler.handleKeyPress(event)
       }
     }
 
@@ -195,49 +149,9 @@ LazyLoader {
         // HEADER
         // ====================================================================
 
-        RowLayout {
-          Layout.fillWidth: true
-          Layout.preferredHeight: 40
-          spacing: Theme.spacing.sm
-
-          // Title text
-          Text {
-            Layout.fillWidth: true
-            Layout.leftMargin: Theme.padding.xs
-            text: "Matugen Color Scheme"
-            color: Theme.on_surface
-            font.pixelSize: Theme.typography.xl
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
-          }
-
-          // Close button (X icon)
-          Rectangle {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            Layout.rightMargin: Theme.padding.xs
-            radius: Theme.radius.full
-            color: closeMouseArea.containsMouse ? Theme.surface_container_high : "transparent"
-
-            Text {
-              anchors.centerIn: parent
-              text: "✕"
-              color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.family: Theme.typography.fontFamily
-            }
-
-            MouseArea {
-              id: closeMouseArea
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-
-              onClicked: {
-                loader.manager.visible = false
-              }
-            }
-          }
+        ModalHeader {
+          title: "Matugen Color Scheme"
+          onCloseClicked: loader.manager.visible = false
         }
 
         // ====================================================================
@@ -267,115 +181,20 @@ LazyLoader {
         // LIGHT/DARK MODE TOGGLE
         // ====================================================================
 
-        Rectangle {
+        SegmentedButton {
           Layout.alignment: Qt.AlignHCenter
           Layout.topMargin: Theme.spacing.sm
-          Layout.preferredWidth: 200
-          Layout.preferredHeight: 40
-          radius: Theme.radius.full
-          color: Theme.surface_container_high
+          
+          options: [
+            { icon: "󰖔", text: "Dark" },
+            { icon: "󰖙", text: "Light" }
+          ]
 
-          RowLayout {
-            anchors.fill: parent
-            spacing: 0
-
-            // Dark mode button
-            Rectangle {
-              Layout.fillHeight: true
-              Layout.fillWidth: true
-              Layout.margins: 4
-              radius: Theme.radius.full
-              color: !loader.manager.lightMode ? Theme.tertiary_container : "transparent"
-
-              RowLayout {
-                anchors.centerIn: parent
-                spacing: Theme.spacing.xs
-
-                Text {
-                  text: "󰖔"  // Moon icon
-                  color: !loader.manager.lightMode ? Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.md
-                  font.family: Theme.typography.fontFamily
-                }
-
-                Text {
-                  text: "Dark"
-                  color: !loader.manager.lightMode ? Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
-                  font.weight: !loader.manager.lightMode ? Theme.typography.weightMedium : Theme.typography.weightNormal
-                }
-              }
-
-              MouseArea {
-                id: darkModeArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                onClicked: {
-                  if (loader.manager.lightMode) {
-                    loader.manager.lightMode = false
-                  }
-                }
-              }
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: 200
-                  easing.type: Easing.OutCubic
-                }
-              }
-            }
-
-            // Light mode button
-            Rectangle {
-              Layout.fillHeight: true
-              Layout.fillWidth: true
-              Layout.margins: 4
-              radius: Theme.radius.full
-              color: loader.manager.lightMode ? Theme.tertiary_container : "transparent"
-
-              RowLayout {
-                anchors.centerIn: parent
-                spacing: Theme.spacing.xs
-
-                Text {
-                  text: "󰖙"  // Sun icon
-                  color: loader.manager.lightMode ? Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.md
-                  font.family: Theme.typography.fontFamily
-                }
-
-                Text {
-                  text: "Light"
-                  color: loader.manager.lightMode ? Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
-                  font.weight: loader.manager.lightMode ? Theme.typography.weightMedium : Theme.typography.weightNormal
-                }
-              }
-
-              MouseArea {
-                id: lightModeArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-
-                onClicked: {
-                  if (!loader.manager.lightMode) {
-                    loader.manager.lightMode = true
-                  }
-                }
-              }
-
-              Behavior on color {
-                ColorAnimation {
-                  duration: 200
-                  easing.type: Easing.OutCubic
-                }
-              }
-            }
+          // 0 = Dark, 1 = Light
+          currentIndex: loader.manager.lightMode ? 1 : 0
+          
+          onClicked: index => {
+            loader.manager.lightMode = (index === 1)
           }
         }
 
@@ -513,14 +332,8 @@ LazyLoader {
         // FOOTER WITH KEYBOARD SHORTCUTS
         // ====================================================================
 
-        Text {
-          Layout.fillWidth: true
-          text: "Arrow Keys Navigate • Tab Next • Shift+Tab Previous • Enter Apply • Esc Close"
-          color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
-          horizontalAlignment: Text.AlignHCenter
-          opacity: 0.7
+        FooterHint {
+          hint: "Arrow Keys Navigate • Tab Next • Shift+Tab Previous • Enter Apply • Esc Close"
         }
       }
     }

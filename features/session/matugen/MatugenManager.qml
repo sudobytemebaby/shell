@@ -75,55 +75,55 @@ Scope {
    */
   property var colorSchemes: [
     {
-      icon: "󰏘",
+      icon: "",
       name: "Content",
       description: "Content-based extraction",
       scheme: "scheme-content"
     },
     {
-      icon: "󰸌",
+      icon: "󱝁",
       name: "Expressive",
       description: "Vibrant and expressive",
       scheme: "scheme-expressive"
     },
     {
-      icon: "󰏖",
+      icon: "󰆗",
       name: "Fidelity",
       description: "High color fidelity",
       scheme: "scheme-fidelity"
     },
     {
-      icon: "󰸘",
+      icon: "󱁃",
       name: "Fruit Salad",
       description: "Playful color mix",
       scheme: "scheme-fruit-salad"
     },
     {
-      icon: "󰶡",
+      icon: "󰊠",
       name: "Monochrome",
       description: "Grayscale palette",
       scheme: "scheme-monochrome"
     },
     {
-      icon: "󰏚",
+      icon: "󰔙",
       name: "Neutral",
       description: "Balanced neutrals",
       scheme: "scheme-neutral"
     },
     {
-      icon: "󰸙",
+      icon: "",
       name: "Rainbow",
       description: "Full spectrum colors",
       scheme: "scheme-rainbow"
     },
     {
-      icon: "󰝤",
+      icon: "󱠦",
       name: "Tonal Spot",
       description: "Subtle tonal variations",
       scheme: "scheme-tonal-spot"
     },
     {
-      icon: "󰸚",
+      icon: "󰓠",
       name: "Vibrant",
       description: "Bold vibrant colors",
       scheme: "scheme-vibrant"

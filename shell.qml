@@ -164,7 +164,7 @@ ShellRoot {
     id: wallpaperManager
   }
   
-  WallpaperGrid {
+  WallpaperDisplay {
     manager: wallpaperManager
   }
   
