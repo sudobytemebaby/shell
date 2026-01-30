@@ -208,11 +208,11 @@ QtObject {
 
       // Check keyword fields
       if (keywordFields.length > 0) {
-        const keywordMatch = keywordFields.some(field => {
+        const kwMatch = keywordFields.some(field => {
           const keywords = item[field]
-          return keywords && keywordMatch(keywords, query)
+          return keywords && root.keywordMatch(keywords, query)
         })
-        if (keywordMatch) return true
+        if (kwMatch) return true
       }
 
       return false
