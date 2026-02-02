@@ -54,7 +54,7 @@ A Wayland desktop shell built with Quickshell (Qt/QML). Features a macOS-inspire
 1. Clone this repository to `~/.config/quickshell/`:
 
 ```bash
-git clone <your-repo> ~/.config/quickshell
+git clone github.com/sudobytemebaby/shell ~/.config/quickshell
 ```
 
 2. Install dependencies for your distribution

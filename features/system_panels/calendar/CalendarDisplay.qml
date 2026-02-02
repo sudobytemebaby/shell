@@ -92,6 +92,16 @@ LazyLoader {
             calendarManager: loader.manager
           }
 
+          // Divider
+          Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 4
+            Layout.bottomMargin: 4
+            height: 1
+            color: Theme.surface_container_high
+            opacity: 0.7
+          }
+
           // ========== CALENDAR NAVIGATION ==========
           CalModules.CalendarNavigation {
             Layout.fillWidth: true

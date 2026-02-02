@@ -205,6 +205,9 @@ PanelWindow {
         Modules.Keyboard {
           systemState: barWindow.systemState
         }
+
+        // System tray icons
+        Modules.SystemTray {}
       }
 
       // ====================================================================

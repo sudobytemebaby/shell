@@ -28,8 +28,8 @@ Rectangle {
   radius: Theme.radius.full
   color: Theme.surface_container_low
 
-  border.width: 1
-  border.color: Theme.surface_container_high
+  border.width: 0
+  border.color: Theme.surface_container_highest
 
   // ============================================================================
   // INPUT FIELD
