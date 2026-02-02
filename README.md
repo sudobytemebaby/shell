@@ -26,14 +26,6 @@ A Wayland desktop shell built with Quickshell (Qt/QML). Features a macOS-inspire
 
 ### System Integration
 
-- **Volume Control** - PipeWire integration with device detection (speakers/headphones)
-- **Brightness Control** - Automatic backlight device detection
-- **Battery Monitoring** - Low battery notifications with configurable thresholds
-- **Network Status** - WiFi connection monitoring
-- **Bluetooth Status** - Bluetooth device tracking
-- **Media Controls** - MPRIS integration for media player control
-- **Keyboard Layout** - Display current keyboard layout
-
 ## Requirements
 
 - **Quickshell** - The shell framework (Wayland)
@@ -86,10 +78,6 @@ property real lowBatteryThreshold: 0.20      // 20%
 property real criticalBatteryThreshold: 0.10  // 10%
 property real emergencyBatteryThreshold: 0.05 // 5%
 ```
-
-### Theme Colors
-
-The theme uses Material Design 3 tokens defined in `shared/theme/Theme.qml`. Colors can be generated dynamically using the Matugen integration, or edited manually in the theme file.
 
 ## IPC Commands
 
@@ -207,83 +195,6 @@ quickshell --ipc matugen open
 quickshell --ipc matugen close
 ```
 
-## Keyboard Navigation
-
-Most interfaces support keyboard navigation:
-
-- **Arrow Keys** - Navigate through items
-- **Ctrl+P / Ctrl+N** - Navigate up/down (Emacs-style)
-- **Tab / Shift+Tab** - Navigate forward/backward
-- **Home / End** - Jump to first/last item
-- **Enter** - Select current item
-- **Escape** - Close interface
-- **Type to search** - Filter items in real-time
-
-### Grid Navigation
-
-For grid-based interfaces (wallpaper, emoji):
-
-- **Arrow Keys** - Navigate in all directions
-- **Left/Right** - Move between columns
-- **Up/Down** - Move between rows
-
-## Project Structure
-
-```
-.
-├── shell.qml                    # Main entry point
-├── core/                        # System-level services
-│   ├── services/               # Singleton services
-│   │   ├── BatteryNotifier.qml
-│   │   ├── WeatherService.qml
-│   │   └── ImageCacheService.qml
-│   ├── system_state/           # Centralized state management
-│   │   ├── SystemStateManager.qml
-│   │   └── system_state/       # Individual state modules
-│   │       ├── Battery.qml
-│   │       ├── Volume.qml
-│   │       ├── Brightness.qml
-│   │       ├── Network.qml
-│   │       ├── Bluetooth.qml
-│   │       ├── KeyboardLayout.qml
-│   │       └── Mpris.qml
-│   ├── scripts/                # Shell integration scripts
-│   └── helpers/                # Utility functions
-├── features/                    # User-facing features
-│   ├── shell_chrome/           # Status bar and OSD
-│   │   ├── bar/
-│   │   └── osd/
-│   ├── launchers/              # Application launcher, wallpaper, emoji
-│   │   ├── launcher/
-│   │   ├── wallpaper/
-│   │   ├── emoji/
-│   │   └── menu/
-│   ├── system_panels/          # Control center and calendar
-│   │   ├── controlcenter/
-│   │   └── calendar/
-│   ├── notifications/          # Notification system
-│   ├── session/                # Session management
-│   │   ├── lockscreen/
-│   │   ├── powermenu/
-│   │   ├── screenshot/
-│   │   ├── screenrec/
-│   │   └── matugen/
-│   └── weather/                # Weather widget
-└── shared/                      # Reusable components
-    ├── components/             # UI component library
-    │   ├── Buttons/
-    │   ├── Cards/
-    │   ├── Display/
-    │   ├── Input/
-    │   ├── Lists/
-    │   ├── Modals/
-    │   ├── Navigation/
-    │   ├── Sliders/
-    │   └── Utils/
-    ├── shaders/                # GLSL shaders
-    └── theme/                  # Material Design 3 theme
-```
-
 ## Architecture
 
 ### Manager-Display Pattern
@@ -298,30 +209,6 @@ This separation keeps code clean and makes it easy to modify UI without touching
 ### System State Management
 
 `SystemStateManager` serves as a single source of truth for system state. All modules (Battery, Volume, Brightness, etc.) are centralized here and referenced throughout the application. This prevents duplicate state and eliminates race conditions.
-
-### Lazy Loading
-
-Heavy components use Qt's `Loader` with conditional activation. They're only instantiated when visible and destroyed when closed, keeping memory usage low.
-
-## Theme System
-
-Uses Material Design 3 with:
-
-- Semantic color tokens (primary, secondary, tertiary, surface)
-- 5-level elevation system
-- Transparent variants for blur effects
-- Consistent spacing and typography scales
-- Component-specific design tokens
-
-Colors can be generated dynamically from wallpapers using Matugen integration.
-
-## Contributing
-
-This is a personal configuration, but feel free to fork and adapt it for your own use. If you find bugs or have suggestions, open an issue.
-
-## License
-
-MIT
 
 ## Credits
 
