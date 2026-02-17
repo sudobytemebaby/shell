@@ -7,16 +7,21 @@ IconButton {
   id: root
 
   icon: nightModeActive ? "󰖔" : "󰖕"
-  title: "Night Mod"
+  title: "Night Mode"
   subtitle: nightModeActive ? "On" : "Off"
 
   isStateful: true
   isActive: nightModeActive
 
   property bool nightModeActive: false
+  property string nightModeScript: ""
 
   // Check night mode status on startup
   Component.onCompleted: {
+    var homeDir = Quickshell.env("HOME")
+    if (homeDir) {
+      root.nightModeScript = homeDir + "/.local/bin/night-mode"
+    }
     statusChecker.running = true
   }
 
@@ -35,7 +40,7 @@ IconButton {
   // Toggle process
   Process {
     id: toggleProcess
-    command: ["sh", "-c", "~/.local/bin/night-mode"]
+    command: [root.nightModeScript]
 
     onExited: {
       // Recheck status after toggle

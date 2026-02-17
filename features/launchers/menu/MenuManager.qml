@@ -93,19 +93,19 @@ Scope {
       icon: "󰂯",
       name: "Bluetooth",
       description: "Manage Bluetooth devices",
-      command: "foot --app-id floating_term_s -e bluetui"
+      command: "~/.local/bin/tui-bluetooth"
     },
     {
       icon: "󰤥",
       name: "WiFi",
       description: "Manage WiFi connections",
-      command: "foot --app-id floating_term_m -e impala"
+      command: "~/.local/bin/tui-wifi"
     },
     {
       icon: "󱡫",
       name: "Audio",
       description: "Audio mixer and settings",
-      command: "foot --app-id floating_term_s -e wiremix"
+      command: "~/.local/bin/tui-audio"
     },
     {
       icon: "󰀻",
@@ -135,13 +135,13 @@ Scope {
       icon: "󰊕",
       name: "Calculator",
       description: "Calc nums and not only them",
-      command: "foot --app-id floating_term_s -e numbat"
+      command: "gnome-calculator"
     },
     {
       icon: "󰗊",
       name: "Translate",
       description: "Translate using shell",
-      command: "foot --app-id floating_term_s"
+      command: "dialect"
     },
     {
       icon: "󰹑",
@@ -177,13 +177,19 @@ Scope {
       icon: "",
       name: "Files",
       description: "Browse files with Yazi",
-      command: "foot --app-id floating_term_l -e yazi"
+      command: "~/.local/bin/tui-files"
     },
     {
       icon: "󱙣",
       name: "System Monitor",
       description: "View system resources",
-      command: "foot --app-id floating_term_l -e btop"
+      command: "~/.local/bin/tui-btop"
+    },
+    {
+      icon: "󰅇",
+      name: "Clipboard manager",
+      description: "Control what's on you clipboard",
+      command: "~/.local/bin/tui-clipboard"
     }
   ]
 

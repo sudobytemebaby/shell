@@ -72,7 +72,7 @@ Scope {
       return
     }
 
-    manager.wallpaperDir = homeDir + "/.config/hypr/wpapers"
+    manager.wallpaperDir = homeDir + "/Pictures/Wallpapers"
     manager.switcherScript = homeDir + "/.local/bin/wallpaper-switcher"
 
     // Read current wallpaper from state file
@@ -249,7 +249,15 @@ Scope {
         if (filename && filename !== "") {
           manager.currentWallpaper = filename
           manager.currentWallpaperPath = manager.wallpaperDir + "/" + filename
-          console.log("[WallpaperManager] Current wallpaper:", filename)
+          console.log("[WallpaperManager] Current wallpaper detected from config:", filename)
+          
+          // Update cache file for other services (Matugen, etc)
+          Core.ProcessUtils.runCommand(
+            manager,
+            ["sh", "-c", "mkdir -p ~/.cache/quickshell && echo \"" + manager.currentWallpaperPath + "\" > ~/.cache/quickshell/current-wallpaper"],
+            () => {},
+            () => {}
+          )
         }
       }
     }

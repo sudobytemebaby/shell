@@ -95,21 +95,21 @@ Scope {
       icon: "󰹑",
       name: "Fullscreen",
       description: "Record entire screen",
-      command: "~/.local/bin/screenrec-output",
+      command: "screen-rec --output",
       key: "F"
     },
     {
       icon: "󱂬",
       name: "Window",
       description: "Record active window",
-      command: "~/.local/bin/screenrec-window",
+      command: "screen-rec --window",
       key: "W"
     },
     {
       icon: "󰆞",
       name: "Region",
       description: "Select area to record",
-      command: "~/.local/bin/screenrec-region",
+      command: "screen-rec --region",
       key: "S"
     }
   ]
@@ -134,44 +134,27 @@ Scope {
     // If already recording, just stop it (toggle behavior)
     if (manager.isRecording) {
       console.log("[ScreenRecording] Already recording, stopping...")
-      Core.ProcessUtils.runCommand(
-        manager,
-        ["sh", "-c", option.command],
-        () => {
-          console.log("[ScreenRecording] Recording stopped successfully")
-          // Force immediate state check after toggle
-          checkRecordingProcess.running = true
-        },
-        (code, error) => {
-          console.error("[ScreenRecording] Failed to stop recording:", error)
-          // Still check state even on error
-          checkRecordingProcess.running = true
-        }
-      )
+      Quickshell.execDetached(["sh", "-c", option.command])
+      
       // Close menu after stopping
       manager.visible = false
+      
+      // Force immediate state check after toggle
+      Qt.callLater(() => { checkRecordingProcess.running = true })
       return
     }
 
     // Start new recording
-    // Close menu immediately for better UX (don't wait for command completion)
+    console.log("[ScreenRecording] Starting recording:", option.name)
+    
+    // Close menu immediately for better UX
     manager.visible = false
 
-    // Execute system command safely through ProcessUtils
-    Core.ProcessUtils.runCommand(
-      manager,
-      ["sh", "-c", option.command],
-      () => {
-        console.log("[ScreenRecording] Command executed successfully:", option.name)
-        // Force immediate state check after starting
-        checkRecordingProcess.running = true
-      },
-      (code, error) => {
-        console.error("[ScreenRecording] Failed to execute command:", option.name, error)
-        // Still check state even on error
-        checkRecordingProcess.running = true
-      }
-    )
+    // Use Quickshell.execDetached for true detached execution
+    Quickshell.execDetached(["sh", "-c", option.command])
+    
+    // Force immediate state check after starting
+    Qt.callLater(() => { checkRecordingProcess.running = true })
   }
 
   // ========================================================================

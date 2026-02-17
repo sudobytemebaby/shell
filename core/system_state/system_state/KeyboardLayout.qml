@@ -121,35 +121,15 @@ Scope {
 
   Process {
     id: initialLayoutProcess
-    command: ["bash", "-c", "$HOME/.config/quickshell/core/scripts/keyboard-state.sh"]
+    command: ["sh", "-c", "hyprctl devices -j | jq -r '.keyboards[] | select(.main == true) | .active_keymap' | head -n1"]
     running: false
 
     stdout: SplitParser {
       onRead: data => {
         if (!data || data.trim() === "") return
-
-        var line = data.trim()
-        var parts = line.split("|")
-
-        if (parts.length === 2) {
-          // Parse your script's output format: "KB|English(US)" or "KB|Русский"
-          var lang = parts[1]
-
-          // Map your custom labels to layout codes
-          if (lang.indexOf("English") !== -1 || lang.indexOf("US") !== -1) {
-            module.currentLayout = "EN"
-            module.currentIcon = "󰌌"
-          } else if (lang.indexOf("Русский") !== -1 || lang.indexOf("Russian") !== -1) {
-            module.currentLayout = "RU"
-            module.currentIcon = "󰗊"
-          } else {
-            module.currentLayout = lang.substring(0, 2).toUpperCase()
-            module.currentIcon = "󰌌"
-          }
-
-          console.log("[KeyboardLayout] Initial layout:", module.currentLayout)
-        }
-
+        var layout = data.trim()
+        module.setLayout(layout)
+        console.log("[KeyboardLayout] Initial layout from hyprctl:", layout)
         initialLayoutProcess.running = false
       }
     }

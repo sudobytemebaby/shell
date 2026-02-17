@@ -19,6 +19,10 @@ QtObject {
             parent,
             "DynamicProcess"
         )
+        if (!proc) {
+          console.error("[ProcessUtils] Failed to create Process object!")
+          return null
+        }
         
         proc.command = command
         
@@ -65,6 +69,7 @@ QtObject {
         })
         
         proc.running = true
+        console.log("[ProcessUtils] Process started, running:", proc.running, "command:", command.join(" "))
         return proc
     }
     

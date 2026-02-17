@@ -271,10 +271,9 @@ Scope {
   }
 
   function openManager() {
-    Core.ProcessUtils.runCommandAsync(
-      module,
-      ["kitty", "--class", "floating_term_s", "-e", "bluetui"]
-    )
+    Quickshell.execDetached({
+      command: ["sh", "-c", "~/.local/bin/tui-bluetooth"]
+    })
   }
 
   // ============================================================================

@@ -85,10 +85,12 @@ Scope {
       }
     }
 
-    Component.onCompleted: {
-      // Load wallpaper path immediately on startup
+  Component.onCompleted: {
+    // Load wallpaper path immediately on startup if not already set
+    if (!manager.wallpaperPath || manager.wallpaperPath === "") {
       running = true
     }
+  }
   }
 
   // ============================================================================

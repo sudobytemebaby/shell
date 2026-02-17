@@ -327,7 +327,9 @@ Scope {
   }
   
   function openNetworkManager() {
-    Core.ProcessUtils.runCommandAsync(module, ["kitty", "--class", "floating_term_m", "-e", "impala"])
+    Quickshell.execDetached({
+      command: ["sh", "-c", "~/.local/bin/tui-wifi"]
+    })
   }
 
   // ============================================================================

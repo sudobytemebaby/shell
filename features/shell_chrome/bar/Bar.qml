@@ -7,21 +7,19 @@ import "../../../shared/theme"
 import "bar_modules" as Modules
 
 /**
- * Bar - Dynamic Island style status bar
+ * Bar - Full Width Top Bar
  *
- * A minimal, centered bar with rounded corners that floats at the top
- * of the screen, inspired by iOS Dynamic Island design.
+ * A classic full-width status bar that spans the entire top of the screen.
  *
  * Features:
- * - Centered horizontal positioning
- * - Compact width that fits content
- * - Rounded corners for modern aesthetic
- * - Minimal vertical margin from screen top
+ * - Full screen width
+ * - Clean rectangular design
+ * - Minimal vertical spacing from screen top
  * - Three sections: left (workspaces), center (spacer), right (status)
  *
  * Architecture:
- * - Uses PanelWindow anchored only to top (not full width)
- * - Contains centered Rectangle with pill-shaped design
+ * - Uses PanelWindow anchored to full width at top
+ * - Simple Rectangle layout spanning entire width
  * - Modules are imported from bar_modules directory
  */
 
@@ -47,12 +45,12 @@ PanelWindow {
   // WINDOW CONFIGURATION
   // ========================================================================
 
-  // Only anchor to top - this allows horizontal centering
+  // Anchor to top and fill width
   anchors.top: true
   anchors.left: true
   anchors.right: true
 
-  // Minimal height - just the bar height for tight spacing
+  // Bar height
   implicitHeight: Theme.barHeight
 
   // Transparent window background (the bar itself will have the background)
@@ -116,37 +114,38 @@ PanelWindow {
   }
 
   // ========================================================================
-  // DYNAMIC ISLAND BAR CONTAINER
+  // FULL WIDTH TOP BAR
   // ========================================================================
 
-  // Centered notch-style bar (like MacBook notch) that sticks to top
+  // Standard full-width bar spanning entire screen
   Rectangle {
     id: barContainer
 
-    // Center horizontally and stick to top edge
+    // Fill the entire width, stick to top
     anchors {
-      horizontalCenter: parent.horizontalCenter
+      left: parent.left
+      right: parent.right
       top: parent.top
     }
 
-    // Compact height for minimal appearance
+    // Standard bar height
     height: Theme.barHeight
 
-    // Width fits content with padding
-    implicitWidth: barLayout.implicitWidth + (Theme.padding.xl * 4)
-
-    // MacBook notch style: sharp top corners, rounded bottom corners
-    topLeftRadius: 0
-    topRightRadius: 0
-    bottomLeftRadius: Theme.radius.md
-    bottomRightRadius: Theme.radius.md
+    // No rounded corners - clean rectangular bar
+    radius: 0 
 
     // Semi-transparent background with blur support
-    color: Theme.surface_container_transparent_medium
+    color: Theme.surface_container_low_transparent_medium
 
-    // Subtle border for depth
-    border.width: 0.5
-    border.color: Theme.surface_container_high
+    // Bottom border for subtle depth
+    Rectangle {
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      color: Theme.surface_container_high
+      opacity: 1
+    }
 
     // Slide animation: slides down when showing, slides up when hiding
     transform: Translate {

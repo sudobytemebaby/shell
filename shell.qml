@@ -89,6 +89,7 @@ ShellRoot {
 
   MatugenManager {
     id: matugenManager
+    currentWallpaperPath: wallpaperManager.currentWallpaperPath
   }
 
   MatugenDisplay {
@@ -231,6 +232,7 @@ ShellRoot {
 
   LockscreenManager {
     id: lockscreenManager
+    wallpaperPath: wallpaperManager.currentWallpaperPath !== "" ? "file://" + wallpaperManager.currentWallpaperPath : ""
   }
 
   LockscreenDisplay {

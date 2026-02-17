@@ -138,7 +138,9 @@ Scope {
    * Initialize by reading current wallpaper path from cache
    */
   Component.onCompleted: {
-    loadCurrentWallpaperPath()
+    if (!manager.currentWallpaperPath || manager.currentWallpaperPath === "") {
+      loadCurrentWallpaperPath()
+    }
   }
 
   // ========================================================================
@@ -308,7 +310,7 @@ Scope {
    * This ensures we always have the latest wallpaper path
    */
   onVisibleChanged: {
-    if (visible) {
+    if (visible && (!manager.currentWallpaperPath || manager.currentWallpaperPath === "")) {
       loadCurrentWallpaperPath()
     }
   }

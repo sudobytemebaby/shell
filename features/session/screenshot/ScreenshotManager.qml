@@ -15,7 +15,8 @@ import "../../../core/system_state" as Core
  * Architecture:
  * - Follows the Manager pattern (state + logic)
  * - ScreenshotDisplay handles presentation
- * - Commands executed via Core.ProcessUtils for safety
+ * - Commands launched via hyprctl dispatch exec to run fully outside
+ *   Quickshell's process tree, avoiding compositor focus/input conflicts
  *
  * IPC Interface:
  * - screenshot:toggle() - Toggle menu visibility
@@ -33,7 +34,47 @@ Scope {
   // STATE
   // ========================================================================
 
-  property bool visible: false  // Menu visibility state
+  property bool visible: false       // Menu visibility state
+  property var _pendingOption: null  // Stashed option waiting for window to fully die
+
+  // ========================================================================
+  // SIGNALS
+  // ========================================================================
+
+  // Fired by ScreenshotDisplay's PanelWindow.onDestruction when the overlay
+  // is fully gone and it's safe to launch interactive tools like slurp
+  signal windowClosed()
+
+  // ========================================================================
+  // INITIALIZATION
+  // ========================================================================
+
+  Component.onCompleted: {
+    // Wire up the windowClosed signal to actual command execution.
+    // Commands are launched via hyprctl dispatch exec so they run as a clean
+    // Hyprland child, completely outside Quickshell's process tree.
+    // This is necessary for interactive tools like slurp which need to grab
+    // compositor input focus independently.
+    manager.windowClosed.connect(() => {
+      if (!manager._pendingOption) return
+
+      var option = manager._pendingOption
+      manager._pendingOption = null
+
+      console.log("[Screenshot] Window destroyed, executing:", option.name)
+
+      Core.ProcessUtils.runCommand(
+        manager,
+        ["hyprctl", "dispatch", "exec", option.command],
+        () => {
+          console.log("[Screenshot] Dispatched successfully:", option.name)
+        },
+        (code, error) => {
+          console.error("[Screenshot] Dispatch failed:", option.name, error)
+        }
+      )
+    })
+  }
 
   // ========================================================================
   // SCREENSHOT OPTIONS CONFIGURATION
@@ -45,7 +86,7 @@ Scope {
    * - icon: Nerd Font icon
    * - name: Display name
    * - description: Short description of action
-   * - command: System command to execute
+   * - command: System command to execute (via hyprctl dispatch exec)
    * - key: Keyboard shortcut (for reference/documentation)
    *
    * Order matters: Matches grid layout (left-to-right, top-to-bottom)
@@ -56,7 +97,7 @@ Scope {
       icon: "󰹑",
       name: "Fullscreen",
       description: "Capture entire screen",
-      command: "~/.local/bin/screenshot-output",
+      command: "~/.local/bin/screenshot-fullscreen",
       key: "F"
     },
     {
@@ -71,7 +112,7 @@ Scope {
       name: "Region",
       description: "Select area to capture",
       command: "~/.local/bin/screenshot-region",
-      key: "S"
+      key: "R"
     }
   ]
 
@@ -82,30 +123,17 @@ Scope {
   /**
    * Execute a screenshot option command
    *
-   * This function:
-   * - Closes the menu immediately for better UX
-   * - Executes the command through ProcessUtils
-   * - Logs success/failure to console
+   * Stashes the option and closes the menu. The actual command runs only
+   * after ScreenshotDisplay fires windowClosed() from PanelWindow.onDestruction,
+   * guaranteeing the exclusive-focus overlay is fully gone before tools like
+   * slurp try to grab pointer input from the compositor.
    *
    * @param option - Screenshot option object from screenshotOptions array
    */
   function executeScreenshotOption(option) {
-    console.log("[Screenshot] Executing:", option.name, "command:", option.command)
-
-    // Close menu immediately for better UX (don't wait for command completion)
+    console.log("[Screenshot] Queuing:", option.name)
+    manager._pendingOption = option
     manager.visible = false
-
-    // Execute system command safely through ProcessUtils
-    Core.ProcessUtils.runCommand(
-      manager,
-      ["sh", "-c", option.command],
-      () => {
-        console.log("[Screenshot] Command executed successfully:", option.name)
-      },
-      (code, error) => {
-        console.error("[Screenshot] Failed to execute command:", option.name, error)
-      }
-    )
   }
 
   // ========================================================================

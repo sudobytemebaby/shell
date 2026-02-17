@@ -41,6 +41,13 @@ LazyLoader {
       exclusiveZone = 0
     }
 
+    // When this window is fully destroyed by LazyLoader (because manager.visible
+    // went false), notify the manager it's safe to run interactive tools like slurp.
+    // This is the correct place — fires exactly once when the overlay is truly gone.
+    Component.onDestruction: {
+      loader.manager.windowClosed()
+    }
+
     property int selectedIndex: 0
 
     KeyboardNavigationHandler {

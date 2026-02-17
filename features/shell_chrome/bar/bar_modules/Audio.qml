@@ -69,7 +69,7 @@ Item {
 
     onClicked: {
       Quickshell.execDetached({
-        command: ["sh", "-c", "kitty --class floating_term_s -e wiremix"]
+        command: ["sh", "-c", "~/.local/bin/tui-audio"]
       })
     }
   }
