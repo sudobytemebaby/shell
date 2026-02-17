@@ -117,7 +117,7 @@ LazyLoader {
       width: 300
       height: 60
       radius: Theme.radius.full
-      color: Theme.surface_container_transparent_medium
+      color: Theme.surface_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high
 

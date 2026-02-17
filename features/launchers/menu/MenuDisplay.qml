@@ -129,7 +129,7 @@ AnimatedLazyLoader {
       // Rounded corners all around (centered design)
       radius: Theme.radius.xl
 
-      color: Theme.surface_container_transparent_medium
+      color: Theme.surface_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high
 
@@ -299,7 +299,7 @@ AnimatedLazyLoader {
       FooterHint {
         hint: "Ctrl+P/N to Navigate • Enter to Select • Esc to Close"
       }
+     }
     }
-  }
   }
 }

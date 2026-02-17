@@ -254,7 +254,7 @@ AnimatedLazyLoader {
       width: 460
       height: 550
       radius: Theme.radius.xl
-      color: Theme.surface_container_transparent_medium
+      color: Theme.surface_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high
 

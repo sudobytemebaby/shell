@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import "../../../../shared/theme"
 
 Item {
@@ -18,6 +19,8 @@ Item {
     font.family: Theme.fontFamilyDisplay || "sans-serif"
     font.bold: false
     verticalAlignment: Text.AlignVCenter
+
+    text: Qt.formatDateTime(systemClock.date, "dddd  hh:mm")
     
     Behavior on color {
       ColorAnimation {
@@ -25,18 +28,12 @@ Item {
         easing.type: Easing.OutCubic
       }
     }
-    
-    Timer {
-      interval: 1000
-      running: true
-      repeat: true
-      onTriggered: {
-        clock.text = Qt.formatTime(new Date(), "hh:mm")
-      }
-    }
-    
-    Component.onCompleted: {
-      clock.text = Qt.formatTime(new Date(), "hh:mm")
+
+    // System clock for time display
+    SystemClock {
+      id: systemClock
+      enabled: true
+      precision: SystemClock.Minutes
     }
   }
   

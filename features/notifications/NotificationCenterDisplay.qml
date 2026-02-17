@@ -75,8 +75,8 @@ LazyLoader {
         radius: Theme.radius.xl
 
         // Use standard transparent theme
-        color: Theme.surface_container_transparent_medium
-        border.width: 0.5
+        color: Theme.surface_transparent_medium
+        border.width: 1
         border.color: Theme.surface_container_high
 
         // Prevent clicks on panel from closing it
