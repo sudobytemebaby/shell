@@ -30,10 +30,10 @@ Item {
   // CONTENT
   // ============================================================================
 
-  ColumnLayout {
+  RowLayout{
     id: contentColumn
     anchors.centerIn: parent
-    spacing: Theme.spacing.lg
+    spacing: Theme.spacing.md
 
     // Suspend Button
     RoundIconButton {

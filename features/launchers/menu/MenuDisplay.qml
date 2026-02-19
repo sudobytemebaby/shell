@@ -130,7 +130,7 @@ AnimatedLazyLoader {
       radius: Theme.radius.xl
 
       color: Theme.surface_transparent_medium
-      border.width: 0.5
+      border.width: 1
       border.color: Theme.surface_container_high
 
       // Polished appearing animation: subtle scale + fade + slide

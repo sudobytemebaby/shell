@@ -154,7 +154,7 @@ Scope {
                   right: parent.right
                   top: parent.top
                   rightMargin: Theme.spacing.xl
-                  topMargin: 300 // Matches OSD positioning
+                  topMargin: Theme.spacing.xl
                 }
               }
 

@@ -39,27 +39,7 @@ Rectangle {
       if (variant === "media") {
         return mouseArea.containsMouse ? Theme.surface : "transparent"
       } else {
-        return mouseArea.containsMouse ? Theme.surface_container_low : Theme.surface_container
-      }
-    }
-  }
-
-  border.width: {
-    if (isPrimary) {
-      return variant === "media" ? 2 : 0
-    } else {
-      return 0.5
-    }
-  }
-
-  border.color: {
-    if (isPrimary) {
-      return variant === "media" ? Theme.primary : "transparent"
-    } else {
-      if (variant === "media") {
-        return mouseArea.containsMouse ? Theme.outline_variant : "transparent"
-      } else {
-        return Theme.surface_container_high
+        return mouseArea.containsMouse ? Theme.surface_container_low : Theme.surface
       }
     }
   }
