@@ -148,6 +148,16 @@ Scope {
                 Component.onCompleted: forceActiveFocus()
               }
 
+              // Power widgets (suspend, reboot, poweroff) - positioned on the right
+              Components.PowerWidgets {
+                anchors {
+                  right: parent.right
+                  top: parent.top
+                  rightMargin: Theme.spacing.xl
+                  topMargin: 300 // Matches OSD positioning
+                }
+              }
+
               // Time display
               Components.TimeDisplay {
                 id: timeDisplay
