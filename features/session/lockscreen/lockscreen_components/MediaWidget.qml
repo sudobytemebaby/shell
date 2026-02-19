@@ -27,7 +27,7 @@ Rectangle {
   width: 380
   height: 60
   radius: Theme.radius.lg
-  color: Theme.surface_container
+  color: Theme.surface
   clip: true
 
   RowLayout {

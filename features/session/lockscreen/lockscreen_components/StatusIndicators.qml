@@ -18,7 +18,7 @@ Rectangle {
   width: contentRow.implicitWidth + Theme.padding.lg * 2
   height: 60
   radius: Theme.radius.lg
-  color: Theme.surface_container
+  color: Theme.surface
 
   RowLayout {
     id: contentRow
