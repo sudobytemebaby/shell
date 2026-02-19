@@ -164,7 +164,6 @@ PanelWindow {
           systemState: barWindow.systemState
         }
 
-        Modules.SystemTray {}
       }
 
       // ==================================================================
@@ -187,6 +186,8 @@ PanelWindow {
           verticalCenter: parent.verticalCenter
         }
         spacing: Theme.spacing.md
+
+        Modules.SystemTray {}
 
         Modules.Battery {
           systemState: barWindow.systemState

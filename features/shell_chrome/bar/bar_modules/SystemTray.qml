@@ -4,31 +4,30 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import "../../../../shared/theme"
 
-/**
- * SystemTray - Displays system tray icons
- *
- * Shows all registered StatusNotifierItem icons from applications.
- * Left-click activates the item, right-click opens its context menu.
- * Scroll events are forwarded to items that support them (e.g., volume).
- */
-
 Item {
   id: root
 
   implicitWidth: trayLayout.implicitWidth
   implicitHeight: Theme.barHeight
 
-  // Track items from SystemTray service
-  property var trayItems: SystemTray.items.values || []
+  visible: true // DEBUG - force visible to test rendering
+  // visible: SystemTray.items.values && SystemTray.items.values.length > 0
 
-  // Hide when no tray items are available
-  visible: trayItems.length > 0
+  onVisibleChanged: {
+    console.log("[SystemTray] Visibility changed to:", visible, "item count:", SystemTray.items.values ? SystemTray.items.values.length : 0)
+  }
 
-  // Update when items change
+  Component.onCompleted: {
+    console.log("[SystemTray] Component loaded, item count:", SystemTray.items.values ? SystemTray.items.values.length : 0)
+  }
+
   Connections {
     target: SystemTray.items
-    function onValuesChanged() {
-      root.trayItems = SystemTray.items.values || []
+    function onObjectInsertedPost(object, index) {
+      console.log("[SystemTray] Item inserted:", object.id, "icon:", object.icon, "at index:", index)
+    }
+    function onObjectRemovedPre(object, index) {
+      console.log("[SystemTray] Item removed:", object.id, "at index:", index)
     }
   }
 
@@ -38,15 +37,17 @@ Item {
     spacing: Theme.spacing.sm
 
     Repeater {
-      model: root.trayItems
+      model: SystemTray.items
 
       delegate: Item {
         id: trayItem
 
-        required property var modelData
-
         implicitWidth: Theme.typography.sm + 4
         implicitHeight: Theme.barHeight
+
+        Component.onCompleted: {
+          console.log("[SystemTray] Delegate created for:", modelData.id, "icon:", modelData.icon)
+        }
 
         Image {
           id: trayIcon
@@ -57,25 +58,13 @@ Item {
           sourceSize.height: Theme.typography.sm * 2
           smooth: true
           asynchronous: true
-          visible: status === Image.Ready
-
-          source: {
-            let icon = modelData?.icon || ""
-            if (!icon) return ""
-
-            // Handle icon paths with ?path= format
-            if (icon.includes("?path=")) {
-              const chunks = icon.split("?path=")
-              const name = chunks[0]
-              const path = chunks[1]
-              const fileName = name.substring(name.lastIndexOf("/") + 1)
-              return "file://" + path + "/" + fileName
-            }
-            return icon
+          source: modelData.icon || ""
+          
+          onStatusChanged: {
+            console.log("[SystemTray] Icon status for", modelData.id, ":", status, "source:", source)
           }
         }
 
-        // Fallback text icon when image fails to load
         Text {
           id: fallbackIcon
           anchors.centerIn: parent
@@ -83,14 +72,13 @@ Item {
           color: Theme.on_surface
           font.pixelSize: Theme.typography.sm
           font.family: Theme.fontFamily
-          visible: trayIcon.status === Image.Error || trayIcon.status === Image.Null || !modelData?.icon
+          visible: trayIcon.status === Image.Error || trayIcon.status === Image.Null || !modelData.icon
         }
 
-        // Menu anchor for displaying the tray item's context menu
-        QsMenuAnchor {
-          id: menuAnchor
-          menu: modelData?.menu || null
-          anchor.window: trayItem.QsWindow.window
+        TrayMenu {
+          id: trayMenu
+          trayItem: modelData
+          anchorItem: trayItem
         }
 
         MouseArea {
@@ -100,20 +88,24 @@ Item {
           acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
           cursorShape: Qt.PointingHandCursor
 
-          onClicked: mouse => {
-            if (!modelData) return
-
-            if (mouse.button === Qt.LeftButton) {
-              if (modelData.onlyMenu && modelData.hasMenu) {
-                menuAnchor.open()
-              } else {
-                modelData.activate()
-              }
-            } else if (mouse.button === Qt.RightButton) {
+          onPressed: mouse => {
+            console.log("[SystemTray] Mouse pressed on", modelData.id, "button:", mouse.button)
+            if (mouse.button === Qt.RightButton) {
               if (modelData.hasMenu) {
-                menuAnchor.open()
+                console.log("[SystemTray] Opening menu for", modelData.id)
+                trayMenu.open()
               } else if (modelData.secondaryActivate) {
                 modelData.secondaryActivate()
+              }
+            }
+          }
+
+          onClicked: mouse => {
+            if (mouse.button === Qt.LeftButton) {
+              if (modelData.onlyMenu && modelData.hasMenu) {
+                trayMenu.open()
+              } else {
+                modelData.activate()
               }
             } else if (mouse.button === Qt.MiddleButton) {
               if (modelData.secondaryActivate) {
