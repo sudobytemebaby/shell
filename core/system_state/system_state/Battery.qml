@@ -77,31 +77,21 @@ Scope {
   // ============================================================================
 
   readonly property string batteryIcon: {
-    // Charging states
-    if (isCharging) {
-      if (percentage >= 0.9) return "󰂅"  // battery-charging-100
-      if (percentage >= 0.8) return "󰂋"  // battery-charging-90
-      if (percentage >= 0.7) return "󰂊"  // battery-charging-80
-      if (percentage >= 0.6) return "󰢞"  // battery-charging-70
-      if (percentage >= 0.5) return "󰂉"  // battery-charging-60
-      if (percentage >= 0.4) return "󰢝"  // battery-charging-50
-      if (percentage >= 0.3) return "󰂈"  // battery-charging-40
-      if (percentage >= 0.2) return "󰂇"  // battery-charging-30
-      if (percentage >= 0.1) return "󰂆"  // battery-charging-20
-      return "󰢜"  // battery-charging-10
-    }
+    let icon = "";
+    
+    // Select base horizontal icon based on percentage
+    if (percentage >= 0.90)      icon = " "; // Full
+    else if (percentage >= 0.65) icon = " "; // 3/4
+    else if (percentage >= 0.40) icon = " "; // 1/2
+    else if (percentage >= 0.15) icon = " "; // 1/4
+    else                         icon = " "; // Empty
 
-    // Discharging/normal states
-    if (percentage >= 0.9) return "󰁹"  // battery-100
-    if (percentage >= 0.8) return "󰂂"  // battery-90
-    if (percentage >= 0.7) return "󰂁"  // battery-80
-    if (percentage >= 0.6) return "󰂀"  // battery-70
-    if (percentage >= 0.5) return "󰁿"  // battery-60
-    if (percentage >= 0.4) return "󰁾"  // battery-50
-    if (percentage >= 0.3) return "󰁽"  // battery-40
-    if (percentage >= 0.2) return "󰁼"  // battery-30
-    if (percentage >= 0.1) return "󰁻"  // battery-20
-    return "󰁺"  // battery-10
+    // Add charging indicator if active
+    if (isCharging) {
+      return icon + " 󱐋";
+    }
+    
+    return icon;
   }
 
   readonly property string statusText: {

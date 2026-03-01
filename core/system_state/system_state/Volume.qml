@@ -81,9 +81,9 @@ Scope {
   readonly property string volumeIcon: {
     if (volumeMuted) return "󰖁"
     if (isHeadphones) return "󰋋"
-    if (volume === 0)   return "󰕿"
-    if (volume < 0.33)  return "󰕿"
-    if (volume < 0.66)  return "󰖀"
+    if (volume === 0) return "󰕿"
+    if (volume < 0.33) return "󰕿"
+    if (volume < 0.66) return "󰖀"
     return "󰕾"
   }
 

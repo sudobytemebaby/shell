@@ -58,7 +58,7 @@ Rectangle {
       visible: root.systemState?.battery.isLaptopBattery ?? false
 
       Text {
-        text: root.systemState?.battery.batteryIcon ?? "󰁹"
+        text: root.systemState?.battery.batteryIcon ?? ""
         font.pixelSize: Theme.typography.lg
         font.family: Theme.typography.fontFamily
         color: {

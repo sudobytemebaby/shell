@@ -9,7 +9,7 @@ Item {
   // Reference to system state
   required property var systemState
 
-  property string icon: "󰂑"
+  property string icon: ""
   property string percentage: "N/A"
   property color iconColor: Theme.on_surface
   property bool hovered: false
@@ -29,7 +29,7 @@ Item {
   RowLayout {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: Theme.spacing.sm
+    spacing: Theme.spacing.xs // Tighter spacing for MD3 feel
 
     // Icon (always visible)
     Text {
@@ -39,6 +39,9 @@ Item {
       font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter
+      
+      // Add subtle spacing between charging symbol and battery if both are present
+      // This is handled automatically by the font but we can fine-tune if needed.
     }
 
     // Percentage (only visible on hover)
@@ -103,7 +106,7 @@ Item {
     var battery = root.systemState.battery
     
     if (!battery || !battery.ready || !battery.isLaptopBattery) {
-      root.icon = "󰂑"  // Default battery icon
+      root.icon = ""  // Default horizontal battery icon
       root.percentage = "N/A"
       return
     }
