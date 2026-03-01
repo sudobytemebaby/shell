@@ -6,7 +6,6 @@ import Quickshell.Io
 // Volume State Module - Native PipeWire
 // Manages audio volume state (speakers and microphone) via PipeWire.
 // Monitors both programmatic and external changes (e.g., media keys).
-// Device type detection via native PipeWire node description.
 
 Scope {
   id: module
@@ -43,22 +42,6 @@ Scope {
   property var audioSource: audioSourceNode?.audio ?? null
 
   // ============================================================================
-  // DEVICE DETECTION - Native PipeWire, no processes or regex
-  // ============================================================================
-
-  readonly property string deviceName: audioSinkNode?.description ?? "Unknown"
-
-  readonly property bool isHeadphones: {
-    var desc = (audioSinkNode?.description ?? "").toLowerCase()
-    return desc.includes("headphone") ||
-           desc.includes("headset")   ||
-           desc.includes("bluez")     ||
-           desc.includes("bluetooth")
-  }
-
-  readonly property string deviceType: isHeadphones ? "headphones" : "speaker"
-
-  // ============================================================================
   // STATE PROPERTIES
   // ============================================================================
 
@@ -71,7 +54,6 @@ Scope {
   readonly property bool micMuted: audioSource?.muted ?? false
 
   // Device information
-  readonly property string outputDevice: deviceName
   readonly property string inputDevice: audioSourceNode?.description ?? "Unknown"
 
   // ============================================================================
@@ -80,7 +62,6 @@ Scope {
 
   readonly property string volumeIcon: {
     if (volumeMuted) return "󰖁"
-    if (isHeadphones) return "󰋋"
     if (volume === 0) return "󰕿"
     if (volume < 0.33) return "󰕿"
     if (volume < 0.66) return "󰖀"
@@ -92,11 +73,6 @@ Scope {
   readonly property string statusText: {
     if (volumeMuted) return "Muted"
     return Math.round(volume * 100) + "%"
-  }
-
-  readonly property string detailedStatusText: {
-    if (volumeMuted) return deviceName + " (Muted)"
-    return deviceName + " " + Math.round(volume * 100) + "%"
   }
 
   // ============================================================================
@@ -241,7 +217,6 @@ Scope {
 
   function getVolumeIcon(volume, muted) {
     if (muted) return "󰖁"
-    if (module.isHeadphones) return "󰋋"
     if (volume === 0)  return "󰕿"
     if (volume < 0.33) return "󰕿"
     if (volume < 0.66) return "󰖀"
@@ -254,10 +229,6 @@ Scope {
 
   function getStatusText() {
     return module.statusText
-  }
-
-  function getDetailedStatus() {
-    return module.detailedStatusText
   }
 
   // ============================================================================

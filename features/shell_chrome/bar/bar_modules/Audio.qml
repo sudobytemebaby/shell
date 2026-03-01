@@ -11,7 +11,6 @@ Item {
 
   property string icon: "󰖁"
   property string volume: "N/A"
-  property string device: "Unknown"
   property bool hovered: false 
 
   implicitWidth: hovered ? rowLayout.implicitWidth : iconText.implicitWidth
@@ -85,20 +84,8 @@ Item {
     function onVolumeChanged() {
       updateAudioDisplay()
     }
-    
+
     function onVolumeMutedChanged() {
-      updateAudioDisplay()
-    }
-    
-    function onDeviceNameChanged() {
-      updateAudioDisplay()
-    }
-    
-    function onDeviceTypeChanged() {
-      updateAudioDisplay()
-    }
-    
-    function onIsHeadphonesChanged() {
       updateAudioDisplay()
     }
   }
@@ -106,26 +93,22 @@ Item {
   // Update audio display
   function updateAudioDisplay() {
     var volumeModule = root.systemState.volume
-    
+
     if (!volumeModule) {
       root.icon = "󰖁"
       root.volume = "N/A"
-      root.device = "Unknown"
       return
     }
-    
-    // Get icon from volume module (handles mute, device type, and volume level)
+
+    // Get icon from volume module (handles mute state and volume level)
     root.icon = volumeModule.getVolumeIcon(volumeModule.volume, volumeModule.volumeMuted)
-    
+
     // Format volume percentage
     if (volumeModule.volumeMuted) {
       root.volume = "Muted"
     } else {
       root.volume = Math.round(volumeModule.volume * 100) + "%"
     }
-    
-    // Get device name
-    root.device = volumeModule.deviceName || "Unknown"
   }
   
   // Initial update
