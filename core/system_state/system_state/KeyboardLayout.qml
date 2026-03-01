@@ -4,7 +4,7 @@ import Quickshell.Hyprland
 import Quickshell.Io
 
 // KeyboardLayout State Module
-// Manages keyboard layout state using Hyprland IPC for instant updates.
+// Displays raw keyboard layout name from Hyprland (e.g., "English (US)", "Russian")
 // Uses event-driven architecture for zero-latency layout changes.
 Scope {
   id: module
@@ -19,8 +19,7 @@ Scope {
   // STATE PROPERTIES
   // ============================================================================
 
-  property string currentLayout: "EN"
-  property string currentIcon: "󰌌"
+  property string currentLayout: ""
 
   property bool isInitialized: false
 
@@ -28,7 +27,7 @@ Scope {
   // EXTERNAL CHANGE SIGNAL
   // ============================================================================
 
-  signal layoutChanged(string layout, string icon)
+  signal layoutChanged(string layout)
 
   // ============================================================================
   // HYPRLAND IPC EVENT LISTENER (Primary - Instant Updates)
@@ -60,59 +59,22 @@ Scope {
   }
 
   // ============================================================================
-  // LAYOUT PARSING & MAPPING
+  // LAYOUT SETTING (Pass-through - no mapping)
   // ============================================================================
 
   function setLayout(layoutString) {
     if (!layoutString) return
 
     var oldLayout = module.currentLayout
-    var result = parseLayoutString(layoutString)
-
-    module.currentLayout = result.code
-    module.currentIcon = result.icon
+    module.currentLayout = layoutString.trim()
 
     if (oldLayout !== module.currentLayout) {
       console.log("[KeyboardLayout]", oldLayout, "→", module.currentLayout)
     }
 
     if (module.isInitialized && oldLayout !== module.currentLayout) {
-      module.layoutChanged(module.currentLayout, module.currentIcon)
+      module.layoutChanged(module.currentLayout)
     }
-  }
-
-  function parseLayoutString(layoutString) {
-    var str = layoutString.toLowerCase().trim()
-
-    // Remove variant: "English (US)" -> "English"
-    if (str.indexOf("(") !== -1) {
-      str = str.substring(0, str.indexOf("(")).trim()
-    }
-
-    // Map layouts
-    var layoutMap = {
-      "english (us)": {code: "EN", icon: "󰌌"},
-      "english": {code: "EN", icon: "󰌌"},
-      "us": {code: "EN", icon: "󰌌"},
-      "russian": {code: "RU", icon: "󰗊"},
-      "ru": {code: "RU", icon: "󰗊"},
-      "arabic": {code: "AR", icon: "󰀍"},
-      "ar": {code: "AR", icon: "󰀍"},
-      "german": {code: "DE", icon: "󰀪"},
-      "de": {code: "DE", icon: "󰀪"},
-      "french": {code: "FR", icon: "󰀫"},
-      "fr": {code: "FR", icon: "󰀫"},
-      "spanish": {code: "ES", icon: "󰀩"},
-      "es": {code: "ES", icon: "󰀩"}
-    }
-
-    if (layoutMap[str]) {
-      return layoutMap[str]
-    }
-
-    // Fallback
-    var code = str.substring(0, 2).toUpperCase()
-    return {code: code, icon: "󰌌"}
   }
 
   // ============================================================================
@@ -128,7 +90,7 @@ Scope {
       onRead: data => {
         if (!data || data.trim() === "") return
         var layout = data.trim()
-        module.setLayout(layout)
+        module.currentLayout = layout
         console.log("[KeyboardLayout] Initial layout from hyprctl:", layout)
         initialLayoutProcess.running = false
       }

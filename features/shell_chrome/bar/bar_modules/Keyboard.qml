@@ -29,7 +29,7 @@ Item {
     Text {
         id: layoutText
         anchors.centerIn: parent
-        text: root.layout.toUpperCase()
+        text: root.layout
         color: Theme.on_surface
         font.pixelSize: Theme.typography.sm
         font.family: Theme.typography.fontFamily
