@@ -147,9 +147,7 @@ Scope {
             radius: Theme.radius.lg
             
             // Use transparent_medium for blur effect consistency
-            color: hovered 
-                   ? Qt.darker(Theme.surface_container_transparent_medium, 1.1) 
-                   : Theme.surface_container_transparent_medium
+            color: Theme.surface_transparent_medium
             
             border.width: 0.5
             border.color: Theme.surface_container_high

@@ -122,11 +122,11 @@ Loader {
 
     Rectangle {
       id: background
-      x: (parent.width - 540) / 2
+      x: (parent.width - 500) / 2
       y: (parent.height - 600) / 2
-      width: 540
+      width: 500
       height: 600
-      radius: 28
+      radius: Theme.radius.xl
       color: Theme.surface_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high

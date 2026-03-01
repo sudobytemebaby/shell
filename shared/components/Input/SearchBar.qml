@@ -26,7 +26,7 @@ Rectangle {
   // ============================================================================
 
   radius: Theme.radius.full
-  color: Theme.surface_container_low
+  color: Theme.surface_container
 
   border.width: 0
   border.color: Theme.surface_container_highest

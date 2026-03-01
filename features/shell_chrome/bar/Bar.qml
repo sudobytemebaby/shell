@@ -152,7 +152,7 @@ PanelWindow {
           left: parent.left
           verticalCenter: parent.verticalCenter
         }
-        spacing: Theme.spacing.md
+        spacing: Theme.spacing.lg
 
         Modules.ControlCenterButton {
           controlCenterManager: barWindow.controlCenterManager
@@ -185,7 +185,7 @@ PanelWindow {
           right: parent.right
           verticalCenter: parent.verticalCenter
         }
-        spacing: Theme.spacing.md
+        spacing: Theme.spacing.lg
 
         Modules.SystemTray {}
 

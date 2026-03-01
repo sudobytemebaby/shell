@@ -43,7 +43,7 @@ LazyLoader {
     
     Rectangle {
       anchors.fill: parent
-      color: Theme.surface_transparent_heavy
+      color: Theme.surface_transparent_medium
       radius: Theme.radius.xl
       border.width: 0.5
       border.color: Theme.surface_container_high

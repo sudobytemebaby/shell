@@ -19,7 +19,10 @@ Item {
     // Updates instantly when layout changes via Hyprland IPC events
     property string layout: systemState.keyboardLayout.currentLayout
 
-    implicitWidth: layoutText.implicitWidth
+    Layout.alignment: Qt.AlignVCenter
+    Layout.minimumWidth: 32
+
+    implicitWidth: Math.max(layoutText.implicitWidth, 32)
     implicitHeight: Theme.barHeight
 
     // Display keyboard layout code in uppercase
