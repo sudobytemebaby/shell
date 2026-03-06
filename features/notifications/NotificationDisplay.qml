@@ -92,7 +92,7 @@ Scope {
           top: true
           right: true
         }
-        
+
         margins {
           top: stackOffset
           right: Theme.spacing.md
@@ -106,20 +106,11 @@ Scope {
         
         Component.onCompleted: {
           exclusiveZone = 0
-          implicitWidth = 340
         }
-        
-        // Dynamic height binding - this will update as content changes
+
+        implicitWidth: 340
         implicitHeight: wrapper.height
-        
-        // Smooth position transitions when notifications above are removed
-        Behavior on stackOffset {
-          NumberAnimation {
-            duration: 200 
-            easing.type: Easing.OutCubic
-          }
-        }
-        
+
         // ----------------------------------------------------------------------
         // Content Wrapper (for Animations)
         // ----------------------------------------------------------------------
@@ -149,7 +140,7 @@ Scope {
             // Use transparent_medium for blur effect consistency
             color: Theme.surface_transparent_medium
             
-            border.width: 0.5
+            border.width: 1
             border.color: Theme.surface_container
             
             property bool hovered: false

@@ -76,7 +76,7 @@ LazyLoader {
 
         // Use standard transparent theme
         color: Theme.surface_transparent_medium
-        border.width: 2
+        border.width: 0.5
         border.color: Theme.surface_container
 
         // Prevent clicks on panel from closing it
@@ -147,7 +147,7 @@ LazyLoader {
                   top: parent.top
                 }
 
-                implicitHeight: cardContent.implicitHeight + (Theme.padding.md * 2)
+                implicitHeight: cardContent.implicitHeight + (Theme.padding.lg * 2)
 
                 radius: Theme.radius.lg
 
@@ -193,8 +193,8 @@ LazyLoader {
                       text: modelData.appName
                       color: Theme.on_surface
                       font.pixelSize: Theme.typography.sm
-                      font.family: Theme.typography.fontFamilyDisplay
-                      font.weight: 600
+                      font.family: Theme.typography.fontFamily
+                      font.weight: Theme.typography.weightMedium
                       elide: Text.ElideRight
                       maximumLineCount: 1
                     }
@@ -204,7 +204,7 @@ LazyLoader {
                       text: "✕"
                       font.pixelSize: Theme.typography.sm
                       font.family: Theme.typography.fontFamily
-                      color: mouseArea.containsMouse ? Theme.error : Theme.on_surface_variant
+                      color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface_variant
 
                       MouseArea {
                         id: mouseArea
