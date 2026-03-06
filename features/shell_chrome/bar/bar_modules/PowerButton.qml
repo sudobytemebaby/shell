@@ -1,10 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Io
 import "../../../../shared/theme"
 
 Item {
   id: root
+
+  required property var powerMenuManager
 
   implicitWidth: buttonText.implicitWidth
   implicitHeight: Theme.barHeight
@@ -13,7 +14,7 @@ Item {
     id: buttonText
     anchors.centerIn: parent
     text: "󰐥"
-    color: mouseArea.containsMouse ? Theme.error : Theme.on_surface
+    color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface
     font.pixelSize: Theme.typography.sm
     verticalAlignment: Text.AlignVCenter
     
@@ -32,7 +33,7 @@ Item {
     cursorShape: Qt.PointingHandCursor
     
     onClicked: {
-      Quickshell.callIpc("powermenu", "toggle")
+      root.powerMenuManager.visible = !root.powerMenuManager.visible
     }
   }
 }

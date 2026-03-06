@@ -33,7 +33,7 @@ Item {
     Text {
       id: iconText
       text: notificationCount > 0 ? "󱅫" : "󰂚"
-      color: mouseArea.containsMouse ? Qt.darker(Theme.on_surface, 1.3) : Theme.on_surface
+      color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface
       font.pixelSize: Theme.typography.sm
       font.family: Theme.fontFamily
       verticalAlignment: Text.AlignVCenter

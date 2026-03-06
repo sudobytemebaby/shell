@@ -35,6 +35,7 @@ PanelWindow {
   required property var notificationCenterManager
   required property var calendarManager
   required property var systemState
+  required property var powerMenuManager
 
   // ========================================================================
   // STATE
@@ -178,7 +179,6 @@ PanelWindow {
         }
         spacing: Theme.spacing.lg
 
-        Modules.PowerButton {}
 
         Modules.SystemTray {}
 
@@ -200,6 +200,10 @@ PanelWindow {
 
         Modules.NotificationCenterButton {
           notificationCenterManager: barWindow.notificationCenterManager
+        }
+
+        Modules.PowerButton {
+          powerMenuManager: barWindow.powerMenuManager
         }
       }
     }
