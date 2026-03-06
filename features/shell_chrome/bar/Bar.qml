@@ -178,6 +178,8 @@ PanelWindow {
         }
         spacing: Theme.spacing.lg
 
+        Modules.PowerButton {}
+
         Modules.SystemTray {}
 
         Modules.Battery {
