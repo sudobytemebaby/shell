@@ -119,7 +119,7 @@ LazyLoader {
       radius: Theme.radius.full
       color: Theme.surface_transparent_medium
       border.width: 0.5
-      border.color: Theme.surface_container_high
+      border.color: Theme.surface_container
 
       MouseArea {
         anchors.fill: parent

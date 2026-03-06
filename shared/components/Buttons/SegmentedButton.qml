@@ -33,7 +33,7 @@ Rectangle {
   radius: Theme.radius.full
   color: Theme.surface_container_low
   border.width: 0.5
-  border.color: Theme.surface_container_high
+  border.color: Theme.surface_container
 
   /**
    * List of options to display.

@@ -130,8 +130,8 @@ LazyLoader {
       height: 580
       radius: 28
       color: Theme.surface_transparent_medium
-      border.width: 0.5
-      border.color: Theme.surface_container_high
+      border.width: 2
+      border.color: Theme.surface_container
 
       // Prevent clicks on container from propagating to background (which would close menu)
       MouseArea {

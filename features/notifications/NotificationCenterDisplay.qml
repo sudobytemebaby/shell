@@ -76,8 +76,8 @@ LazyLoader {
 
         // Use standard transparent theme
         color: Theme.surface_transparent_medium
-        border.width: 1
-        border.color: Theme.surface_container_high
+        border.width: 2
+        border.color: Theme.surface_container
 
         // Prevent clicks on panel from closing it
         MouseArea {

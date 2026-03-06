@@ -78,7 +78,7 @@ Scope {
 
   readonly property string batteryIcon: {
     if (isCharging) {
-      if (percentage >= 0.99) return "󰂋"
+      if (percentage >= 0.99) return "󰂅"
       if (percentage >= 0.90) return "󰂊"
       if (percentage >= 0.80) return "󰢞"
       if (percentage >= 0.70) return "󰂉"
@@ -88,10 +88,10 @@ Scope {
       if (percentage >= 0.30) return "󰂆"
       if (percentage >= 0.20) return "󰢜"
       if (percentage >= 0.10) return "󰂅"
-      return "󰂅"
+      return "󰂑"
     }
     
-    if (percentage >= 0.99) return "󰂂"
+    if (percentage >= 0.99) return "󰁹"
     if (percentage >= 0.90) return "󰂁"
     if (percentage >= 0.80) return "󰂀"
     if (percentage >= 0.70) return "󰁿"
@@ -100,8 +100,8 @@ Scope {
     if (percentage >= 0.40) return "󰁼"
     if (percentage >= 0.30) return "󰁻"
     if (percentage >= 0.20) return "󰁺"
-    if (percentage >= 0.10) return "󰁹"
-    return "󰁹"
+    if (percentage >= 0.10) return "󰂎" 
+    return "󰂑"
   }
 
   readonly property string statusText: {

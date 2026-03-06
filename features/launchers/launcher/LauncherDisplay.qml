@@ -128,8 +128,8 @@ Loader {
       height: 600
       radius: Theme.radius.xl
       color: Theme.surface_transparent_medium
-      border.width: 0.5
-      border.color: Theme.surface_container_high
+      border.width: 2
+      border.color: Theme.surface_container
 
       // Prevent clicks on launcher from closing it (only background clicks close)
       MouseArea {
