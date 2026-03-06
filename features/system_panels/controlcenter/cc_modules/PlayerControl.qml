@@ -22,24 +22,10 @@ Card {
   // BACKGROUND: ALBUM ART
   // ====================================================================
 
-  // Album art background with rounded corners using NImageRounded
-  NImageRounded {
-    id: alblumBg
-    anchors.fill: parent
-    imagePath: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
-               ? mediaManager.playerArtUrl
-               : ""
-    radius: Theme.radius.xl
-    borderWidth: 0
-    imageFillMode: Image.PreserveAspectCrop
-    visible: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
-  }
-
   // Dark overlay for better text contrast
   Rectangle {
     anchors.fill: parent
-    color: "#000000"
-    opacity: 0.7
+    color: Theme.surface_container
     radius: Theme.radius.xl
     visible: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
   }
@@ -63,7 +49,7 @@ Card {
       radius: Theme.radius.lg
       icon: "󰝛"
       iconSize: Theme.typography.xxl
-      bgColor: Theme.surface_container_highest
+      bgColor: Theme.surface_container
       iconColor: Theme.on_surface_variant
     }
 
@@ -78,7 +64,7 @@ Card {
     }
   }
 
-  // Active state - album art background with controls
+  // Active state
   ColumnLayout {
     anchors.fill: parent
     anchors.margins: Theme.padding.lg
@@ -167,7 +153,7 @@ Card {
     RowLayout {
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
-      spacing: Theme.spacing.lg
+      spacing: Theme.spacing.md
 
       // Previous
       Text {
@@ -200,7 +186,7 @@ Card {
           anchors.centerIn: parent
           text: mediaManager.playerPlaying ? "󰏤" : "󰐊"
           color: Theme.primary
-          font.pixelSize: 20
+          font.pixelSize: 18
           font.family: Theme.typography.fontFamily
         }
 
