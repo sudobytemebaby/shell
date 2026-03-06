@@ -104,34 +104,6 @@ Scope {
   }
 
   // ============================================================================
-  // UTILITY FUNCTIONS (Legacy - use cached properties where possible)
-  // ============================================================================
-  
-  // Get battery icon based on percentage and charging state
-  function getBatteryIcon(percentage, isCharging) {
-    return module.batteryIcon
-  }
-  
-  // Format time remaining (seconds -> "Xh Ym" or "Ym")
-  function formatTime(seconds) {
-    if (seconds <= 0) return "N/A"
-    
-    var hours = Math.floor(seconds / 3600)
-    var minutes = Math.floor((seconds % 3600) / 60)
-    
-    if (hours > 0) {
-      return hours + "h " + minutes + "m"
-    } else {
-      return minutes + "m"
-    }
-  }
-  
-  // Get status text (for display)
-  function getStatusText() {
-    return module.statusText
-  }
-  
-  // ============================================================================
   // LOGGING (for debugging)
   // ============================================================================
   
@@ -139,6 +111,6 @@ Scope {
     console.log("[Battery] Module initialized")
     console.log("[Battery] Is laptop battery:", isLaptopBattery)
     console.log("[Battery] Initial percentage:", Math.round(percentage * 100) + "%")
-    console.log("[Battery] State:", getStatusText())
+    console.log("[Battery] State:", statusText)
   }
 }

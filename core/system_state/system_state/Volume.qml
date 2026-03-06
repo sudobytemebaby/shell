@@ -61,11 +61,11 @@ Scope {
   // ============================================================================
 
   readonly property string volumeIcon: {
-    if (volumeMuted) return "󰖁"
-    if (volume === 0) return "󰕿"
-    if (volume < 0.33) return "󰕿"
-    if (volume < 0.66) return "󰖀"
-    return "󰕾"
+    if (volumeMuted) return ""
+    if (volume === 0) return ""
+    if (volume < 0.33) return ""
+    if (volume < 0.66) return ""
+    return ""
   }
 
   readonly property string micIcon: micMuted ? "󰍭" : "󰍬"
@@ -209,26 +209,6 @@ Scope {
     changingMic = true
     micChangeResetTimer.restart()
     audioSource.muted = muted
-  }
-
-  // ============================================================================
-  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
-  // ============================================================================
-
-  function getVolumeIcon(volume, muted) {
-    if (muted) return "󰖁"
-    if (volume === 0)  return "󰕿"
-    if (volume < 0.33) return "󰕿"
-    if (volume < 0.66) return "󰖀"
-    return "󰕾"
-  }
-
-  function getMicIcon(muted) {
-    return muted ? "󰍭" : "󰍬"
-  }
-
-  function getStatusText() {
-    return module.statusText
   }
 
   // ============================================================================

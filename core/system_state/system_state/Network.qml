@@ -333,22 +333,6 @@ Scope {
   }
 
   // ============================================================================
-  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
-  // ============================================================================
-
-  function getNetworkIcon() {
-    return module.networkIcon
-  }
-
-  function getStatusText() {
-    return module.statusText
-  }
-
-  function getDetailedStatus() {
-    return module.detailedStatus
-  }
-  
-  // ============================================================================
   // INITIALIZATION
   // ============================================================================
 

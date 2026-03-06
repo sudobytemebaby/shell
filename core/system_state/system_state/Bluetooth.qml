@@ -277,22 +277,6 @@ Scope {
   }
 
   // ============================================================================
-  // UTILITY FUNCTIONS (Legacy - use cached properties instead)
-  // ============================================================================
-
-  function getBluetoothIcon(powered, hasDevice) {
-    return module.bluetoothIcon
-  }
-
-  function getStatusText() {
-    return module.statusText
-  }
-
-  function getDetailedStatus() {
-    return module.detailedStatus
-  }
-
-  // ============================================================================
   // INITIALIZATION
   // ============================================================================
 

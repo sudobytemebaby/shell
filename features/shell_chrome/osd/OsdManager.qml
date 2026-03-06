@@ -58,12 +58,12 @@ Scope {
     enabled: manager.systemState && manager.systemState.volume
     
     function onVolumeChangedExternally(volume, muted) {
-      var icon = manager.systemState.volume.getVolumeIcon(volume, muted)
+      var icon = manager.systemState.volume.volumeIcon
       manager.showOsd(manager.typeVolume, volume, muted, icon)
     }
     
     function onMicChangedExternally(volume, muted) {
-      var icon = manager.systemState.volume.getMicIcon(muted)
+      var icon = manager.systemState.volume.micIcon
       manager.showOsd(manager.typeMic, volume, muted, icon)
     }
   }
@@ -77,7 +77,7 @@ Scope {
     enabled: manager.systemState && manager.systemState.brightness
     
     function onBrightnessChangedExternally(brightness) {
-      var icon = manager.systemState.brightness.getBrightnessIcon(brightness)
+      var icon = manager.systemState.brightness.brightnessIcon
       manager.showOsd(manager.typeBrightness, brightness, false, icon)
     }
   }

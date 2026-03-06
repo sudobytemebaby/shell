@@ -108,10 +108,10 @@ Item {
     }
     
     // Get icon based on power and connection state
-    root.icon = bt.getBluetoothIcon(bt.powered, bt.hasConnectedDevice)
+    root.icon = bt.bluetoothIcon
     
     // Get status text
-    root.status = bt.getStatusText()
+    root.status = bt.statusText
   }
   
   // Initial update

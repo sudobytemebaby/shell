@@ -100,15 +100,6 @@ PanelWindow {
     radius: 0
     color: Theme.surface_transparent_medium
 
-    // Bottom border
-    Rectangle {
-      anchors.bottom: parent.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      height: 1
-      color: Theme.surface_container_high
-    }
-
     // Slide animation
     transform: Translate {
       y: barWindow.barVisible ? 0 : -(barContainer.height + 2)

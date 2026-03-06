@@ -9,7 +9,7 @@ Item {
   // Reference to system state
   required property var systemState
 
-  property string icon: ""
+  property string icon: " "
   property string percentage: "N/A"
   property color iconColor: Theme.on_surface
   property bool hovered: false
@@ -29,7 +29,7 @@ Item {
   RowLayout {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: Theme.spacing.xs // Tighter spacing for MD3 feel
+    spacing: Theme.spacing.sm
 
     // Icon (always visible)
     Text {
@@ -112,7 +112,7 @@ Item {
     }
     
     // Get icon based on percentage and charging state
-    root.icon = battery.getBatteryIcon(battery.percentage, battery.isCharging)
+    root.icon = battery.batteryIcon
     
     // Format percentage
     root.percentage = Math.round(battery.percentage * 100) + "%"

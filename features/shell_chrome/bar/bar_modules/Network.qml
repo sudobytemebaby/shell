@@ -127,7 +127,7 @@ Item {
     }
     
     // Get icon from network module
-    root.icon = network.getNetworkIcon()
+    root.icon = network.networkIcon
     
     // Get interface name or status
     if (network.connectionType === "wifi" && network.wifiConnected) {

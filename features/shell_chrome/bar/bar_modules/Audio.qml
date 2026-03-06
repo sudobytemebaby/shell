@@ -101,7 +101,7 @@ Item {
     }
 
     // Get icon from volume module (handles mute state and volume level)
-    root.icon = volumeModule.getVolumeIcon(volumeModule.volume, volumeModule.volumeMuted)
+    root.icon = volumeModule.volumeIcon
 
     // Format volume percentage
     if (volumeModule.volumeMuted) {
