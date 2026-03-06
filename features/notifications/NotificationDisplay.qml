@@ -84,7 +84,7 @@ Scope {
         // Calculate Y position based on stack index (compact stacking)
         property real stackOffset: {
           var baseOffset = Theme.component.barHeight + Theme.spacing.md
-          var perNotifOffset = 130 // Compact spacing
+          var perNotifOffset = 140
           return baseOffset + (loader.notificationIndex * perNotifOffset)
         }
         
