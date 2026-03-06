@@ -94,6 +94,7 @@ AnimatedLazyLoader {
       var group = loader.manager.selectedGroup
 
       // Iterate through all items and update their group membership
+      var visibleCount = 0
       for (var i = 0; i < delegateModel.items.count; i++) {
         var item = delegateModel.items.get(i)
         var matches = true
@@ -103,16 +104,18 @@ AnimatedLazyLoader {
           matches = false
         }
         // Apply search filter using SearchFilterMixin for consistent keyword matching
-        else if (search && !filterMixin.keywordMatch(item.model.keywords, search)) {
-          matches = false
+        else if (search) {
+          if (!filterMixin.keywordMatch(item.model.keywords, search)) {
+            matches = false
+          }
         }
 
         // Update visibility group membership
         item.inVisible = matches
+        if (matches) visibleCount++
       }
 
       // Reset selection to first item after filtering completes
-      // This ensures highlight is always on the first visible item
       emojiWindow.selectedIndex = 0
       if (gridView.count > 0) {
         gridView.positionViewAtBeginning()
@@ -203,11 +206,21 @@ AnimatedLazyLoader {
 
       onSelectCurrent: {
         // Copy selected emoji on Enter
-        if (emojiWindow.selectedIndex >= 0 &&
-            emojiWindow.selectedIndex < delegateModel.items.count) {
-          var item = delegateModel.items.get(emojiWindow.selectedIndex)
-          if (loader.manager) {
-            loader.manager.copyEmoji(item.model.emoji)
+        // Get item from filtered visible group using selectedIndex
+        if (emojiWindow.selectedIndex >= 0) {
+          var visibleItems = []
+          for (var i = 0; i < delegateModel.items.count; i++) {
+            var item = delegateModel.items.get(i)
+            if (item.inVisible) {
+              visibleItems.push(item)
+            }
+          }
+          
+          if (emojiWindow.selectedIndex < visibleItems.length) {
+            var selectedItem = visibleItems[emojiWindow.selectedIndex]
+            if (loader.manager) {
+              loader.manager.copyEmoji(selectedItem.model.emoji)
+            }
           }
         }
       }
