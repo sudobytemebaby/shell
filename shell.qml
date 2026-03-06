@@ -251,6 +251,7 @@ ShellRoot {
     notificationCenterManager: notificationCenterManager
     calendarManager: calendarManager
     systemState: systemStateManager
+    powerMenuManager: powerMenuManager
   }
   
   // ============================================================================
