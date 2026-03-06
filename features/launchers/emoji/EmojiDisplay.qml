@@ -153,11 +153,7 @@ AnimatedLazyLoader {
           isSelected: false  // Highlight is now handled by GridView.highlight
 
           onClicked: {
-            // Update selection to the filtered index
-            emojiWindow.selectedIndex = DelegateModel.itemsIndex
-            console.log("[EmojiDisplay] Selected via click:", model.emoji)
-
-            // Null safety check before calling manager method
+            // Copy emoji on click
             if (loader.manager) {
               loader.manager.copyEmoji(model.emoji)
             }
@@ -206,13 +202,10 @@ AnimatedLazyLoader {
       }
 
       onSelectCurrent: {
-        // Get the actual item from the delegate model
+        // Copy selected emoji on Enter
         if (emojiWindow.selectedIndex >= 0 &&
             emojiWindow.selectedIndex < delegateModel.items.count) {
           var item = delegateModel.items.get(emojiWindow.selectedIndex)
-          console.log("[EmojiDisplay] Selected via Enter:", item.model.emoji)
-
-          // Null safety check
           if (loader.manager) {
             loader.manager.copyEmoji(item.model.emoji)
           }

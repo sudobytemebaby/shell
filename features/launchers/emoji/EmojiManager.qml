@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "../../../core/system_state" as Core
 import "EmojiData.js" as EmojiData
 
 /**
@@ -42,13 +41,15 @@ Scope {
   // ========== EMOJI DATA ==========
 
   // ListModel containing all emoji data
-  // Populated synchronously from EmojiData.js on component creation
   property alias emojiModel: emojiModel
 
-  // Array of emoji category names (e.g., "Smileys & Emotion", "Animals & Nature", etc.)
+  // Array of emoji category names
   property var emojiGroups: []
 
-  // Internal ListModel - contains all emojis loaded from EmojiData.js
+  // Loading state - true when emoji data has been loaded
+  property bool loaded: false
+
+  // Internal ListModel
   ListModel {
     id: emojiModel
   }
@@ -69,55 +70,51 @@ Scope {
    * @param emoji - The emoji character to copy
    */
   function copyEmoji(emoji) {
-    console.log("[EmojiManager] Copying emoji:", emoji)
-
-    Core.ProcessUtils.runCommand(
-      manager,
-      ["emoji-picker", emoji],
-      () => {
-        // Close picker after successful copy
+    // Escape emoji for shell: replace ' with '\''
+    var escapedEmoji = emoji.replace(/'/g, "'\\''")
+    
+    // Copy to clipboard
+    Quickshell.execDetached(["sh", "-c", "printf '%s' '" + escapedEmoji + "' | wl-copy"])
+    
+    // Show notification
+    Quickshell.execDetached(["sh", "-c", "notify-send -u low 'Emoji Copied' '" + escapedEmoji + "'"])
+    
+    // Close picker
+    Qt.callLater(() => {
+      Qt.callLater(() => {
         manager.visible = false
-      },
-      (code, error) => {
-        console.error("[EmojiManager] Failed to copy emoji:", error)
-      }
-    )
+      })
+    })
   }
 
   // ========== DATA LOADING ==========
 
   /**
    * Load emoji data from pre-processed JavaScript module
-   * This runs synchronously on component creation
-   *
-   * EmojiData.js contains:
-   * - emojis: Array of 3,515+ emoji objects with name, keywords, group, etc.
-   * - groups: Array of 9 emoji category names
-   *
-   * The data is pre-processed from emojis.json to avoid runtime JSON parsing overhead
+   * Uses Qt.callLater() to defer loading until after shell init completes
+   * This prevents blocking the UI during shell startup
    */
-  Component.onCompleted: {
-    console.log("[EmojiManager] Loading emoji data...")
-
+  function loadEmojis() {
     try {
-      // Load pre-processed data from JS module
       var emojis = EmojiData.emojis
       var groups = EmojiData.groups
 
-      // Populate ListModel with emoji data
-      // Note: This is synchronous and may block UI for a moment
-      // Consider async loading via WorkerScript for very large datasets
       for (var i = 0; i < emojis.length; i++) {
         emojiModel.append(emojis[i])
       }
 
       manager.emojiGroups = groups
-
-      console.log("[EmojiManager] Loaded", emojiModel.count, "emojis in", groups.length, "groups")
+      manager.loaded = true
     } catch (error) {
       manager.errorMessage = "Failed to load emoji data: " + error
-      console.error("[EmojiManager]", manager.errorMessage)
     }
+  }
+
+  // Deferred loading - runs after shell init completes
+  Component.onCompleted: {
+    Qt.callLater(() => {
+      loadEmojis()
+    })
   }
 
   // ========== IPC INTERFACE ==========
