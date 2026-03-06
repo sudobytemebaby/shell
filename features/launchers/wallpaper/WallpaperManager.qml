@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../../../core/system_state" as Core
+import "../../../core/services" as Services
 
 /**
  * WallpaperManager - Central state and logic manager for the wallpaper picker
@@ -45,6 +46,7 @@ Scope {
 
   // Loading states
   property bool isLoading: false            // True while scanning wallpaper directory
+  property bool loaded: false                // True when initial wallpaper load is complete
   property string errorMessage: ""          // Error message to display (empty = no error)
 
   // ============================================================================
@@ -75,11 +77,14 @@ Scope {
     manager.wallpaperDir = homeDir + "/Pictures/Wallpapers"
     manager.switcherScript = homeDir + "/.local/bin/wallpaper-switcher"
 
-    // Read current wallpaper from state file
-    loadCurrentWallpaperState()
+    // Deferred loading - run after shell init completes
+    Qt.callLater(() => {
+      // Read current wallpaper from state file
+      loadCurrentWallpaperState()
 
-    // Initial load - scan wallpaper directory
-    refreshWallpapers()
+      // Initial load - scan wallpaper directory
+      refreshWallpapers()
+    })
   }
 
   // ============================================================================
@@ -125,6 +130,7 @@ Scope {
 
     onExited: code => {
       manager.currentWpProcessRunning = false
+      manager.loaded = true
     }
   }
 
@@ -195,6 +201,7 @@ Scope {
     // Handle process completion
     onExited: code => {
       manager.listProcessRunning = false
+      manager.loaded = true
 
       if (code === 0 || listProcess.wallpaperBuffer.length > 0) {
         // Success or partial success - update wallpaper list
@@ -202,6 +209,11 @@ Scope {
         manager.errorMessage = ""
 
         console.log("[WallpaperManager] Found", manager.wallpapers.length, "wallpapers")
+
+        // Pre-cache thumbnails in background for fast picker open
+        Qt.callLater(() => {
+          preloadThumbnails()
+        })
       } else {
         // Complete failure - show error
         manager.errorMessage = "Failed to list wallpapers in " + manager.wallpaperDir
@@ -210,6 +222,41 @@ Scope {
 
       manager.isLoading = false
     }
+  }
+
+  // ============================================================================
+  // THUMBNAIL PRE-CACHING
+  // ============================================================================
+
+  /**
+   * Pre-cache all wallpaper thumbnails in background
+   * This runs after wallpapers are loaded, ensuring picker opens instantly
+   * on subsequent launches (thumbnails already generated or cached)
+   */
+  function preloadThumbnails() {
+    if (!manager.wallpapers || manager.wallpapers.length === 0) {
+      return
+    }
+
+    var cachedCount = 0
+    var missCount = 0
+    var totalCount = manager.wallpapers.length
+
+    manager.wallpapers.forEach((wallpaper, index) => {
+      var fullPath = manager.wallpaperDir + "/" + wallpaper
+
+      Services.ImageCacheService.getThumbnail(fullPath, function(cachedPath, success) {
+        if (success) {
+          cachedCount++
+        } else {
+          missCount++
+        }
+
+        if (cachedCount + missCount === totalCount) {
+          console.log("[WallpaperManager] Thumbnails pre-cached:", cachedCount, "cached,", missCount, "failed")
+        }
+      })
+    })
   }
 
   // ============================================================================
