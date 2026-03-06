@@ -56,7 +56,7 @@ LazyLoader {
       anchors.horizontalCenter: parent.horizontalCenter
       y: 28
       width: 360
-      height: 520
+      height: 560
 
       // Main container with Material 3 style
       Rectangle {
@@ -95,8 +95,8 @@ LazyLoader {
           // Divider
           Rectangle {
             Layout.fillWidth: true
-            Layout.topMargin: 4
-            Layout.bottomMargin: 4
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
             height: 1
             color: Theme.surface_container_high
             opacity: 0.7
@@ -106,6 +106,16 @@ LazyLoader {
           CalModules.CalendarNavigation {
             Layout.fillWidth: true
             calendarManager: loader.manager
+          }
+
+          // Divider
+          Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
+            height: 1
+            color: Theme.surface_container_high
+            opacity: 0.7
           }
 
           // ========== CALENDAR GRID ==========

@@ -13,7 +13,7 @@ Card {
   
   ColumnLayout {
     anchors.fill: parent
-    spacing: 2
+    spacing: 3
     
     // Day names header
     DayOfWeekRow {
@@ -47,7 +47,7 @@ Card {
       delegate: Rectangle {
         required property var model
         
-        radius: height / 2
+        radius: height / 1
         color: {
           var now = new Date()
           var isToday = model.day === now.getDate() && 
