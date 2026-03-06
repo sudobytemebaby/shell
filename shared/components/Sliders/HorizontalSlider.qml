@@ -38,7 +38,7 @@ ColumnLayout {
       }
       height: 6
       radius: Theme.radius.sm
-      color: Theme.surface_container_highest
+      color: Theme.surface_container_high
 
       // Progress fill
       Rectangle {
