@@ -5,7 +5,6 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../shared/theme"
 import "../../shared/components"
-import "../../shared/components/Modals"
 
 Scope {
   id: root
@@ -151,7 +150,7 @@ Scope {
             color: Theme.surface_transparent_medium
             
             border.width: 0.5
-            border.color: Theme.surface_container_high
+            border.color: Theme.surface_container
             
             property bool hovered: false
             
@@ -196,9 +195,21 @@ Scope {
                 }
                 
                 // Close button
-                CloseButton {
-                  style: "rounded"
-                  onClicked: fadeOut.start()
+                Text {
+                  text: "✕"
+                  font.pixelSize: Theme.typography.sm
+                  font.family: Theme.typography.fontFamily
+                  color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface_variant
+
+                  MouseArea {
+                    id: mouseArea
+                    width: 24
+                    height: 24
+                    anchors.centerIn: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: fadeOut.start()
+                  }
                 }
               }
               

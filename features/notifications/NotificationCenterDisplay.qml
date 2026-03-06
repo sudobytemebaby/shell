@@ -199,9 +199,22 @@ LazyLoader {
                       maximumLineCount: 1
                     }
 
-                    CloseButton {
-                      style: "rounded"
-                      onClicked: loader.manager.removeNotification(index)
+                    // Close button
+                    Text {
+                      text: "✕"
+                      font.pixelSize: Theme.typography.sm
+                      font.family: Theme.typography.fontFamily
+                      color: mouseArea.containsMouse ? Theme.error : Theme.on_surface_variant
+
+                      MouseArea {
+                        id: mouseArea
+                        width: 24
+                        height: 24
+                        anchors.centerIn: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: loader.manager.removeNotification(index)
+                      }
                     }
                   }
 

@@ -13,9 +13,9 @@ Item {
   Text {
     id: buttonText
     anchors.centerIn: parent
-    text: ""
+    text: "󰐥"
     color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface
-    font.pixelSize: Theme.typography.sm
+    font.pixelSize: Theme.typography.md
     verticalAlignment: Text.AlignVCenter
     
     Behavior on color {
