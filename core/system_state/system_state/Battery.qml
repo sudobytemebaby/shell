@@ -77,21 +77,31 @@ Scope {
   // ============================================================================
 
   readonly property string batteryIcon: {
-    let icon = "";
-    
-    // Select base horizontal icon based on percentage
-    if (percentage >= 0.90)      icon = " "; // Full
-    else if (percentage >= 0.65) icon = " "; // 3/4
-    else if (percentage >= 0.40) icon = " "; // 1/2
-    else if (percentage >= 0.15) icon = " "; // 1/4
-    else                         icon = " "; // Empty
-
-    // Add charging indicator if active
     if (isCharging) {
-      return icon + " 󱐋";
+      if (percentage >= 0.99) return "󰂋"
+      if (percentage >= 0.90) return "󰂊"
+      if (percentage >= 0.80) return "󰢞"
+      if (percentage >= 0.70) return "󰂉"
+      if (percentage >= 0.60) return "󰢝"
+      if (percentage >= 0.50) return "󰂈"
+      if (percentage >= 0.40) return "󰂇"
+      if (percentage >= 0.30) return "󰂆"
+      if (percentage >= 0.20) return "󰢜"
+      if (percentage >= 0.10) return "󰂅"
+      return "󰂅"
     }
     
-    return icon;
+    if (percentage >= 0.99) return "󰂂"
+    if (percentage >= 0.90) return "󰂁"
+    if (percentage >= 0.80) return "󰂀"
+    if (percentage >= 0.70) return "󰁿"
+    if (percentage >= 0.60) return "󰁾"
+    if (percentage >= 0.50) return "󰁽"
+    if (percentage >= 0.40) return "󰁼"
+    if (percentage >= 0.30) return "󰁻"
+    if (percentage >= 0.20) return "󰁺"
+    if (percentage >= 0.10) return "󰁹"
+    return "󰁹"
   }
 
   readonly property string statusText: {
