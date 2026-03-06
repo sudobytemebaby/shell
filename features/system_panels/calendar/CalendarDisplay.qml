@@ -53,7 +53,8 @@ LazyLoader {
 
     Item {
       id: container
-      anchors.centerIn: parent
+      anchors.horizontalCenter: parent.horizontalCenter
+      y: 28
       width: 360
       height: 520
 
