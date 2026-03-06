@@ -199,24 +199,9 @@ LazyLoader {
                       maximumLineCount: 1
                     }
 
-                    Text {
-                      text: "✕"
-                      color: Theme.on_surface_variant
-                      font.pixelSize: Theme.typography.md
-                      font.family: Theme.typography.fontFamily
-                      opacity: itemCloseArea.containsMouse ? 1 : 0.7
-
-                      Behavior on opacity {
-                        NumberAnimation { duration: 150 }
-                      }
-
-                      MouseArea {
-                        id: itemCloseArea
-                        anchors.centerIn: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: loader.manager.removeNotification(index)
-                      }
+                    CloseButton {
+                      style: "rounded"
+                      onClicked: loader.manager.removeNotification(index)
                     }
                   }
 
@@ -265,20 +250,6 @@ LazyLoader {
                     opacity: 0.6
                     horizontalAlignment: Text.AlignRight
                     elide: Text.ElideRight
-                  }
-                }
-
-                // Hover detection
-                MouseArea {
-                  anchors.fill: parent
-                  hoverEnabled: true
-                  propagateComposedEvents: true
-
-                  onEntered: notifCard.hovered = true
-                  onExited: notifCard.hovered = false
-
-                  onClicked: mouse => {
-                    mouse.accepted = false
                   }
                 }
               }
