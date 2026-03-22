@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -116,8 +117,22 @@ LazyLoader {
       y: parent.height - 60 - 24
       width: 300
       height: 60
-      radius: Theme.radius.full
+
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 4
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1.0
+        shadowScale: 1.02
+      }
+
       color: Theme.surface_transparent_medium
+
+      radius: Theme.radius.full
       border.width: 0.5
       border.color: Theme.surface_container
 

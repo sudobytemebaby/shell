@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -124,13 +125,27 @@ LazyLoader {
     // Centered modal dialog with Material 3 styling
     Rectangle {
       id: container
+
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 6
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1
+        shadowScale: 1.02
+      }
+
       x: (parent.width - 650) / 2
       y: (parent.height - 580) / 2
       width: 650
       height: 580
-      radius: 28
+
       color: Theme.surface_transparent_medium
-      border.width: 2
+      radius: Theme.radius.xl
+      border.width: 1
       border.color: Theme.surface_container
 
       // Prevent clicks on container from propagating to background (which would close menu)

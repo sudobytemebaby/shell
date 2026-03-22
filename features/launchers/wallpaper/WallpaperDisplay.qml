@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -228,7 +229,21 @@ AnimatedLazyLoader {
       y: (parent.height - 700) / 2
       width: 900
       height: 700
+
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 6
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1
+        shadowScale: 1.02
+      }
+
       radius: Theme.radius.xl
+
       color: Theme.surface_transparent_medium
       border.width: 0.5
       border.color: Theme.surface_container_high

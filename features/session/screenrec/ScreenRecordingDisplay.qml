@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -142,12 +143,27 @@ LazyLoader {
     // Centered modal dialog with Material 3 styling
     Rectangle {
       id: container
+
       x: (parent.width - 700) / 2
       y: (parent.height - 350) / 2
       width: 700
       height: 350
-      radius: 28
+
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 6
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1.0
+        shadowScale: 1.02
+      }
+
       color: Theme.surface_transparent_medium
+
+      radius: Theme.radius.xl
       border.width: 2
       border.color: Theme.surface_container
 

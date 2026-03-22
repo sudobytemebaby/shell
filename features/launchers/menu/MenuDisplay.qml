@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
@@ -120,6 +121,15 @@ AnimatedLazyLoader {
       
       layer.enabled: true
       layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 6
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1.0
+        shadowScale: 1.02
+      }
 
       x: (parent.width - 460) / 2
       y: (parent.height - 560) / 2
@@ -130,7 +140,7 @@ AnimatedLazyLoader {
       radius: Theme.radius.xl
 
       color: Theme.surface_transparent_medium
-      border.width: 2
+      border.width: 0.5
       border.color: Theme.surface_container
 
       // Polished appearing animation: subtle scale + fade + slide

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -38,17 +39,33 @@ LazyLoader {
     
     Rectangle {
       id: osdBackground
+
       anchors {
         horizontalCenter: parent.horizontalCenter
         bottom: parent.bottom
         bottomMargin: 28
       }
-      width: contentLayout.implicitWidth + (Theme.padding.sm * 2)
-      height: contentLayout.implicitHeight + (Theme.padding.sm * 2)
+
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 4
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1.0
+        shadowScale: 1.02
+      }
+
+      width: contentLayout.implicitWidth + (Theme.padding.md * 2)
+      height: contentLayout.implicitHeight + (Theme.padding.md * 2)
+
       color: Theme.surface_transparent_medium
-      radius: Theme.radius.xl
+
+      radius: Theme.radius.full
       border.width: 0.5
-      border.color: Theme.surface_container_high
+      border.color: Theme.surface_container
       
       // Hover detection for the whole OSD
       MouseArea {

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -255,18 +256,34 @@ AnimatedLazyLoader {
     // Centered modal dialog with Material 3 styling
     Rectangle {
       id: container
+
+      layer.enabled: true
+      layer.smooth: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80000000"
+        shadowBlur: 1.0
+        shadowVerticalOffset: 6
+        shadowHorizontalOffset: 0
+        shadowOpacity: 1.0
+        shadowScale: 1.02
+      }
+
       x: (parent.width - 460) / 2
       y: (parent.height - 550) / 2
+
       width: 460
       height: 550
-      radius: Theme.radius.xl
-      color: Theme.surface_transparent_medium
-      border.width: 2
+
+      border.width: 1
       border.color: Theme.surface_container
+      color: Theme.surface_transparent_medium
 
       // Polished appearing animation: subtle scale + fade + slide
       scale: 0.95 + (loader.animationProgress * 0.05)
       opacity: loader.animationProgress
+
+      radius: Theme.radius.xl
 
       // Prevent clicks on container from propagating to background (which would close picker)
       MouseArea {

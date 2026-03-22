@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import "../../../shared/theme"
@@ -78,10 +79,24 @@ LazyLoader {
 
       Rectangle {
         id: background
+
+        layer.enabled: true
+        layer.smooth: true
+
+        layer.effect: MultiEffect {
+          shadowEnabled: true
+          shadowColor: "#80000000"
+          shadowBlur: 1.0
+          shadowVerticalOffset: 6
+          shadowHorizontalOffset: 0
+          shadowOpacity: 1
+          shadowScale: 1.02
+        }
+
         anchors.fill: parent
         radius: Theme.radius.xl
         color: Theme.surface_transparent_medium
-        border.width: 2
+        border.width: 0.5
         border.color: Theme.surface_container
 
         MouseArea {

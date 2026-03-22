@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -74,9 +75,22 @@ LazyLoader {
         anchors.fill: parent
         radius: Theme.radius.xl
 
-        // Use standard transparent theme
+        layer.enabled: true
+        layer.smooth: true
+
+        layer.effect: MultiEffect {
+          shadowEnabled: true
+          shadowColor: "#80000000"
+          shadowBlur: 1.0
+          shadowVerticalOffset: 6
+          shadowHorizontalOffset: 0
+          shadowOpacity: 1
+          shadowScale: 1.02
+        }
+
         color: Theme.surface_transparent_medium
-        border.width: 0.5
+
+        border.width: 1
         border.color: Theme.surface_container
 
         // Prevent clicks on panel from closing it
