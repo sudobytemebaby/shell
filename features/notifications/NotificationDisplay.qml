@@ -94,8 +94,8 @@ Scope {
         }
 
         margins {
-          top: stackOffset
-          right: Config.spacing.md
+          top: stackOffset - shadowPad
+          right: Config.spacing.md - shadowPad
         }
         
         WlrLayershell.layer: WlrLayer.Overlay
@@ -108,18 +108,27 @@ Scope {
           exclusiveZone = 0
         }
 
-        implicitWidth: 340
-        implicitHeight: wrapper.height
+        // Extra padding around card for shadow to render into
+        property int shadowPad: 20
+
+        implicitWidth: 340 + (shadowPad * 2)
+        implicitHeight: wrapper.height + (shadowPad * 2)
 
         // ----------------------------------------------------------------------
         // Content Wrapper (for Animations)
         // ----------------------------------------------------------------------
         Item {
           id: wrapper
+          x: notifWindow.shadowPad
+          y: notifWindow.shadowPad
           width: 340
           height: background.height
           opacity: 0
-          
+
+          layer.enabled: true
+          layer.smooth: true
+          layer.effect: PaneShadow {}
+
           // Fade in
           NumberAnimation on opacity {
             from: 0
@@ -127,7 +136,7 @@ Scope {
             duration: 350
             easing.type: Easing.OutCubic
           }
-          
+
           // --------------------------------------------------------------------
           // Notification Card
           // --------------------------------------------------------------------
@@ -136,15 +145,15 @@ Scope {
             width: parent.width
             height: notifContent.implicitHeight + (Config.padding.lg * 2)
             radius: Config.radius.lg
-            
+
             // Use transparent_medium for blur effect consistency
             color: Config.paneBackground
-            
-            border.width: 1
+
+            border.width: Config.paneBorderWidth
             border.color: Theme.surface_container
-            
+
             property bool hovered: false
-            
+
             AColor on color {}
             
             ColumnLayout {
