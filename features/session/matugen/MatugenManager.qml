@@ -286,7 +286,7 @@ Scope {
     // 3. Sends notification based on exit code
     // 4. Survives QML lifecycle and config reloads
     var script = "(" +
-      "matugen image '" + safePath + "' -t " + option.scheme + " --mode " + modeArg + " && " +
+      "matugen image '" + safePath + "' -t " + option.scheme + " --mode " + modeArg + " --prefer saturation && " +
       "notify-send -u normal -i preferences-color 'Matugen Color Scheme' '" + safeName + " scheme applied (" + modeText + " mode)' " +
       "|| " +
       "notify-send -u critical -i dialog-error 'Matugen Error' 'Failed to apply " + safeName + " scheme'" +
