@@ -9,6 +9,19 @@ QtObject {
   readonly property var _a: _s.appearance
 
   // ============================================================================
+  // SCALE RATIO — multiplies all internal design tokens (fonts, spacing, etc.)
+  // Panel dimensions (width/height) are NOT scaled — user controls those directly.
+  // ============================================================================
+
+  readonly property real scaleRatio: _a.scaleRatio
+
+  // Scale helper: round to nearest int for pixel-perfect rendering
+  function _sc(base) { return Math.round(base * scaleRatio) }
+
+  // Force odd number (ensures clean center pixel for icon alignment)
+  function toOdd(n) { var r = Math.round(n); return r % 2 === 0 ? r + 1 : r }
+
+  // ============================================================================
   // TOKEN RESOLVER
   // ============================================================================
 
@@ -21,20 +34,20 @@ QtObject {
   }
 
   // ============================================================================
-  // TYPOGRAPHY (fonts from config, sizes/weights are internal design tokens)
+  // TYPOGRAPHY (fonts from config, sizes scaled by scaleRatio)
   // ============================================================================
 
   readonly property QtObject typography: QtObject {
     readonly property string sans: root._a.fonts.sans
     readonly property string sansDisplay: root._a.fonts.sansDisplay
 
-    readonly property int xs: 10
-    property int sm: 12
-    readonly property int md: 14
-    readonly property int lg: 16
-    readonly property int xl: 18
-    readonly property int xxl: 24
-    readonly property int xxxl: 32
+    readonly property int xs: root._sc(10)
+    property int sm: root._sc(12)
+    readonly property int md: root._sc(14)
+    readonly property int lg: root._sc(16)
+    readonly property int xl: root._sc(18)
+    readonly property int xxl: root._sc(24)
+    readonly property int xxxl: root._sc(32)
 
     readonly property int weightNormal: 400
     readonly property int weightMedium: 500
@@ -42,34 +55,63 @@ QtObject {
   }
 
   // ============================================================================
-  // LAYOUT (internal design tokens)
+  // LAYOUT (scaled design tokens)
   // ============================================================================
 
   readonly property QtObject spacing: QtObject {
-    readonly property int xs: 4
-    readonly property int sm: 8
-    readonly property int md: 12
-    readonly property int lg: 18
-    readonly property int xl: 26
-    readonly property int xxl: 48
+    readonly property int xs: root._sc(4)
+    readonly property int sm: root._sc(8)
+    readonly property int md: root._sc(12)
+    readonly property int lg: root._sc(18)
+    readonly property int xl: root._sc(26)
+    readonly property int xxl: root._sc(48)
   }
 
   readonly property QtObject padding: QtObject {
-    readonly property int xs: 4
-    readonly property int sm: 8
-    readonly property int md: 12
-    readonly property int lg: 18
-    readonly property int xl: 20
+    readonly property int xs: root._sc(4)
+    readonly property int sm: root._sc(8)
+    readonly property int md: root._sc(12)
+    readonly property int lg: root._sc(18)
+    readonly property int xl: root._sc(20)
   }
 
   readonly property QtObject radius: QtObject {
     readonly property int none: 0
-    readonly property int sm: 6
-    readonly property int md: 12
-    readonly property int lg: 20
-    readonly property int xl: 32
-    readonly property int xxl: 40
+    readonly property int sm: root._sc(6)
+    readonly property int md: root._sc(12)
+    readonly property int lg: root._sc(20)
+    readonly property int xl: root._sc(32)
+    readonly property int xxl: root._sc(40)
     readonly property int full: 9999
+  }
+
+  // ============================================================================
+  // COMPONENT SIZES (scaled)
+  // ============================================================================
+
+  readonly property QtObject sizes: QtObject {
+    // Icon circles
+    readonly property int iconCircle: root.toOdd(root._sc(32))
+    readonly property int iconCircleLg: root.toOdd(root._sc(40))
+    readonly property int iconCircleXl: root.toOdd(root._sc(48))
+
+    // Buttons
+    readonly property int buttonHeight: root._sc(40)
+    readonly property int buttonHeightLg: root._sc(48)
+    readonly property int buttonHeightXl: root._sc(56)
+
+    // Close button
+    readonly property int closeButton: root.toOdd(root._sc(32))
+
+    // Segmented button
+    readonly property int segmentedWidth: root._sc(200)
+    readonly property int segmentedHeight: root._sc(40)
+
+    // Header
+    readonly property int headerHeight: root._sc(40)
+
+    // Password dots
+    readonly property int dotSize: root._sc(8)
   }
 
   // ============================================================================
@@ -124,26 +166,26 @@ QtObject {
   }
 
   // ============================================================================
-  // OSD (hardcoded internal values)
+  // OSD (scaled internal values)
   // ============================================================================
 
   readonly property QtObject osd: QtObject {
-    readonly property int sliderWidth: 180
-    readonly property int sliderHeight: 18
-    readonly property int trackHeight: 6
-    readonly property int handleSize: 16
-    readonly property int handleBorderWidth: 2
-    readonly property int bottomMargin: 28
+    readonly property int sliderWidth: root._sc(180)
+    readonly property int sliderHeight: root._sc(18)
+    readonly property int trackHeight: root._sc(6)
+    readonly property int handleSize: root._sc(16)
+    readonly property int handleBorderWidth: root._sc(2)
+    readonly property int bottomMargin: root._sc(28)
   }
 
   // ============================================================================
-  // SCREENSHOT (hardcoded internal values)
+  // SCREENSHOT (scaled internal values)
   // ============================================================================
 
   readonly property QtObject screenshot: QtObject {
-    readonly property int containerWidth: 300
-    readonly property int containerHeight: 60
-    readonly property int bottomMargin: 24
+    readonly property int containerWidth: root._sc(300)
+    readonly property int containerHeight: root._sc(60)
+    readonly property int bottomMargin: root._sc(24)
   }
 
   // ============================================================================
@@ -155,7 +197,7 @@ QtObject {
   }
 
   // ============================================================================
-  // FEATURE PANELS (from config, radius resolved from tokens)
+  // FEATURE PANELS (from config, radius resolved from tokens — NOT scaled)
   // ============================================================================
 
   readonly property QtObject controlCenter: QtObject {

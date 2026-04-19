@@ -15,8 +15,8 @@ Rectangle {
   signal pamRestartNeeded()
   signal errorOccurred()
   
-  width: 120
-  height: 40
+  width: Config._sc(120)
+  height: Config.sizes.buttonHeight
   radius: Config.radius.full
   color: "transparent"
   border.color: "transparent"
@@ -68,8 +68,8 @@ Rectangle {
   
   Item {
     anchors.centerIn: parent
-    width: 200
-    height: 40
+    width: Config._sc(200)
+    height: Config.sizes.buttonHeight
     
     // Hidden text input for actual password entry
     TextInput {
@@ -133,9 +133,9 @@ Rectangle {
         model: 20 // Max password length
         
         Rectangle {
-          width: 8
-          height: 8
-          radius: 4
+          width: Config.sizes.dotSize
+          height: Config.sizes.dotSize
+          radius: Config.sizes.dotSize / 2
           color: Theme.on_surface
           visible: index < passwordInput.text.length
           opacity: 0

@@ -16,7 +16,7 @@ ColumnLayout {
   property real maximumValue: 1.0
   property int tickCount: 11
 
-  spacing: 4
+  spacing: Config.spacing.xs
   
   // Normalize value to 0-1 range for internal calculations
   readonly property real normalizedValue: {
@@ -27,7 +27,7 @@ ColumnLayout {
 
   Item {
     Layout.fillWidth: true
-    Layout.preferredHeight: 14
+    Layout.preferredHeight: Config._sc(14)
 
     // Track
     Rectangle {
@@ -37,7 +37,7 @@ ColumnLayout {
         right: parent.right
         verticalCenter: parent.verticalCenter
       }
-      height: 6
+      height: Config._sc(6)
       radius: Config.radius.sm
       color: Theme.surface_container_high
 
@@ -63,12 +63,12 @@ ColumnLayout {
       id: handle
       x: Math.max(0, Math.min(parent.width - width, (parent.width - width) * root.normalizedValue))
       anchors.verticalCenter: parent.verticalCenter
-      width: 18
-      height: 18
+      width: Config._sc(18)
+      height: Config._sc(18)
       radius: Config.radius.full
       color: Theme.primary
       border.color: Theme.surface_container_low
-      border.width: 3
+      border.width: Config._sc(3)
 
       scale: handleMouseArea.drag.active || handleMouseArea.containsMouse ? 1.3 : 1.0
 
@@ -82,7 +82,7 @@ ColumnLayout {
       MouseArea {
         id: handleMouseArea
         anchors.fill: parent
-        anchors.margins: -8
+        anchors.margins: -Config.padding.sm
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         drag.target: parent

@@ -2,10 +2,6 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-  // ============================================================================
-  // MATUGEN COLOR TOKENS
-  // ============================================================================
-
   // --- Primary ---
   readonly property color primary: "#adc6ff"
   readonly property color on_primary: "#102f60"
@@ -71,10 +67,4 @@ QtObject {
   // --- Scrim & Shadow ---
   readonly property color scrim: "#000000"
   readonly property color shadow: "#000000"
-
-  // ============================================================================
-  // TRANSPARENT VARIANTS (used by components, not pane backgrounds)
-  // ============================================================================
-
-  readonly property color primary_transparent_medium: Qt.rgba(primary.r, primary.g, primary.b, 0.40)
 }

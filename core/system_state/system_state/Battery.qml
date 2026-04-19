@@ -87,8 +87,8 @@ Scope {
       if (percentage >= 0.40) return "󰂇"
       if (percentage >= 0.30) return "󰂆"
       if (percentage >= 0.20) return "󰢜"
-      if (percentage >= 0.10) return "󰂅"
-      return "󰂑"
+      if (percentage >= 0.10) return "󰢟"
+      return "󰢟"
     }
     
     if (percentage >= 0.99) return "󰁹"
@@ -101,7 +101,7 @@ Scope {
     if (percentage >= 0.30) return "󰁻"
     if (percentage >= 0.20) return "󰁺"
     if (percentage >= 0.10) return "󰂎" 
-    return "󰂑"
+    return "󱃍"
   }
 
   readonly property string statusText: {

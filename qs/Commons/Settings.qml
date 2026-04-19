@@ -67,13 +67,14 @@ Singleton {
   JsonAdapter {
     id: adapter
 
-    // appearance - fonts and transparency
+    // appearance - fonts, transparency, and UI scale
     property JsonObject appearance: JsonObject {
       property JsonObject fonts: JsonObject {
         property string sans: "Google Sans"
         property string sansDisplay: "Google Sans"
       }
       property string transparency: "medium"
+      property real scaleRatio: 1.0
     }
 
     // animations

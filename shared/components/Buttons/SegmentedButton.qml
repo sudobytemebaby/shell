@@ -29,8 +29,8 @@ import "../Animations"
 Rectangle {
   id: root
   
-  Layout.preferredWidth: 200
-  Layout.preferredHeight: 40
+  Layout.preferredWidth: Config.sizes.segmentedWidth
+  Layout.preferredHeight: Config.sizes.segmentedHeight
   radius: Config.radius.full
   color: Theme.surface_container_low
   border.width: 0.5
@@ -66,7 +66,7 @@ Rectangle {
 
         Layout.fillHeight: true
         Layout.fillWidth: true
-        Layout.margins: 6
+        Layout.margins: Config.spacing.xs + 2
         
         radius: Config.radius.full
         

@@ -8,7 +8,8 @@
       "sans": "Google Sans",
       "sansDisplay": "Google Sans"
     },
-    "transparency": "heavy"
+    "transparency": "heavy",
+    "scaleRatio": 1.0
   },
   "shadows": {
     "blur": 1,
@@ -51,7 +52,7 @@
   },
   "emojiPicker": {
     "width": 460,
-    "height": 550,
+    "height": 560,
     "radius": "xl"
   },
   "wallpaperPicker": {
@@ -77,6 +78,6 @@
   "weather": {
     "width": 850,
     "height": 550,
-    "radius": "lg"
+    "radius": "xl"
   }
 }

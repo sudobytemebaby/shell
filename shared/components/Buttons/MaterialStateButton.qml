@@ -18,8 +18,8 @@ Rectangle {
   // APPEARANCE
   // ============================================================================
 
-  implicitWidth: isActive ? 66 : 56
-  implicitHeight: 56
+  implicitWidth: isActive ? Config._sc(66) : Config.sizes.buttonHeightXl
+  implicitHeight: Config.sizes.buttonHeightXl
   
   width: implicitWidth
   height: implicitHeight

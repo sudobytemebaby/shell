@@ -16,7 +16,7 @@ Rectangle {
   property string title: ""
   property string subtitle: ""
   property string iconSource: ""  // Image path (alternative to icon text)
-  property int iconSize: 48
+  property int iconSize: Config.sizes.iconCircleXl
   property bool selected: false
 
   // Icon color customization
@@ -65,7 +65,7 @@ Rectangle {
 
         Image {
           anchors.fill: parent
-          anchors.margins: 4
+          anchors.margins: Config.spacing.xs
           source: root.iconSource
           fillMode: Image.PreserveAspectFit
           smooth: true
@@ -88,7 +88,7 @@ Rectangle {
     ColumnLayout {
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
-      spacing: 2
+      spacing: Config._sc(2)
 
       Text {
         id: titleText

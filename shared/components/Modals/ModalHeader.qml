@@ -39,7 +39,7 @@ RowLayout {
   id: root
 
   Layout.fillWidth: true
-  Layout.preferredHeight: 40
+  Layout.preferredHeight: Config.sizes.headerHeight
   spacing: Config.spacing.sm
 
   /**
@@ -122,8 +122,8 @@ RowLayout {
       required property var modelData
       required property int index
 
-      Layout.preferredWidth: 32
-      Layout.preferredHeight: 32
+      Layout.preferredWidth: Config.sizes.closeButton
+      Layout.preferredHeight: Config.sizes.closeButton
       radius: Config.radius.full
       color: "transparent"
 

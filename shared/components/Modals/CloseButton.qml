@@ -43,8 +43,8 @@ Item {
   signal clicked()
 
   // Size based on style
-  Layout.preferredWidth: style === "rounded" ? 32 : implicitWidth
-  Layout.preferredHeight: style === "rounded" ? 32 : implicitHeight
+  Layout.preferredWidth: style === "rounded" ? Config.sizes.closeButton : implicitWidth
+  Layout.preferredHeight: style === "rounded" ? Config.sizes.closeButton : implicitHeight
   Layout.rightMargin: style === "rounded" ? Config.padding.xs : Config.padding.sm
 
   implicitWidth: closeText.implicitWidth

@@ -52,7 +52,7 @@ Card {
     // Slider + tick marks
     ColumnLayout {
       Layout.fillWidth: true
-      spacing: 4
+      spacing: Config.spacing.xs
 
       HorizontalSlider {
         Layout.fillWidth: true

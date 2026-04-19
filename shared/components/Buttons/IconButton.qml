@@ -46,12 +46,11 @@ Rectangle {
 
     // Icon container
     IconCircle {
-      Layout.preferredWidth: 40
-      Layout.preferredHeight: 40
+      Layout.preferredWidth: Config.sizes.iconCircleLg
+      Layout.preferredHeight: Config.sizes.iconCircleLg
       Layout.alignment: Qt.AlignVCenter
 
       icon: root.icon
-      iconSize: Config.typography.xl
 
       // Color logic: if stateful,
       // use active/inactive colors.
@@ -73,7 +72,7 @@ Rectangle {
     ColumnLayout {
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
-      spacing: 2
+      spacing: Config._sc(2)
 
       Text {
         text: root.title

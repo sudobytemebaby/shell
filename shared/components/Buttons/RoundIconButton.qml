@@ -19,7 +19,7 @@ Rectangle {
   property bool showShadow: false  // Show subtle shadow (good for media controls)
   property string variant: "default"  // "default" or "media"
 
-  property int size: isPrimary ? 48 : 40
+  property int size: isPrimary ? Config.sizes.buttonHeightLg : Config.sizes.buttonHeight
 
   // ============================================================================
   // APPEARANCE
@@ -27,12 +27,12 @@ Rectangle {
 
   width: size
   height: size
-  radius: variant === "media" ? (isPrimary ? size / 2 : size / 2) : Config.radius.full
+  radius: Config.radius.full
 
   color: {
     if (isPrimary) {
       if (variant === "media") {
-        return mouseArea.containsMouse ? Theme.primary : Theme.primary_transparent_medium
+        return mouseArea.containsMouse ? Theme.primary : Theme.primary_container
       } else {
         return mouseArea.pressed ? Qt.darker(Theme.primary, 1.2) : Theme.primary
       }
@@ -64,7 +64,9 @@ Rectangle {
   // ============================================================================
 
   Text {
-    anchors.centerIn: parent
+    // Integer-aligned centering for crisp rendering
+    x: Math.round((parent.width - implicitWidth) / 2)
+    y: Math.round((parent.height - implicitHeight) / 2)
     text: root.icon
     color: {
       if (isPrimary) {
@@ -73,7 +75,8 @@ Rectangle {
         return Theme.on_surface
       }
     }
-    font.pixelSize: isPrimary ? Config.typography.xxl : Config.typography.xl
+    // Icon is 50% of container size
+    font.pixelSize: Math.round(root.size * 0.5)
     font.family: Config.typography.sans
   }
 
