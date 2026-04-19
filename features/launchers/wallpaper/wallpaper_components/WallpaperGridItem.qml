@@ -54,10 +54,10 @@ Item {
   Rectangle {
     anchors {
       fill: parent
-      margins: Theme.spacing.xs
+      margins: Config.spacing.xs
     }
 
-    radius: Theme.radius.lg
+    radius: Config.radius.lg
 
     // Dynamic background color based on state
     color: {
@@ -87,9 +87,9 @@ Item {
       id: imagePreview
       anchors {
         fill: parent
-        margins: Theme.spacing.xs
+        margins: Config.spacing.xs
       }
-      radius: Theme.radius.lg
+      radius: Config.radius.lg
       imagePath: root.cachedThumbnailPath !== "" ? "file://" + root.cachedThumbnailPath : ""
       fallbackIcon: "󰸉"  // Wallpaper icon shown when loading/error
       borderWidth: 0
@@ -111,11 +111,11 @@ Item {
       anchors {
         bottom: imagePreview.bottom
         right: imagePreview.right
-        margins: Theme.spacing.sm
+        margins: Config.spacing.sm
       }
       width: 100
       height: 40 
-      radius: Theme.radius.full
+      radius: Config.radius.full
       color: Theme.primary
       visible: root.isCurrent
 
@@ -124,8 +124,8 @@ Item {
         anchors.centerIn: parent
         text: "󰄬  Applied"
         color: Theme.on_primary
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamily
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
       }
     }
 
@@ -142,11 +142,11 @@ Item {
       anchors {
         top: imagePreview.top
         left: imagePreview.left
-        margins: Theme.spacing.sm
+        margins: Config.spacing.sm
       }
       width: 40
       height: 40 
-      radius: Theme.radius.full
+      radius: Config.radius.full
       color: Theme.primary
       visible: root.isSelected && !root.isCurrent
 
@@ -155,9 +155,9 @@ Item {
         anchors.centerIn: parent
         text: "󰋑"
         color: Theme.on_primary
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamily
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.lg
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
       }
     }
 

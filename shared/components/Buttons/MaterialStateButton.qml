@@ -1,5 +1,6 @@
 import QtQuick
 import "../../theme"
+import "../Animations"
 
 Rectangle {
   id: root
@@ -23,7 +24,7 @@ Rectangle {
   width: implicitWidth
   height: implicitHeight
   
-  radius: isActive ? Theme.radius.full : Theme.radius.lg
+  radius: isActive ? Config.radius.full : Config.radius.lg
 
   color: isActive ? Theme.primary : Theme.surface_container_highest
 
@@ -31,10 +32,10 @@ Rectangle {
   // ANIMATIONS
   // ============================================================================
 
-  Behavior on color { ColorAnimation { duration: 200 } }
-  Behavior on implicitWidth { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-  Behavior on implicitHeight { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-  Behavior on radius { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+  AColor on color {}
+  AExpand on implicitWidth {}
+  AExpand on implicitHeight {}
+  AExpand on radius {}
 
   ParallelAnimation {
     id: pressAnimation
@@ -51,8 +52,8 @@ Rectangle {
     anchors.centerIn: parent
     text: root.icon
     color: isActive ? Theme.on_primary : Theme.on_primary_container
-    font.pixelSize: Theme.typography.xl
-    font.family: Theme.typography.fontFamily
+    font.pixelSize: Config.typography.xl
+    font.family: Config.typography.sans
   }
 
   // ============================================================================

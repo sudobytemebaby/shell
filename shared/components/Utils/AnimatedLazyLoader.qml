@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import "../../theme"
 
 LazyLoader {
   id: root
@@ -7,15 +8,16 @@ LazyLoader {
   // Required: controls when the content should be shown
   required property bool show
 
-  // Animation configuration
-  property int openDuration: 250
-  property int closeDuration: 150
-  property real openEasingType: Easing.OutBack
-  property real closeEasingType: Easing.OutQuint
+  // Scale range: content scales from scaleFrom → 1.0 on open
+  property real scaleFrom: 0.96
 
-  // Animation state - use this in your content to drive visual changes
-  // 0 = fully closed, 1 = fully open
-  property real animationProgress: 0
+  // Animation state (driven independently)
+  property real _opacity: 0
+  property real _scale: scaleFrom
+
+  // Content bindings for consumers
+  readonly property real contentScale: _scale
+  readonly property real contentOpacity: _opacity
 
   // Internal state tracking
   property bool isClosing: false
@@ -24,50 +26,44 @@ LazyLoader {
   active: show || isClosing
 
   // Animations wrapped in QtObject since LazyLoader doesn't support direct children
-  property QtObject animations: QtObject {
-    property NumberAnimation openAnimation: NumberAnimation {
-      target: root
-      property: "animationProgress"
-      from: root.animationProgress
-      to: 1
-      duration: root.openDuration
-      easing.type: root.openEasingType
+  property QtObject _anims: QtObject {
+    // OPEN: scale + opacity in parallel, overlapping
+    property ParallelAnimation openAnim: ParallelAnimation {
+      NumberAnimation {
+        target: root; property: "_opacity"
+        from: 0; to: 1
+        duration: Config.animations.slow
+        easing.type: Easing.OutCubic
+      }
+      NumberAnimation {
+        target: root; property: "_scale"
+        from: root.scaleFrom; to: 1.0
+        duration: Config.animations.slower
+        easing.type: Easing.OutCubic
+      }
     }
 
-    property NumberAnimation closeAnimation: NumberAnimation {
-      target: root
-      property: "animationProgress"
-      from: root.animationProgress
+    // CLOSE: fast opacity fade, no scale change
+    property NumberAnimation closeAnim: NumberAnimation {
+      target: root; property: "_opacity"
       to: 0
-      duration: root.closeDuration
-      easing.type: root.closeEasingType
+      duration: Config.animations.fast
+      easing.type: Easing.InCubic
       onFinished: {
+        root._scale = root.scaleFrom
         root.isClosing = false
       }
     }
   }
 
-  // Watch for visibility changes
   onShowChanged: {
     if (show) {
-      animations.closeAnimation.stop()
-      animations.openAnimation.start()
+      _anims.closeAnim.stop()
+      _anims.openAnim.start()
     } else {
-      animations.openAnimation.stop()
+      _anims.openAnim.stop()
       isClosing = true
-      animations.closeAnimation.start()
+      _anims.closeAnim.start()
     }
-  }
-
-  // Public functions for manual control if needed
-  function open() {
-    animations.closeAnimation.stop()
-    animations.openAnimation.start()
-  }
-
-  function close() {
-    animations.openAnimation.stop()
-    isClosing = true
-    animations.closeAnimation.start()
   }
 }

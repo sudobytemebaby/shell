@@ -9,12 +9,11 @@ Rectangle {
   property alias color: root.color
   property alias border: root.border
 
-  property int padding: Theme.padding.lg
+  property int padding: Config.padding.lg
 
   default property alias contentItem: content.data
 
-  radius: Theme.radius.xl
-  //color: Theme.surface_container_low
+  radius: Config.radius.xl
   color: "transparent"
 
   border.width: 0

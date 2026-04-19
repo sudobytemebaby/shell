@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
@@ -49,12 +48,6 @@ AnimatedLazyLoader {
   show: manager.visible
 
   required property var manager
-
-  // Polished animation timings
-  openDuration: 150
-  closeDuration: 0
-  openEasingType: Easing.OutCubic
-  closeEasingType: Easing.InOutCubic
 
   // ========== WINDOW CONFIGURATION ==========
 
@@ -121,31 +114,22 @@ AnimatedLazyLoader {
       
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 6
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1.0
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      x: (parent.width - 460) / 2
-      y: (parent.height - 560) / 2
-      width: 460
-      height: 560
+      x: (parent.width - Config.menu.width) / 2
+      y: (parent.height - Config.menu.height) / 2
+      width: Config.menu.width
+      height: Config.menu.height
 
       // Rounded corners all around (centered design)
-      radius: Theme.radius.xl
+      radius: Config.menu.radius
 
-      color: Theme.surface_transparent_medium
-      border.width: 0.5
+      color: Config.paneBackground
+      border.width: Config.paneBorderWidth
       border.color: Theme.surface_container
 
-      // Polished appearing animation: subtle scale + fade + slide
-      scale: 0.8 + (loader.animationProgress * 0.2)  // Scale from 0.94 to 1.0
-      opacity: loader.animationProgress  // Fade from 0 to 1
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Prevent clicks on menu from closing it (only background clicks close)
       MouseArea {
@@ -161,9 +145,9 @@ AnimatedLazyLoader {
     ColumnLayout {
       anchors {
         fill: parent
-        margins: Theme.padding.xl
+        margins: Config.padding.xl
       }
-      spacing: Theme.spacing.md
+      spacing: Config.spacing.md
 
       // ========== HEADER ==========
 
@@ -193,7 +177,7 @@ AnimatedLazyLoader {
           id: menuList
           anchors.fill: parent
           clip: true
-          spacing: Theme.spacing.xs
+          spacing: Config.spacing.xs
 
           currentIndex: 0
 
@@ -202,7 +186,7 @@ AnimatedLazyLoader {
           highlight: Rectangle {
             width: menuList.width
             height: 72
-            radius: Theme.radius.xl
+            radius: Config.radius.xl
             color: Theme.primary_container
           }
 
@@ -297,8 +281,8 @@ AnimatedLazyLoader {
             anchors.centerIn: parent
             text: loader.manager.searchText ? "No items found" : "No menu items available"
             color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.md
-            font.family: Theme.typography.fontFamilyDisplay
+            font.pixelSize: Config.typography.md
+            font.family: Config.typography.sans
             opacity: menuList.count === 0 ? 0.7 : 0
           }
         }

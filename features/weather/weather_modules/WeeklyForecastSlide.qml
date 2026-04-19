@@ -72,8 +72,8 @@ Item {
           anchors.right: parent.right
           anchors.top: parent.top
           anchors.bottom: parent.bottom
-          anchors.topMargin: Theme.spacing.lg
-          anchors.bottomMargin: Theme.spacing.lg
+          anchors.topMargin: Config.spacing.lg
+          anchors.bottomMargin: Config.spacing.lg
           width: 1
           color: Theme.surface_container_highest
           visible: index < root.forecast.length - 1
@@ -192,15 +192,15 @@ Item {
           anchors.top: parent.top
           anchors.horizontalCenter: parent.horizontalCenter
           spacing: 4
-          anchors.topMargin: Theme.spacing.lg
+          anchors.topMargin: Config.spacing.lg
           width: parent.width
 
           // Day name
           Text {
             text: modelData.day
             color: Theme.on_surface
-            font.pixelSize: Theme.typography.lg
-            font.weight: Theme.typography.weightBold
+            font.pixelSize: Config.typography.lg
+            font.weight: Config.typography.weightBold
             Layout.alignment: Qt.AlignHCenter
           }
 
@@ -214,8 +214,8 @@ Item {
           // Temperature
           Text {
             text: Math.round(modelData.max) + "°"
-            font.pixelSize: Theme.typography.xxl
-            font.weight: Theme.typography.weightBold
+            font.pixelSize: Config.typography.xxl
+            font.weight: Config.typography.weightBold
             color: Theme.primary
             Layout.alignment: Qt.AlignHCenter
           }
@@ -223,7 +223,7 @@ Item {
           // Weather description
           Text {
             text: Utils.getShortWeatherDesc(modelData.code)
-            font.pixelSize: Theme.typography.xs
+            font.pixelSize: Config.typography.xs
             color: Theme.tertiary
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
@@ -240,7 +240,7 @@ Item {
         ColumnLayout {
           anchors.bottom: parent.bottom
           anchors.horizontalCenter: parent.horizontalCenter
-          anchors.bottomMargin: Theme.spacing.lg
+          anchors.bottomMargin: Config.spacing.lg
           spacing: 4
 
           // Precipitation probability
@@ -256,8 +256,8 @@ Item {
             Text {
               text: modelData.precipProb + "%"
               color: modelData.precipProb > 0 ? Theme.primary : Theme.outline
-              font.pixelSize: Theme.typography.sm
-              font.weight: Theme.typography.weightMedium
+              font.pixelSize: Config.typography.sm
+              font.weight: Config.typography.weightMedium
             }
           }
 
@@ -274,7 +274,7 @@ Item {
             Text {
               text: Math.round(modelData.windSpeed) + " m/s"
               color: Theme.on_surface_variant
-              font.pixelSize: Theme.typography.sm
+              font.pixelSize: Config.typography.sm
             }
           }
         }

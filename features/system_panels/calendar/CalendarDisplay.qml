@@ -1,16 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components"
 import "../../../shared/components/Modals"
+import "../../../shared/components/Utils"
 import "cal_modules" as CalModules
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  active: manager.visible
+  show: manager.visible
 
   required property var manager
 
@@ -24,7 +25,7 @@ LazyLoader {
       right: true
     }
 
-    visible: loader.manager.visible
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
@@ -55,9 +56,12 @@ LazyLoader {
     Item {
       id: container
       anchors.horizontalCenter: parent.horizontalCenter
-      y: 28
-      width: 360
-      height: 560
+      y: Config.calendar.posY
+      width: Config.calendar.width
+      height: Config.calendar.height
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       Rectangle {
         id: background
@@ -65,19 +69,11 @@ LazyLoader {
 
         layer.enabled: true
         layer.smooth: true
-        layer.effect: MultiEffect {
-          shadowEnabled: true
-          shadowColor: "#80000000"
-          shadowBlur: 1.0
-          shadowVerticalOffset: 6
-          shadowHorizontalOffset: 0
-          shadowOpacity: 1.0
-          shadowScale: 1.02
-        }
-        color: Theme.surface_transparent_medium
+        layer.effect: PaneShadow {}
+        color: Config.paneBackground
 
-        radius: Theme.radius.xl
-        border.width: 1
+        radius: Config.calendar.radius
+        border.width: Config.paneBorderWidth
         border.color: Theme.surface_container
 
         // Prevent clicks on panel from closing it
@@ -88,9 +84,9 @@ LazyLoader {
         ColumnLayout {
           anchors {
             fill: parent
-            margins: Theme.padding.lg
+            margins: Config.padding.lg
           }
-          spacing: Theme.spacing.md
+          spacing: Config.spacing.md
 
           // ========== HEADER ==========
           ModalHeader {

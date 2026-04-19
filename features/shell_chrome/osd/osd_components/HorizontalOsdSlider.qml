@@ -1,5 +1,6 @@
 import QtQuick
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Item {
   id: root
@@ -10,8 +11,8 @@ Item {
 
   signal sliderMoved(real newValue)
 
-  implicitWidth: 180
-  implicitHeight: 18
+  implicitWidth: Config.osd.sliderWidth
+  implicitHeight: Config.osd.sliderHeight
 
   function clamp(valueToClamp) {
     return Math.max(0, Math.min(1, valueToClamp))
@@ -32,8 +33,8 @@ Item {
       right: parent.right
       verticalCenter: parent.verticalCenter
     }
-    height: 6
-    radius: Theme.radius.sm
+    height: Config.osd.trackHeight
+    radius: Config.radius.sm
     color: Theme.surface_container_highest
 
     Rectangle {
@@ -46,9 +47,7 @@ Item {
       radius: parent.radius
       color: root.isMuted ? Theme.outline : Theme.primary
 
-      Behavior on color {
-        ColorAnimation { duration: 200 }
-      }
+      AColor on color {}
 
       Behavior on width {
         enabled: !handleArea.drag.active
@@ -64,18 +63,16 @@ Item {
     id: handle
     x: Math.max(0, Math.min(track.width - width, (track.width - width) * root.value))
     anchors.verticalCenter: track.verticalCenter
-    width: 16
-    height: 16
-    radius: Theme.radius.full
+    width: Config.osd.handleSize
+    height: Config.osd.handleSize
+    radius: Config.radius.full
     color: root.isMuted ? Theme.outline : Theme.primary
     border.color: Theme.surface_container_low
-    border.width: 2
+    border.width: Config.osd.handleBorderWidth
 
     scale: handleArea.pressed || handleArea.containsMouse ? 1.2 : 1.0
 
-    Behavior on color {
-      ColorAnimation { duration: 200 }
-    }
+    AColor on color {}
 
     Behavior on x {
       enabled: !handleArea.drag.active
@@ -85,12 +82,7 @@ Item {
       }
     }
 
-    Behavior on scale {
-      NumberAnimation {
-        duration: 150
-        easing.type: Easing.OutCubic
-      }
-    }
+    AScale on scale {}
 
     MouseArea {
       id: handleArea

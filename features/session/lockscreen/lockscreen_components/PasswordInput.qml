@@ -1,5 +1,6 @@
 import QtQuick
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 // ============================================================================
 // PASSWORD INPUT (Visual Component)
@@ -66,7 +67,7 @@ Item {
     // Visual password dots
     Row {
       anchors.centerIn: parent
-      spacing: Theme.spacing.xs
+      spacing: Config.spacing.xs
       visible: root.passwordInput ? root.passwordInput.text.length > 0 : false
 
       Repeater {
@@ -91,19 +92,9 @@ Item {
             }
           }
 
-          Behavior on opacity {
-            NumberAnimation {
-              duration: 150
-              easing.type: Easing.OutCubic
-            }
-          }
+          AFade on opacity {}
 
-          Behavior on scale {
-            NumberAnimation {
-              duration: 200
-              easing.type: Easing.OutBack
-            }
-          }
+          AScale on scale {}
         }
       }
     }
@@ -120,16 +111,11 @@ Item {
         }
         return Theme.on_surface_variant
       }
-      font.family: Theme.typography.fontFamily
-      font.pixelSize: Theme.typography.sm
+      font.family: Config.typography.sans
+      font.pixelSize: Config.typography.sm
       opacity: 0.5
 
-      Behavior on color {
-        ColorAnimation {
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
+      AColor on color {}
     }
   }
 }

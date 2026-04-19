@@ -8,19 +8,19 @@ Card {
   
   required property var calendarManager
   
-  padding: Theme.padding.md
+  padding: Config.padding.md
   
   ColumnLayout {
     anchors.fill: parent
-    spacing: Theme.spacing.xs
+    spacing: Config.spacing.xs
     
     // Time (big)
     Text {
       Layout.fillWidth: true
       text: root.calendarManager.timeString
       color: Theme.on_surface
-      font.pixelSize: Theme.typography.xxxl + 8
-      font.family: Theme.typography.fontFamilyDisplay
+      font.pixelSize: Config.typography.xxxl + 8
+      font.family: Config.typography.sans
       font.weight: 600
       horizontalAlignment: Text.AlignHCenter
     }
@@ -30,9 +30,9 @@ Card {
       Layout.fillWidth: true
       text: root.calendarManager.dayOfWeek
       color: Theme.on_surface
-      font.pixelSize: Theme.typography.md
-      font.family: Theme.typography.fontFamilyDisplay
-      font.weight: Theme.typography.weightMedium
+      font.pixelSize: Config.typography.md
+      font.family: Config.typography.sans
+      font.weight: Config.typography.weightMedium
       horizontalAlignment: Text.AlignHCenter
       opacity: 0.9
     }
@@ -42,8 +42,8 @@ Card {
       Layout.fillWidth: true
       text: root.calendarManager.dateString
       color: Theme.on_surface_variant
-      font.pixelSize: Theme.typography.sm
-      font.family: Theme.typography.fontFamilyDisplay
+      font.pixelSize: Config.typography.sm
+      font.family: Config.typography.sans
       horizontalAlignment: Text.AlignHCenter
       opacity: 0.8
     }

@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 // ============================================================================
 // WALLPAPER BACKGROUND
@@ -26,12 +27,7 @@ Item {
     color: "#000000"
     opacity: (!root.hasWallpaper || wallpaperImage.status !== Image.Ready) ? 1.0 : 0.0
 
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 300
-        easing.type: Easing.OutCubic
-      }
-    }
+    AFade on opacity {}
   }
 
   // ============================================================================
@@ -53,12 +49,7 @@ Item {
     antialiasing: true
 
     // Smooth fade-in animation
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 600
-        easing.type: Easing.OutCubic
-      }
-    }
+    AFade on opacity {}
 
     onStatusChanged: {
       if (status === Image.Error) {
@@ -107,11 +98,6 @@ Item {
     }
 
     // Smooth fade-in animation
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 400
-        easing.type: Easing.OutCubic
-      }
-    }
+    AFade on opacity {}
   }
 }

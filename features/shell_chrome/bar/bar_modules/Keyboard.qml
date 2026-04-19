@@ -23,7 +23,7 @@ Item {
     Layout.minimumWidth: 32
 
     implicitWidth: Math.max(layoutText.implicitWidth, 32)
-    implicitHeight: Theme.barHeight
+    implicitHeight: Config.bar.height
 
     // Display keyboard layout code in uppercase
     Text {
@@ -31,8 +31,8 @@ Item {
         anchors.centerIn: parent
         text: root.layout
         color: Theme.on_surface
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.sm
+        font.family: Config.typography.sans
         verticalAlignment: Text.AlignVCenter
     }
 }

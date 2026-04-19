@@ -1,5 +1,6 @@
 import QtQuick
 import "../../theme"
+import "../Animations"
 
 Rectangle {
   id: root
@@ -21,7 +22,7 @@ Rectangle {
   width: implicitWidth
   height: implicitHeight
   
-  radius: Theme.radius.lg
+  radius: Config.radius.lg
 
   color: mouseArea.pressed ? Theme.surface_container_highest : Theme.surface_container_highest
 
@@ -29,7 +30,7 @@ Rectangle {
   // ANIMATIONS
   // ============================================================================
 
-  Behavior on color { ColorAnimation { duration: 200 } }
+  AColor on color {}
 
   ParallelAnimation {
     id: pressAnimation
@@ -46,8 +47,8 @@ Rectangle {
     anchors.centerIn: parent
     text: root.icon
     color: Theme.on_surface
-    font.pixelSize: Theme.typography.xl
-    font.family: Theme.typography.fontFamily
+    font.pixelSize: Config.typography.xl
+    font.family: Config.typography.sans
   }
 
   // ============================================================================

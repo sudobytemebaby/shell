@@ -1,16 +1,16 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../shared/theme"
 import "../../shared/components"
 import "../../shared/components/Modals"
+import "../../shared/components/Utils"
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  active: manager.visible
+  show: manager.visible
 
   required property var manager
 
@@ -27,8 +27,7 @@ LazyLoader {
       right: true
     }
 
-    // Explicitly set visible to true as LazyLoader handles lifecycle
-    visible: true
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
@@ -64,33 +63,28 @@ LazyLoader {
     // --------------------------------------------------------------------------
     Item {
       id: container
-      x: parent.width - width - 28
-      y: 28
-      width: 360
-      height: 600
+      x: parent.width - width - Config.notificationCenter.marginFromEdge
+      y: Config.notificationCenter.posY
+      width: Config.notificationCenter.width
+      height: Config.notificationCenter.height
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Main container background
       Rectangle {
         id: background
         anchors.fill: parent
-        radius: Theme.radius.xl
+        radius: Config.notificationCenter.radius
 
         layer.enabled: true
         layer.smooth: true
 
-        layer.effect: MultiEffect {
-          shadowEnabled: true
-          shadowColor: "#80000000"
-          shadowBlur: 1.0
-          shadowVerticalOffset: 6
-          shadowHorizontalOffset: 0
-          shadowOpacity: 1
-          shadowScale: 1.02
-        }
+        layer.effect: PaneShadow {}
 
-        color: Theme.surface_transparent_medium
+        color: Config.paneBackground
 
-        border.width: 1
+        border.width: Config.paneBorderWidth
         border.color: Theme.surface_container
 
         // Prevent clicks on panel from closing it
@@ -101,17 +95,17 @@ LazyLoader {
         ColumnLayout {
           anchors {
             fill: parent
-            margins: Theme.padding.xl
+            margins: Config.padding.xl
           }
 
-          spacing: Theme.spacing.md
+          spacing: Config.spacing.md
 
           // ----------------------------------------------------------------------
           // Header Section
           // ----------------------------------------------------------------------
           ModalHeader {
             title: "Notifications"
-            
+
             // Show "Clear All" action button only when there are notifications
             actionButtons: loader.manager.notifications.length > 0 ? [
               {
@@ -132,16 +126,11 @@ LazyLoader {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
-            spacing: Theme.spacing.sm
+            spacing: Config.spacing.sm
 
             model: loader.manager.notifications
 
-            Behavior on contentY {
-              NumberAnimation {
-                duration: 250
-                easing.type: Easing.OutCubic
-              }
-            }
+            AExpand on contentY {}
 
             delegate: Rectangle {
               required property var modelData
@@ -161,9 +150,9 @@ LazyLoader {
                   top: parent.top
                 }
 
-                implicitHeight: cardContent.implicitHeight + (Theme.padding.lg * 2)
+                implicitHeight: cardContent.implicitHeight + (Config.padding.lg * 2)
 
-                radius: Theme.radius.lg
+                radius: Config.radius.lg
 
                 // Subtle transparent background
                 color: Theme.surface_container_low
@@ -173,9 +162,7 @@ LazyLoader {
 
                 property bool hovered: false
 
-                Behavior on color {
-                  ColorAnimation { duration: 150 }
-                }
+                AColor on color {}
 
                 ColumnLayout {
                   id: cardContent
@@ -183,15 +170,15 @@ LazyLoader {
                     left: parent.left
                     right: parent.right
                     top: parent.top
-                    margins: Theme.padding.lg
+                    margins: Config.padding.lg
                   }
 
-                  spacing: Theme.spacing.md
+                  spacing: Config.spacing.md
 
                   // Card Header: Icon + App Name + Close
                   RowLayout {
                     Layout.fillWidth: true
-                    spacing: Theme.spacing.sm
+                    spacing: Config.spacing.sm
 
                     IconCircle {
                       Layout.preferredWidth: 28
@@ -199,16 +186,16 @@ LazyLoader {
                       icon: "󰂚"
                       bgColor: Theme.primary_container
                       iconColor: Theme.primary
-                      iconSize: Theme.typography.md
+                      iconSize: Config.typography.md
                     }
 
                     Text {
                       Layout.fillWidth: true
                       text: modelData.appName
                       color: Theme.on_surface
-                      font.pixelSize: Theme.typography.sm
-                      font.family: Theme.typography.fontFamily
-                      font.weight: Theme.typography.weightMedium
+                      font.pixelSize: Config.typography.sm
+                      font.family: Config.typography.sans
+                      font.weight: Config.typography.weightMedium
                       elide: Text.ElideRight
                       maximumLineCount: 1
                     }
@@ -216,8 +203,8 @@ LazyLoader {
                     // Close button
                     Text {
                       text: "✕"
-                      font.pixelSize: Theme.typography.sm
-                      font.family: Theme.typography.fontFamily
+                      font.pixelSize: Config.typography.sm
+                      font.family: Config.typography.sans
                       color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface_variant
 
                       MouseArea {
@@ -235,16 +222,16 @@ LazyLoader {
                   // Card Content: Summary + Body
                   ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: Theme.spacing.xs
+                    spacing: Config.spacing.xs
 
                     // Summary (bold)
                     Text {
                       Layout.fillWidth: true
                       text: modelData.summary
                       color: Theme.on_surface
-                      font.pixelSize: Theme.typography.md
-                      font.family: Theme.typography.fontFamily
-                      font.weight: Theme.typography.weightMedium
+                      font.pixelSize: Config.typography.md
+                      font.family: Config.typography.sans
+                      font.weight: Config.typography.weightMedium
                       wrapMode: Text.Wrap
                       maximumLineCount: 2
                       elide: Text.ElideRight
@@ -255,8 +242,8 @@ LazyLoader {
                       Layout.fillWidth: true
                       text: modelData.body
                       color: Theme.on_surface_variant
-                      font.pixelSize: Theme.typography.sm
-                      font.family: Theme.typography.fontFamily
+                      font.pixelSize: Config.typography.sm
+                      font.family: Config.typography.sans
                       wrapMode: Text.Wrap
                       maximumLineCount: 3
                       elide: Text.ElideRight
@@ -268,12 +255,12 @@ LazyLoader {
                   // Timestamp (subtle, bottom right)
                   Text {
                     Layout.fillWidth: true
-                    Layout.topMargin: Theme.spacing.xs
-                    Layout.bottomMargin: Theme.spacing.sm
+                    Layout.topMargin: Config.spacing.xs
+                    Layout.bottomMargin: Config.spacing.sm
                     text: modelData.date + (modelData.date && modelData.time ? " · " : "") + modelData.time
                     color: Theme.on_surface_variant
-                    font.pixelSize: Theme.typography.xs
-                    font.family: Theme.typography.fontFamily
+                    font.pixelSize: Config.typography.xs
+                    font.family: Config.typography.sans
                     opacity: 0.6
                     horizontalAlignment: Text.AlignRight
                     elide: Text.ElideRight
@@ -293,22 +280,22 @@ LazyLoader {
 
               ColumnLayout {
                 anchors.centerIn: parent
-                spacing: Theme.spacing.md
+                spacing: Config.spacing.md
 
                 // Icon container
                 Rectangle {
                   Layout.alignment: Qt.AlignHCenter
                   Layout.preferredWidth: 64
                   Layout.preferredHeight: 64
-                  radius: Theme.radius.full
+                  radius: Config.radius.full
                   color: "transparent"
 
                   Text {
                     anchors.centerIn: parent
                     text: "󰂚"
                     color: Theme.on_surface_variant
-                    font.pixelSize: Theme.typography.xxl * 2
-                    font.family: Theme.typography.fontFamily
+                    font.pixelSize: Config.typography.xxl * 2
+                    font.family: Config.typography.sans
                     opacity: 0.6
                   }
                 }
@@ -317,9 +304,9 @@ LazyLoader {
                   Layout.alignment: Qt.AlignHCenter
                   text: "No notifications"
                   color: Theme.on_surface
-                  font.pixelSize: Theme.typography.md
-                  font.family: Theme.typography.fontFamily
-                  font.weight: Theme.typography.weightMedium
+                  font.pixelSize: Config.typography.md
+                  font.family: Config.typography.sans
+                  font.weight: Config.typography.weightMedium
                   opacity: 0.8
                 }
 
@@ -327,8 +314,8 @@ LazyLoader {
                   Layout.alignment: Qt.AlignHCenter
                   text: "You're all caught up"
                   color: Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
+                  font.pixelSize: Config.typography.sm
+                  font.family: Config.typography.sans
                   opacity: 0.6
                 }
               }

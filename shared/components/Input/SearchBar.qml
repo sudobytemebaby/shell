@@ -25,7 +25,7 @@ Rectangle {
   // APPEARANCE
   // ============================================================================
 
-  radius: Theme.radius.full
+  radius: Config.radius.full
   color: Theme.surface_container
 
   border.width: 0
@@ -39,14 +39,14 @@ Rectangle {
     id: searchInput
     anchors {
       fill: parent
-      leftMargin: Theme.padding.lg
-      rightMargin: Theme.padding.lg
+      leftMargin: Config.padding.lg
+      rightMargin: Config.padding.lg
     }
 
     verticalAlignment: TextInput.AlignVCenter
     color: Theme.on_surface
-    font.pixelSize: Theme.typography.lg
-    font.family: Theme.typography.fontFamilyDisplay
+    font.pixelSize: Config.typography.lg
+    font.family: Config.typography.sans
 
     // Placeholder text
     Text {

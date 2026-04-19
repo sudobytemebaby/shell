@@ -1,0 +1,6 @@
+module Animations
+
+AFade 1.0 AFade.qml
+AColor 1.0 AColor.qml
+AScale 1.0 AScale.qml
+AExpand 1.0 AExpand.qml

@@ -29,9 +29,9 @@ Item {
   Rectangle {
     anchors {
       fill: parent
-      margins: Theme.spacing.xs
+      margins: Config.spacing.xs
     }
-    radius: Theme.radius.xl
+    radius: Config.radius.xl
 
     // Dynamic color based on state
     color: {
@@ -44,7 +44,7 @@ Item {
       text: root.emoji
       color: Theme.on_surface
       font.pixelSize: 32
-      font.family: Theme.typography.fontFamily
+      font.family: Config.typography.sans
     }
 
     // Mouse interaction area

@@ -1,0 +1,82 @@
+{
+  "animations": {
+    "speed": 2,
+    "disabled": false
+  },
+  "appearance": {
+    "fonts": {
+      "sans": "Google Sans",
+      "sansDisplay": "Google Sans"
+    },
+    "transparency": "heavy"
+  },
+  "shadows": {
+    "blur": 1,
+    "color": "#80000000",
+    "horizontalOffset": 0,
+    "verticalOffset": 4
+  },
+  "bar": {
+    "height": 26
+  },
+  "controlCenter": {
+    "width": 360,
+    "height": 620,
+    "posX": 28,
+    "posY": 28,
+    "radius": "xl"
+  },
+  "calendar": {
+    "width": 360,
+    "height": 560,
+    "posY": 28,
+    "radius": "xl"
+  },
+  "notificationCenter": {
+    "width": 360,
+    "height": 600,
+    "marginFromEdge": 28,
+    "posY": 28,
+    "radius": "xl"
+  },
+  "launcher": {
+    "width": 500,
+    "height": 600,
+    "radius": "xl"
+  },
+  "menu": {
+    "width": 460,
+    "height": 560,
+    "radius": "xl"
+  },
+  "emojiPicker": {
+    "width": 460,
+    "height": 550,
+    "radius": "xl"
+  },
+  "wallpaperPicker": {
+    "width": 900,
+    "height": 700,
+    "radius": "xl"
+  },
+  "powerMenu": {
+    "width": 700,
+    "height": 450,
+    "radius": "xl"
+  },
+  "screenRecording": {
+    "width": 700,
+    "height": 350,
+    "radius": "xl"
+  },
+  "matugen": {
+    "width": 650,
+    "height": 580,
+    "radius": "xl"
+  },
+  "weather": {
+    "width": 850,
+    "height": 550,
+    "radius": "lg"
+  }
+}

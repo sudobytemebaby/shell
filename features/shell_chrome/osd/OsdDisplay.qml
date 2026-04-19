@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -29,7 +28,7 @@ LazyLoader {
     }
 
     exclusiveZone: 0
-    implicitHeight: osdBackground.height + 28
+    implicitHeight: osdBackground.height + Config.osd.bottomMargin
     
     color: "transparent"
     mask: null
@@ -43,29 +42,28 @@ LazyLoader {
       anchors {
         horizontalCenter: parent.horizontalCenter
         bottom: parent.bottom
-        bottomMargin: 28
+        bottomMargin: Config.osd.bottomMargin
       }
 
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 4
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1.0
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      width: contentLayout.implicitWidth + (Theme.padding.md * 2)
-      height: contentLayout.implicitHeight + (Theme.padding.md * 2)
+      width: contentLayout.implicitWidth + (Config.padding.md * 2)
+      height: contentLayout.implicitHeight + (Config.padding.md * 2)
 
-      color: Theme.surface_transparent_medium
+      color: Config.paneBackground
 
-      radius: Theme.radius.full
+      radius: Config.radius.full
       border.width: 0.5
       border.color: Theme.surface_container
+
+      // Entrance animation
+      scale: 0.92
+      opacity: 0
+      Component.onCompleted: { scale = 1.0; opacity = 1.0 }
+      AScale on scale {}
+      AFade on opacity {}
       
       // Hover detection for the whole OSD
       MouseArea {
@@ -87,16 +85,16 @@ LazyLoader {
       Item {
         anchors {
           fill: parent
-          leftMargin: Theme.padding.sm
-          rightMargin: Theme.padding.xs
-          topMargin: Theme.padding.sm
-          bottomMargin: Theme.padding.sm
+          leftMargin: Config.padding.sm
+          rightMargin: Config.padding.xs
+          topMargin: Config.padding.sm
+          bottomMargin: Config.padding.sm
         }
         
         RowLayout {
           id: contentLayout
           anchors.centerIn: parent
-          spacing: Theme.spacing.sm
+          spacing: Config.spacing.sm
           
           Item {
             Layout.alignment: Qt.AlignVCenter
@@ -106,20 +104,16 @@ LazyLoader {
             IconCircle {
               anchors.centerIn: parent
               icon: loader.manager.currentIcon
-              iconSize: Theme.typography.lg
+              iconSize: Config.typography.lg
               iconColor: osdSlider.isMuted ? Theme.outline : Theme.primary
               bgColor: osdSlider.isMuted ? Theme.surface_container_highest : Theme.primary_container
-              Behavior on bgColor{
-                ColorAnimation{
-                  duration: 200
-                }
-              }
+              AColor on bgColor {}
             }
           }
 
           ColumnLayout {
             Layout.alignment: Qt.AlignVCenter
-            spacing: Theme.spacing.xs
+            spacing: Config.spacing.xs
 
             Components.HorizontalOsdSlider {
               id: osdSlider
@@ -158,9 +152,9 @@ LazyLoader {
             Layout.preferredWidth: 30
             text: Math.round(loader.manager.currentValue * 100)
             color: Theme.on_surface
-            font.pixelSize: Theme.typography.md
-            font.family: Theme.typography.fontFamily
-            font.weight: Theme.typography.weightMedium
+            font.pixelSize: Config.typography.md
+            font.family: Config.typography.sans
+            font.weight: Config.typography.weightMedium
             horizontalAlignment: Text.AlignHCenter
           }
         }

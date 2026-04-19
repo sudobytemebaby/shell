@@ -32,7 +32,7 @@ Rectangle {
   // APPEARANCE
   // ============================================================================
 
-  radius: Theme.radius.lg
+  radius: Config.radius.lg
   color: "transparent"
 
   // ============================================================================
@@ -41,8 +41,8 @@ Rectangle {
 
   RowLayout {
     anchors.fill: parent
-    anchors.margins: Theme.padding.md
-    spacing: Theme.spacing.md
+    anchors.margins: Config.padding.md
+    spacing: Config.spacing.md
 
     // Icon (either text icon or image)
     Loader {
@@ -60,7 +60,7 @@ Rectangle {
       Rectangle {
         width: root.iconSize
         height: root.iconSize
-        radius: Theme.radius.md
+        radius: Config.radius.md
         color: Theme.surface_container
 
         Image {
@@ -94,8 +94,8 @@ Rectangle {
         id: titleText
         text: root.title
         color: Theme.on_surface
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamilyDisplay
+        font.pixelSize: Config.typography.lg
+        font.family: Config.typography.sans
         font.weight: 500
         elide: Text.ElideRight
         Layout.fillWidth: true
@@ -105,8 +105,8 @@ Rectangle {
         id: subtitleText
         text: root.subtitle
         color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamilyDisplay
+        font.pixelSize: Config.typography.sm
+        font.family: Config.typography.sans
         opacity: 0.8
         elide: Text.ElideRight
         Layout.fillWidth: true

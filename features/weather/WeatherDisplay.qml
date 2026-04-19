@@ -1,12 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../shared/theme"
+import "../../shared/components"
 import "../../shared/components/Modals"
 import "../../shared/components/Navigation"
+import "../../shared/components/Utils"
 import "weather_modules" as Modules
 
 // ----------------------------------------------------------------------------
@@ -20,12 +21,12 @@ import "weather_modules" as Modules
 // Navigation: Arrow keys or click page indicators
 // Close: Escape key or click background
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
 
   required property var manager
 
-  active: manager.visible
+  show: manager.visible
 
   PanelWindow {
     id: weatherWindow
@@ -40,6 +41,8 @@ LazyLoader {
       left: true
       right: true
     }
+
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
@@ -64,7 +67,7 @@ LazyLoader {
 
       onNavigateLeft: newIndex => viewStack.currentIndex = newIndex
       onNavigateRight: newIndex => viewStack.currentIndex = newIndex
-      
+
       onClose: loader.manager.visible = false
     }
 
@@ -115,24 +118,19 @@ LazyLoader {
 
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 6
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      x: (parent.width - 850) / 2
-      y: (parent.height - 550) / 2
-      width: 850
-      height: 550
-      radius: 28
-      color: Theme.surface_transparent_medium
-      border.width: 1
+      x: (parent.width - Config.weather.width) / 2
+      y: (parent.height - Config.weather.height) / 2
+      width: Config.weather.width
+      height: Config.weather.height
+      radius: Config.weather.radius
+      color: Config.paneBackground
+      border.width: Config.paneBorderWidth
       border.color: Theme.surface_container
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Prevent clicks from propagating to background
       MouseArea {
@@ -142,9 +140,9 @@ LazyLoader {
       ColumnLayout {
         anchors {
           fill: parent
-          margins: Theme.padding.xl
+          margins: Config.padding.xl
         }
-        spacing: Theme.spacing.md
+        spacing: Config.spacing.md
 
         // ====================================================================
         // HEADER
@@ -156,10 +154,10 @@ LazyLoader {
             if (viewStack.currentIndex === 1) return "Hourly Forecast"
             return "Weekly Forecast"
           }
-          
+
           animateTitle: true
           fadeDuration: 150
-          
+
           actionButtons: [
             {
               icon: "󰑐",

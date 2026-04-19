@@ -1,5 +1,6 @@
 import QtQuick
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 /**
  * EmojiGridView - Scrollable grid container for emoji items
@@ -45,12 +46,12 @@ GridView {
       right: parent.right
       top: parent.top
       bottom: parent.bottom
-      rightMargin: Theme.spacing.xs
-      topMargin: Theme.spacing.xs
-      bottomMargin: Theme.spacing.xs
+      rightMargin: Config.spacing.xs
+      topMargin: Config.spacing.xs
+      bottomMargin: Config.spacing.xs
     }
     width: 6
-    radius: Theme.radius.sm
+    radius: Config.radius.sm
     color: "transparent"
 
     // Only show scrollbar when content exceeds viewport
@@ -88,26 +89,11 @@ GridView {
       opacity: scrollThumbMouseArea.containsMouse ? 0.8 : 0.6
 
       // Smooth animations for thumb movement
-      Behavior on y {
-        NumberAnimation {
-          duration: 100
-          easing.type: Easing.OutCubic
-        }
-      }
+      AExpand on y {}
 
-      Behavior on color {
-        ColorAnimation {
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
+      AColor on color {}
 
-      Behavior on opacity {
-        NumberAnimation {
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
+      AFade on opacity {}
 
       // Hover area for thumb with extended hit target
       MouseArea {

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 import "../../../../shared/components/Display"
 
 // ============================================================================
@@ -26,33 +27,33 @@ Rectangle {
   visible: hasMedia
   width: 380
   height: 60
-  radius: Theme.radius.lg
+  radius: Config.radius.lg
   color: Theme.surface
   clip: true
 
   RowLayout {
     anchors {
       fill: parent
-      leftMargin: Theme.spacing.md
-      rightMargin: Theme.spacing.md
-      bottomMargin: Theme.spacing.sm
-      topMargin: Theme.spacing.sm
+      leftMargin: Config.spacing.md
+      rightMargin: Config.spacing.md
+      bottomMargin: Config.spacing.sm
+      topMargin: Config.spacing.sm
     }
 
-    spacing: Theme.spacing.md
+    spacing: Config.spacing.md
 
     // Album art
     Rectangle {
       Layout.preferredWidth: 38
       Layout.preferredHeight: 38
-      radius: Theme.radius.md
+      radius: Config.radius.md
       color: Theme.surface_container_high
 
       NImageRounded {
         anchors.fill: parent
         imagePath: root.albumArt
         borderWidth: 0
-        radius: Theme.radius.md
+        radius: Config.radius.md
         imageFillMode: Image.PreserveAspectCrop
         visible: root.albumArt !== ""
       }
@@ -61,8 +62,8 @@ Rectangle {
       Text {
         anchors.centerIn: parent
         text: "󰝚"
-        font.pixelSize: Theme.typography.xl
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.xl
+        font.family: Config.typography.sans
         color: Theme.on_surface_variant
         visible: root.albumArt === ""
       }
@@ -72,14 +73,14 @@ Rectangle {
     ColumnLayout {
       Layout.preferredWidth: 160
       Layout.fillHeight: true
-      spacing: Theme.spacing.xs
+      spacing: Config.spacing.xs
 
       Text {
         Layout.fillWidth: true
         text: root.trackTitle
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
         color: Theme.on_surface
         elide: Text.ElideRight
       }
@@ -87,8 +88,8 @@ Rectangle {
       Text {
         Layout.fillWidth: true
         text: root.trackArtist
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.sm
+        font.family: Config.typography.sans
         color: Theme.on_surface_variant
         elide: Text.ElideRight
         visible: root.trackArtist !== ""
@@ -102,19 +103,19 @@ Rectangle {
 
     // Media controls (right side, one line)
     RowLayout {
-      spacing: Theme.spacing.xs
+      spacing: Config.spacing.xs
 
       // Previous button
       Rectangle {
         Layout.preferredWidth: 32
         Layout.preferredHeight: 32
-        radius: Theme.radius.full
+        radius: Config.radius.full
         color: "transparent"
 
         Text {
           anchors.centerIn: parent
           text: "󰒮"
-          font.pixelSize: Theme.typography.lg
+          font.pixelSize: Config.typography.lg
           color: Theme.on_surface
         }
 
@@ -131,13 +132,13 @@ Rectangle {
       Rectangle {
         Layout.preferredWidth: 36
         Layout.preferredHeight: 36
-        radius: Theme.radius.full
+        radius: Config.radius.full
         color: playPauseMouseArea.containsMouse ? Theme.primary_container : Theme.primary
 
         Text {
           anchors.centerIn: parent
           text: root.isPlaying ? "󰏤" : "󰐊"
-          font.pixelSize: Theme.typography.xl
+          font.pixelSize: Config.typography.xl
           color: Theme.on_primary
         }
 
@@ -149,22 +150,20 @@ Rectangle {
           onClicked: root.mprisState.playPause()
         }
 
-        Behavior on color {
-          ColorAnimation { duration: 150 }
-        }
+        AColor on color {}
       }
 
       // Next button
       Rectangle {
         Layout.preferredWidth: 32
         Layout.preferredHeight: 32
-        radius: Theme.radius.full
+        radius: Config.radius.full
         color: "transparent"
 
         Text {
           anchors.centerIn: parent
           text: "󰒭"
-          font.pixelSize: Theme.typography.lg
+          font.pixelSize: Config.typography.lg
           color: Theme.on_surface
         }
 
@@ -180,7 +179,5 @@ Rectangle {
   }
 
   // Smooth fade in/out
-  Behavior on opacity {
-    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-  }
+  AFade on opacity {}
 }

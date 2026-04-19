@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../theme"
+import "../Animations"
 import ".."
 
 Rectangle {
@@ -23,28 +24,25 @@ Rectangle {
   property color inactiveIconColor: Theme.on_surface_variant
 
   // ========== APPEARANCE ==========
-  radius: Theme.radius.full
-  //color: Theme.surface_container_low
+  radius: Config.radius.full
   color: "transparent"
 
   border.width: 0
   border.color: Theme.surface_container_high
 
   // ========== ANIMATIONS ==========
-  Behavior on color {
-    ColorAnimation { duration: 200 }
-  }
+  AColor on color {}
 
   // ========== CONTENT ==========
   RowLayout {
     anchors {
       fill: parent
-      topMargin: Theme.padding.sm
-      bottomMargin: Theme.padding.sm
-      leftMargin: Theme.padding.lg
-      rightMargin: Theme.padding.lg
+      topMargin: Config.padding.sm
+      bottomMargin: Config.padding.sm
+      leftMargin: Config.padding.lg
+      rightMargin: Config.padding.lg
     }
-    spacing: Theme.spacing.sm
+    spacing: Config.spacing.sm
 
     // Icon container
     IconCircle {
@@ -53,7 +51,7 @@ Rectangle {
       Layout.alignment: Qt.AlignVCenter
 
       icon: root.icon
-      iconSize: Theme.typography.xl
+      iconSize: Config.typography.xl
 
       // Color logic: if stateful,
       // use active/inactive colors.
@@ -68,12 +66,7 @@ Rectangle {
 
       scale: mouseArea.pressed ? 0.88 : 1.0
 
-      Behavior on scale {
-        NumberAnimation {
-          duration: 150
-          easing.type: Easing.OutCubic
-        }
-      }
+      AScale on scale {}
     }
 
     // Text content
@@ -87,13 +80,11 @@ Rectangle {
         color: Theme.on_surface
         // If stateful, dim when inactive. If not stateful, always full opacity
         opacity: root.isStateful ? (root.isActive ? 1 : 0.8) : 1
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamilyDisplay
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
 
-        Behavior on opacity {
-          NumberAnimation { duration: 200 }
-        }
+        AFade on opacity {}
       }
 
       Text {
@@ -104,13 +95,11 @@ Rectangle {
                ? Theme.primary
                : Theme.on_surface_variant
 
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.sm
+        font.family: Config.typography.sans
         opacity: 0.8
 
-        Behavior on color {
-          ColorAnimation { duration: 200 }
-        }
+        AColor on color {}
       }
     }
   }

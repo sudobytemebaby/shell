@@ -4,6 +4,7 @@ import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 import "../../../shared/theme"
+import "../../../shared/components/Animations"
 import "bar_modules" as Modules
 
 /**
@@ -51,7 +52,7 @@ PanelWindow {
   anchors.left: true
   anchors.right: true
 
-  implicitHeight: Theme.barHeight
+  implicitHeight: Config.bar.height
 
   color: "transparent"
 
@@ -97,9 +98,9 @@ PanelWindow {
       top: parent.top
     }
 
-    height: Theme.barHeight
+    height: Config.bar.height
     radius: 0
-    color: Theme.surface_transparent_medium
+    color: Config.paneBackground
 
     // Slide animation
     transform: Translate {
@@ -114,12 +115,7 @@ PanelWindow {
 
     // Fade animation
     opacity: barWindow.barVisible ? 1 : 0
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 150
-        easing.type: Easing.InOutQuad
-      }
-    }
+    AFade on opacity {}
 
     // ======================================================================
     // BAR CONTENT LAYOUT
@@ -130,8 +126,8 @@ PanelWindow {
     Item {
       anchors {
         fill: parent
-        leftMargin: Theme.padding.lg
-        rightMargin: Theme.padding.lg
+        leftMargin: Config.padding.lg
+        rightMargin: Config.padding.lg
       }
 
       // ==================================================================
@@ -144,7 +140,7 @@ PanelWindow {
           left: parent.left
           verticalCenter: parent.verticalCenter
         }
-        spacing: Theme.spacing.lg
+        spacing: Config.spacing.lg
 
         Modules.ControlCenterButton {
           controlCenterManager: barWindow.controlCenterManager
@@ -177,7 +173,7 @@ PanelWindow {
           right: parent.right
           verticalCenter: parent.verticalCenter
         }
-        spacing: Theme.spacing.lg
+        spacing: Config.spacing.lg
 
 
         Modules.SystemTray {}

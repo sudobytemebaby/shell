@@ -281,15 +281,7 @@ Scope {
   // ============================================================================
 
   Component.onCompleted: {
-    if (adapter) {
-      console.log("[Bluetooth] Initialized with native Quickshell.Bluetooth API")
-      console.log("[Bluetooth] Adapter:", adapter.name || "default")
-      console.log("[Bluetooth] Adapter ID:", adapter.adapterId || "unknown")
-      console.log("[Bluetooth] Initial state:", adapter.enabled ? "enabled" : "disabled")
-      console.log("[Bluetooth] Initial devices:", adapter.devices ? adapter.devices.values.length : 0)
-    } else {
-      console.warn("[Bluetooth] Native API unavailable. Fallback polling disabled.")
-    }
+    // adapter may arrive asynchronously after init - no warning needed
   }
 
   // ============================================================================

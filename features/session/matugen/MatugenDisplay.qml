@@ -1,13 +1,15 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Animations"
+import "../../../shared/components"
 import "../../../shared/components/Modals"
 import "../../../shared/components/Navigation"
 import "../../../shared/components/Buttons"
+import "../../../shared/components/Utils"
 
 /**
  * MatugenDisplay - UI display for the matugen color scheme menu system
@@ -21,7 +23,7 @@ import "../../../shared/components/Buttons"
  * - 3x3 grid layout for 9 color schemes
  *
  * Architecture:
- * - LazyLoader ensures UI only loads when visible
+ * - AnimatedLazyLoader ensures UI only loads when visible
  * - MatugenManager handles state and command execution
  * - This component is purely presentational
  *
@@ -35,13 +37,12 @@ import "../../../shared/components/Buttons"
 
 // ========== LAZY LOADING ==========
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
 
   required property var manager
 
-  // Lazy load UI only when visible for better performance
-  active: manager.visible
+  show: manager.visible
 
   // ========== WINDOW CONFIGURATION ==========
 
@@ -55,6 +56,8 @@ LazyLoader {
       bottom: true
       right: true
     }
+
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
@@ -128,25 +131,20 @@ LazyLoader {
 
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 6
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      x: (parent.width - 650) / 2
-      y: (parent.height - 580) / 2
-      width: 650
-      height: 580
+      x: (parent.width - Config.matugen.width) / 2
+      y: (parent.height - Config.matugen.height) / 2
+      width: Config.matugen.width
+      height: Config.matugen.height
 
-      color: Theme.surface_transparent_medium
-      radius: Theme.radius.xl
-      border.width: 1
+      color: Config.paneBackground
+      radius: Config.matugen.radius
+      border.width: Config.paneBorderWidth
       border.color: Theme.surface_container
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Prevent clicks on container from propagating to background (which would close menu)
       MouseArea {
@@ -156,9 +154,9 @@ LazyLoader {
       ColumnLayout {
         anchors {
           fill: parent
-          margins: Theme.padding.xl
+          margins: Config.padding.xl
         }
-        spacing: Theme.spacing.md
+        spacing: Config.spacing.md
 
         // ====================================================================
         // HEADER
@@ -175,7 +173,7 @@ LazyLoader {
 
         RowLayout {
           Layout.fillWidth: true
-          spacing: Theme.spacing.lg
+          spacing: Config.spacing.lg
 
           Text {
             text: {
@@ -187,8 +185,8 @@ LazyLoader {
               return "Loading wallpaper..."
             }
             color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
-            font.family: Theme.typography.fontFamily
+            font.pixelSize: Config.typography.sm
+            font.family: Config.typography.sans
             opacity: 0.7
             elide: Text.ElideMiddle
           }
@@ -230,8 +228,8 @@ LazyLoader {
           Layout.fillWidth: true
           Layout.fillHeight: true
           columns: 3
-          rowSpacing: Theme.spacing.sm
-          columnSpacing: Theme.spacing.sm
+          rowSpacing: Config.spacing.sm
+          columnSpacing: Config.spacing.sm
 
           Repeater {
             model: loader.manager.colorSchemes
@@ -245,7 +243,7 @@ LazyLoader {
               Layout.fillHeight: true
               Layout.preferredHeight: 120
 
-              radius: Theme.radius.xl
+              radius: Config.radius.xl
 
               color: {
                 if (index === matugenWindow.selectedIndex) {
@@ -256,7 +254,7 @@ LazyLoader {
 
               ColumnLayout {
                 anchors.fill: parent
-                spacing: Theme.spacing.xs
+                spacing: Config.spacing.xs
 
                 Item { Layout.fillHeight: true }
 
@@ -267,14 +265,9 @@ LazyLoader {
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface
                   font.pixelSize: 40
-                  font.family: Theme.typography.fontFamily
+                  font.family: Config.typography.sans
 
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: 200
-                      easing.type: Easing.OutCubic
-                    }
-                  }
+                  AColor on color {}
                 }
 
                 // Title
@@ -283,17 +276,12 @@ LazyLoader {
                   text: modelData.name
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface
-                  font.pixelSize: Theme.typography.md
-                  font.family: Theme.typography.fontFamilyDisplay
-                  font.weight: Theme.typography.weightMedium
+                  font.pixelSize: Config.typography.md
+                  font.family: Config.typography.sans
+                  font.weight: Config.typography.weightMedium
                   horizontalAlignment: Text.AlignHCenter
 
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: 200
-                      easing.type: Easing.OutCubic
-                    }
-                  }
+                  AColor on color {}
                 }
 
                 // Description
@@ -302,17 +290,12 @@ LazyLoader {
                   text: modelData.description
                   color: index === matugenWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamilyDisplay
+                  font.pixelSize: Config.typography.sm
+                  font.family: Config.typography.sans
                   horizontalAlignment: Text.AlignHCenter
                   opacity: index === matugenWindow.selectedIndex ? 0.8 : 0.6
 
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: 200
-                      easing.type: Easing.OutCubic
-                    }
-                  }
+                  AColor on color {}
                 }
 
                 Item { Layout.fillHeight: true }

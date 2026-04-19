@@ -33,7 +33,7 @@ Item {
   RowLayout{
     id: contentColumn
     anchors.centerIn: parent
-    spacing: Theme.spacing.md
+    spacing: Config.spacing.md
 
     // Suspend Button
     RoundIconButton {

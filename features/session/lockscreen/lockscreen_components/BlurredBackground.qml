@@ -3,6 +3,7 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Item {
   id: root
@@ -40,12 +41,7 @@ Item {
     brightness: -0.1
     
     // Smooth fade-in animation
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 400
-        easing.type: Easing.OutCubic
-      }
-    }
+    AFade on opacity {}
     
     // Trigger fade-in when content is ready
     onVisibleChanged: {

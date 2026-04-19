@@ -67,7 +67,7 @@ Item {
     id: appList
     anchors.fill: parent
     clip: true
-    spacing: Theme.spacing.xs
+    spacing: Config.spacing.xs
 
     // Manage currentIndex directly on the ListView (not through parent property)
     // This ensures proper highlight behavior when model changes
@@ -78,7 +78,7 @@ Item {
     highlight: Rectangle {
       width: appList.width
       height: 72
-      radius: Theme.radius.xl
+      radius: Config.radius.xl
       color: Theme.secondary_container
       border.width: 0
       border.color: Theme.secondary
@@ -170,22 +170,22 @@ Item {
       
       ColumnLayout {
         anchors.centerIn: parent
-        spacing: Theme.spacing.md
+        spacing: Config.spacing.md
 
         // Large circular icon container with app icon
         Rectangle {
           Layout.alignment: Qt.AlignHCenter
           Layout.preferredWidth: 64
           Layout.preferredHeight: 64
-          radius: Theme.radius.full
+          radius: Config.radius.full
           color: Theme.surface_container_high
 
           Text {
             anchors.centerIn: parent
             text: "󰀻"  // App grid icon
             color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.xxxl
-            font.family: Theme.typography.fontFamily
+            font.pixelSize: Config.typography.xxxl
+            font.family: Config.typography.sans
             opacity: 0.6
           }
         }
@@ -195,9 +195,9 @@ Item {
           Layout.alignment: Qt.AlignHCenter
           text: root.searchTerm ? "No apps found" : "No applications available"
           color: Theme.on_surface
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamily
-          font.weight: Theme.typography.weightMedium
+          font.pixelSize: Config.typography.md
+          font.family: Config.typography.sans
+          font.weight: Config.typography.weightMedium
           opacity: 0.8
         }
 
@@ -206,8 +206,8 @@ Item {
           Layout.alignment: Qt.AlignHCenter
           text: root.searchTerm ? "Try a different search term" : "Install some applications"
           color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.typography.fontFamily
+          font.pixelSize: Config.typography.sm
+          font.family: Config.typography.sans
           opacity: 0.6
         }
       }

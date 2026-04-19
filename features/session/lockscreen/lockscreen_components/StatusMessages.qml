@@ -1,5 +1,6 @@
 import QtQuick
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Column {
   id: root
@@ -10,7 +11,7 @@ Column {
   required property bool infoVisible
   required property string infoText
 
-  spacing: Theme.spacing.sm
+  spacing: Config.spacing.sm
 
   // Info message
   Text {
@@ -18,14 +19,12 @@ Column {
     anchors.horizontalCenter: parent.horizontalCenter
     text: root.infoText
     color: Theme.on_surface_variant
-    font.family: Theme.typography.fontFamily
-    font.pixelSize: Theme.typography.sm
+    font.family: Config.typography.sans
+    font.pixelSize: Config.typography.sm
     visible: root.infoVisible && !root.errorVisible
     opacity: visible ? 0.8 : 0
 
-    Behavior on opacity {
-      NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-    }
+    AFade on opacity {}
   }
 
   // Error message
@@ -34,14 +33,12 @@ Column {
     anchors.horizontalCenter: parent.horizontalCenter
     text: root.errorText
     color: Theme.error
-    font.family: Theme.typography.fontFamily
-    font.pixelSize: Theme.typography.md
+    font.family: Config.typography.sans
+    font.pixelSize: Config.typography.md
     visible: root.errorVisible
     opacity: visible ? 1.0 : 0
 
-    Behavior on opacity {
-      NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-    }
+    AFade on opacity {}
   }
 
   // Authenticating indicator
@@ -49,8 +46,8 @@ Column {
     anchors.horizontalCenter: parent.horizontalCenter
     text: "󰔟 Authenticating..."
     color: Theme.on_surface_variant
-    font.family: Theme.typography.fontFamily
-    font.pixelSize: Theme.typography.sm
+    font.family: Config.typography.sans
+    font.pixelSize: Config.typography.sm
     visible: root.isAuthenticating && !root.errorVisible
     opacity: 0.7
 

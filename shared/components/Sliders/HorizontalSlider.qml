@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../theme"
+import "../Animations"
 
 ColumnLayout {
   id: root
@@ -37,7 +38,7 @@ ColumnLayout {
         verticalCenter: parent.verticalCenter
       }
       height: 6
-      radius: Theme.radius.sm
+      radius: Config.radius.sm
       color: Theme.surface_container_high
 
       // Progress fill
@@ -64,7 +65,7 @@ ColumnLayout {
       anchors.verticalCenter: parent.verticalCenter
       width: 18
       height: 18
-      radius: Theme.radius.full
+      radius: Config.radius.full
       color: Theme.primary
       border.color: Theme.surface_container_low
       border.width: 3
@@ -76,9 +77,7 @@ ColumnLayout {
         NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
       }
 
-      Behavior on scale {
-        NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
-      }
+      AScale on scale {}
 
       MouseArea {
         id: handleMouseArea

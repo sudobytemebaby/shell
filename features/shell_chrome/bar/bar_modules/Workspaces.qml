@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell.Hyprland
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 /**
  * Workspaces - Minimalist MD3 Indicator
@@ -9,8 +10,8 @@ import "../../../../shared/theme"
  */
 Row {
   id: root
-  spacing: Theme.spacing.sm
-  height: Theme.barHeight
+  spacing: Config.spacing.sm
+  height: Config.bar.height
   
   Repeater {
     model: 5
@@ -38,13 +39,9 @@ Row {
       color: isFocused ? Theme.primary : (isOccupied ? Theme.on_surface_variant : Theme.surface_container_highest)
       
       // --- Snappy, Predictable Transitions ---
-      Behavior on width {
-        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-      }
+      AExpand on width {}
       
-      Behavior on color {
-        ColorAnimation { duration: 200 }
-      }
+      AColor on color {}
       
       MouseArea {
         id: ma
@@ -57,7 +54,7 @@ Row {
       
       // Minimal hover: Just a very slight scale shift
       scale: ma.containsMouse ? 1.1 : 1.0
-      Behavior on scale { NumberAnimation { duration: 150 } }
+      AScale on scale {}
     }
   }
 }

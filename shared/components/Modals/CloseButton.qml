@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../theme"
+import "../Animations"
 
 /**
  * CloseButton
@@ -44,7 +45,7 @@ Item {
   // Size based on style
   Layout.preferredWidth: style === "rounded" ? 32 : implicitWidth
   Layout.preferredHeight: style === "rounded" ? 32 : implicitHeight
-  Layout.rightMargin: style === "rounded" ? Theme.padding.xs : Theme.padding.sm
+  Layout.rightMargin: style === "rounded" ? Config.padding.xs : Config.padding.sm
 
   implicitWidth: closeText.implicitWidth
   implicitHeight: closeText.implicitHeight
@@ -52,7 +53,7 @@ Item {
   // Background (only for rounded style)
   Rectangle {
     anchors.fill: parent
-    radius: Theme.radius.full
+    radius: Config.radius.full
     visible: style === "rounded"
     color: mouseArea.containsMouse ? Theme.surface_container_high : "transparent"
 
@@ -64,12 +65,10 @@ Item {
     anchors.centerIn: parent
     text: "✕"
     color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface
-    font.pixelSize: Theme.typography.lg
-    font.family: Theme.typography.fontFamily
+    font.pixelSize: Config.typography.lg
+    font.family: Config.typography.sans
 
-    Behavior on color {
-      ColorAnimation { duration: 150 }
-    }
+    AColor on color {}
   }
 
   // Interactive area

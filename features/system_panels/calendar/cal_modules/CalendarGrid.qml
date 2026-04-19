@@ -3,13 +3,14 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import "../../../../shared/components"
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Card {
   id: root
   
   required property var calendarManager
   
-  padding: Theme.padding.lg
+  padding: Config.padding.lg
   
   ColumnLayout {
     anchors.fill: parent
@@ -25,9 +26,9 @@ Card {
         
         text: shortName
         color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamilyDisplay
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.sm
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         opacity: 0.8
@@ -61,12 +62,7 @@ Card {
           return "transparent"
         }
         
-        Behavior on color {
-          ColorAnimation {
-            duration: 150
-            easing.type: Easing.OutCubic
-          }
-        }
+        AColor on color {}
         
         Text {
           anchors.centerIn: parent
@@ -81,23 +77,18 @@ Card {
             if (model.month !== monthGrid.month) return Theme.on_surface_variant
             return Theme.on_surface
           }
-          font.pixelSize: Theme.typography.md
-          font.family: Theme.typography.fontFamilyDisplay
+          font.pixelSize: Config.typography.md
+          font.family: Config.typography.sans
           font.weight: {
             var now = new Date()
             var isToday = model.day === now.getDate() && 
                           model.month === now.getMonth() && 
                           model.year === now.getFullYear()
-            return isToday ? Theme.typography.weightMedium : Theme.typography.weightNormal
+            return isToday ? Config.typography.weightMedium : Config.typography.weightNormal
           }
           opacity: model.month === monthGrid.month ? 1.0 : 0.3
           
-          Behavior on color {
-            ColorAnimation {
-              duration: 150
-              easing.type: Easing.OutCubic
-            }
-          }
+          AColor on color {}
         }
         
         MouseArea {

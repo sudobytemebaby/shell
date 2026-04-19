@@ -22,20 +22,20 @@ Card {
 
   ColumnLayout {
     anchors.fill: parent
-    spacing: Theme.spacing.md
+    spacing: Config.spacing.md
 
     // Header row: icon + label + percentage
     RowLayout {
       Layout.fillWidth: true
-      spacing: Theme.spacing.sm
+      spacing: Config.spacing.sm
       
       // Label
       Text {
         Layout.fillWidth: true
         text: root.label
         color: Theme.on_surface
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamily
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
         font.weight: Font.Medium
       }
 
@@ -43,8 +43,8 @@ Card {
       Text {
         text: Math.round(root.value * 100) + "%"
         color: Theme.outline
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.fontFamily
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
         font.weight: Font.Medium
       }
     }

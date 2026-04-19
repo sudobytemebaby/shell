@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../../../shared/theme"
 import "../../../shared/components/Modals"
+import "../../../shared/components/Animations"
 
 // ----------------------------------------------------------------------------
 // Weather Footer
@@ -10,7 +11,7 @@ import "../../../shared/components/Modals"
 // Shows current page indicator, keyboard shortcuts, and last update time.
 
 ColumnLayout {
-  spacing: Theme.spacing.md
+  spacing: Config.spacing.md
 
   // ==========================================================================
   // PROPERTIES
@@ -27,7 +28,7 @@ ColumnLayout {
 
   RowLayout {
     Layout.alignment: Qt.AlignHCenter
-    spacing: Theme.spacing.sm
+    spacing: Config.spacing.sm
 
     Repeater {
       model: pageCount
@@ -44,9 +45,7 @@ ColumnLayout {
           onClicked: indexSelected(index)
         }
 
-        Behavior on color {
-          ColorAnimation { duration: 150 }
-        }
+        AColor on color {}
       }
     }
   }
@@ -70,12 +69,12 @@ ColumnLayout {
     Text {
       anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
-      anchors.rightMargin: Theme.padding.sm
+      anchors.rightMargin: Config.padding.sm
       visible: lastUpdate !== ""
       text: "Updated: " + lastUpdate
       color: Theme.on_surface_variant
-      font.pixelSize: Theme.typography.xs
-      font.family: Theme.typography.fontFamily
+      font.pixelSize: Config.typography.xs
+      font.family: Config.typography.sans
       opacity: 0.5
     }
   }

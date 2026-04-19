@@ -38,8 +38,8 @@ Text {
   Layout.fillWidth: true
   text: hint
   color: Theme.on_surface_variant
-  font.pixelSize: Theme.typography.sm
-  font.family: Theme.typography.fontFamilyDisplay
+  font.pixelSize: Config.typography.sm
+  font.family: Config.typography.sans
   horizontalAlignment: Text.AlignHCenter
   opacity: 0.7
 }

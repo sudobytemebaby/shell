@@ -31,8 +31,8 @@ Item {
         Text {
           text: modelData.time
           color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.md
-          font.weight: Theme.typography.weightBold
+          font.pixelSize: Config.typography.md
+          font.weight: Config.typography.weightBold
           Layout.alignment: Qt.AlignHCenter
         }
 
@@ -47,8 +47,8 @@ Item {
         Text {
           text: Math.round(modelData.temp) + "°"
           color: Theme.on_surface
-          font.pixelSize: Theme.typography.xxl
-          font.weight: Theme.typography.weightBold
+          font.pixelSize: Config.typography.xxl
+          font.weight: Config.typography.weightBold
           Layout.alignment: Qt.AlignHCenter
         }
 
@@ -68,7 +68,7 @@ Item {
             Text {
               text: Math.round(modelData.windSpeed) + " m/s"
               color: Theme.outline
-              font.pixelSize: Theme.typography.sm
+              font.pixelSize: Config.typography.sm
             }
           }
 
@@ -83,7 +83,7 @@ Item {
             Text {
               text: modelData.precipProb + "%"
               color: modelData.precipProb > 0 ? Theme.primary : Theme.outline
-              font.pixelSize: Theme.typography.sm
+              font.pixelSize: Config.typography.sm
             }
           }
         }
@@ -92,7 +92,7 @@ Item {
         Text {
           text: Utils.getShortWeatherDesc(modelData.code)
           color: Theme.tertiary
-          font.pixelSize: Theme.typography.sm
+          font.pixelSize: Config.typography.sm
           Layout.alignment: Qt.AlignHCenter
           elide: Text.ElideRight
           Layout.maximumWidth: parent.width - 10
@@ -125,8 +125,8 @@ Item {
       Layout.fillWidth: true
       Layout.preferredHeight: 1
       color: Theme.surface_container_highest
-      Layout.topMargin: Theme.spacing.xxl
-      Layout.bottomMargin: Theme.spacing.xxl
+      Layout.topMargin: Config.spacing.xxl
+      Layout.bottomMargin: Config.spacing.xxl
     }
 
     // Second row (hours 6-11)

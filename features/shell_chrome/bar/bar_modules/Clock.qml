@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Item {
   id: root
@@ -9,25 +10,20 @@ Item {
   required property var calendarManager
   
   implicitWidth: clock.implicitWidth
-  implicitHeight: Theme.barHeight
+  implicitHeight: Config.bar.height
   
   Text {
     id: clock
     anchors.centerIn: parent
     color: mouseArea.containsMouse ? Qt.darker(Theme.on_surface, 1.3) : Theme.on_surface
-    font.pixelSize: Theme.typography.sm
-    font.family: Theme.fontFamilyDisplay || "sans-serif"
+    font.pixelSize: Config.typography.sm
+    font.family: Config.typography.sans
     font.bold: false
     verticalAlignment: Text.AlignVCenter
 
     text: Qt.formatDateTime(systemClock.date, "dddd  hh:mm")
     
-    Behavior on color {
-      ColorAnimation {
-        duration: 200
-        easing.type: Easing.OutCubic
-      }
-    }
+    AColor on color {}
 
     // System clock for time display
     SystemClock {

@@ -11,7 +11,7 @@ Item {
   property real radius: 0
   property string imagePath: ""
   property string fallbackIcon: ""
-  property real fallbackIconSize: Theme.typography.xxxl
+  property real fallbackIconSize: Config.typography.xxxl
   property real borderWidth: 0
   property color borderColor: "transparent"
   property int imageFillMode: Image.PreserveAspectCrop
@@ -81,7 +81,7 @@ Item {
       text: root.fallbackIcon || "󰸉"
       color: Theme.on_surface_variant
       font.pixelSize: root.fallbackIconSize
-      font.family: Theme.typography.fontFamily
+      font.family: Config.typography.sans
       horizontalAlignment: Text.AlignHCenter
       verticalAlignment: Text.AlignVCenter
       opacity: 0.5
@@ -101,15 +101,15 @@ Item {
         anchors.centerIn: parent
         width: 40
         height: 40
-        radius: Theme.radius.full
+        radius: Config.radius.full
         color: Theme.primary_container
 
         Text {
           anchors.centerIn: parent
           text: ""
           color: Theme.on_primary_container
-          font.pixelSize: Theme.typography.xl
-          font.family: Theme.typography.fontFamily
+          font.pixelSize: Config.typography.xl
+          font.family: Config.typography.sans
 
           RotationAnimation on rotation {
             running: parent.parent.visible

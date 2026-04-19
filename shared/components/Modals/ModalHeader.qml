@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../theme"
+import "../Animations"
 
 /**
  * ModalHeader
@@ -39,7 +40,7 @@ RowLayout {
 
   Layout.fillWidth: true
   Layout.preferredHeight: 40
-  spacing: Theme.spacing.sm
+  spacing: Config.spacing.sm
 
   /**
    * Title text displayed in the header
@@ -90,14 +91,14 @@ RowLayout {
   Text {
     id: headerText
     Layout.fillWidth: true
-    Layout.leftMargin: Theme.padding.xs
+    Layout.leftMargin: Config.padding.xs
 
     text: root.title
 
     color: Theme.on_surface
-    font.pixelSize: Theme.typography.xl
-    font.family: Theme.typography.fontFamily
-    font.weight: Theme.typography.weightMedium
+    font.pixelSize: Config.typography.xl
+    font.family: Config.typography.sans
+    font.weight: Config.typography.weightMedium
 
     // Smooth fade transition when title changes (optional)
     Behavior on text {
@@ -123,7 +124,7 @@ RowLayout {
 
       Layout.preferredWidth: 32
       Layout.preferredHeight: 32
-      radius: Theme.radius.full
+      radius: Config.radius.full
       color: "transparent"
 
 
@@ -132,12 +133,10 @@ RowLayout {
         anchors.centerIn: parent
         text: modelData.icon || ""
         color: actionMouseArea.containsMouse ? Theme.outline : Theme.on_surface
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.lg
+        font.family: Config.typography.sans
 
-        Behavior on color {
-          ColorAnimation { duration: 150 }
-        }
+        AColor on color {}
       }
 
       MouseArea {

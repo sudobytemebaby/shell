@@ -8,7 +8,7 @@ RowLayout {
   
   required property var calendarManager
   
-  spacing: Theme.spacing.sm
+  spacing: Config.spacing.sm
   
   // Previous month button
   RoundIconButton {
@@ -28,9 +28,9 @@ RowLayout {
       return monthName + " " + root.calendarManager.displayYear
     }
     color: Theme.on_surface
-    font.pixelSize: Theme.typography.md
-    font.family: Theme.typography.fontFamilyDisplay
-    font.weight: Theme.typography.weightMedium
+    font.pixelSize: Config.typography.md
+    font.family: Config.typography.sans
+    font.weight: Config.typography.weightMedium
     horizontalAlignment: Text.AlignHCenter
   }
   

@@ -8,7 +8,7 @@ Item {
   id: root
 
   implicitWidth: trayLayout.implicitWidth
-  implicitHeight: Theme.barHeight
+  implicitHeight: Config.bar.height
 
   visible: true // DEBUG - force visible to test rendering
   // visible: SystemTray.items.values && SystemTray.items.values.length > 0
@@ -34,7 +34,7 @@ Item {
   RowLayout {
     id: trayLayout
     anchors.centerIn: parent
-    spacing: Theme.spacing.sm
+    spacing: Config.spacing.sm
 
     Repeater {
       model: SystemTray.items
@@ -42,8 +42,8 @@ Item {
       delegate: Item {
         id: trayItem
 
-        implicitWidth: Theme.typography.sm + 4
-        implicitHeight: Theme.barHeight
+        implicitWidth: Config.typography.sm + 4
+        implicitHeight: Config.bar.height
 
         Component.onCompleted: {
           console.log("[SystemTray] Delegate created for:", modelData.id, "icon:", modelData.icon)
@@ -52,10 +52,10 @@ Item {
         Image {
           id: trayIcon
           anchors.centerIn: parent
-          width: Theme.typography.sm
-          height: Theme.typography.sm
-          sourceSize.width: Theme.typography.sm * 2
-          sourceSize.height: Theme.typography.sm * 2
+          width: Config.typography.sm
+          height: Config.typography.sm
+          sourceSize.width: Config.typography.sm * 2
+          sourceSize.height: Config.typography.sm * 2
           smooth: true
           asynchronous: true
           source: modelData.icon || ""
@@ -70,8 +70,8 @@ Item {
           anchors.centerIn: parent
           text: "󰀻"
           color: Theme.on_surface
-          font.pixelSize: Theme.typography.sm
-          font.family: Theme.fontFamily
+          font.pixelSize: Config.typography.sm
+          font.family: Config.typography.sans
           visible: trayIcon.status === Image.Error || trayIcon.status === Image.Null || !modelData.icon
         }
 

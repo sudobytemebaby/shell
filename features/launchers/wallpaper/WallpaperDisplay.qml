@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components"
 import "../../../shared/components/Input"
 import "../../../shared/components/Modals"
 import "../../../shared/components/Navigation"
@@ -40,12 +40,6 @@ AnimatedLazyLoader {
   show: manager.visible
 
   required property var manager
-
-  // Polished animation timings
-  openDuration: 150
-  closeDuration: 0
-  openEasingType: Easing.OutCubic
-  closeEasingType: Easing.InOutCubic
 
   PanelWindow {
     id: wallpaperWindow
@@ -225,32 +219,23 @@ AnimatedLazyLoader {
     // Centered modal dialog with Material 3 styling
     Rectangle {
       id: container
-      x: (parent.width - 900) / 2
-      y: (parent.height - 700) / 2
-      width: 900
-      height: 700
+      x: (parent.width - Config.wallpaperPicker.width) / 2
+      y: (parent.height - Config.wallpaperPicker.height) / 2
+      width: Config.wallpaperPicker.width
+      height: Config.wallpaperPicker.height
 
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 6
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      radius: Theme.radius.xl
+      radius: Config.wallpaperPicker.radius
 
-      color: Theme.surface_transparent_medium
+      color: Config.paneBackground
       border.width: 0.5
       border.color: Theme.surface_container_high
 
-      // Polished appearing animation: subtle scale + fade + slide
-      scale: 0.95 + (loader.animationProgress * 0.05)
-      opacity: loader.animationProgress
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Prevent clicks on container from propagating to background (which would close picker)
       MouseArea {
@@ -260,9 +245,9 @@ AnimatedLazyLoader {
       ColumnLayout {
         anchors {
           fill: parent
-          margins: Theme.padding.xl
+          margins: Config.padding.xl
         }
-        spacing: Theme.spacing.md
+        spacing: Config.spacing.md
         
         // ====================================================================
         // HEADER
@@ -319,22 +304,22 @@ AnimatedLazyLoader {
           
           ColumnLayout {
             anchors.centerIn: parent
-            spacing: Theme.spacing.md
+            spacing: Config.spacing.md
 
             // Loading spinner icon
             Rectangle {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: 64
               Layout.preferredHeight: 64
-              radius: Theme.radius.full
+              radius: Config.radius.full
               color: Theme.surface_container_high
 
               Text {
                 anchors.centerIn: parent
                 text: "󰝲"
                 color: Theme.on_surface_variant
-                font.pixelSize: Theme.typography.xxxl
-                font.family: Theme.typography.fontFamily
+                font.pixelSize: Config.typography.xxxl
+                font.family: Config.typography.sans
                 opacity: 0.6
 
                 // Continuous rotation animation
@@ -353,9 +338,9 @@ AnimatedLazyLoader {
               Layout.alignment: Qt.AlignHCenter
               text: "Loading wallpapers..."
               color: Theme.on_surface
-              font.pixelSize: Theme.typography.md
-              font.family: Theme.typography.fontFamily
-              font.weight: Theme.typography.weightMedium
+              font.pixelSize: Config.typography.md
+              font.family: Config.typography.sans
+              font.weight: Config.typography.weightMedium
               opacity: 0.8
             }
           }
@@ -377,22 +362,22 @@ AnimatedLazyLoader {
           
           ColumnLayout {
             anchors.centerIn: parent
-            spacing: Theme.spacing.md
+            spacing: Config.spacing.md
 
             // Error icon
             Rectangle {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: 64
               Layout.preferredHeight: 64
-              radius: Theme.radius.full
+              radius: Config.radius.full
               color: Theme.error_container
 
               Text {
                 anchors.centerIn: parent
                 text: "󰀪"
                 color: Theme.on_error_container
-                font.pixelSize: Theme.typography.xxxl
-                font.family: Theme.typography.fontFamily
+                font.pixelSize: Config.typography.xxxl
+                font.family: Config.typography.sans
               }
             }
 
@@ -402,8 +387,8 @@ AnimatedLazyLoader {
               Layout.maximumWidth: 600
               text: loader.manager ? loader.manager.errorMessage : ""
               color: Theme.error
-              font.pixelSize: Theme.typography.md
-              font.family: Theme.typography.fontFamily
+              font.pixelSize: Config.typography.md
+              font.family: Config.typography.sans
               horizontalAlignment: Text.AlignHCenter
               wrapMode: Text.WordWrap
             }
@@ -464,22 +449,22 @@ AnimatedLazyLoader {
           
           ColumnLayout {
             anchors.centerIn: parent
-            spacing: Theme.spacing.md
+            spacing: Config.spacing.md
 
             // Empty state icon
             Rectangle {
               Layout.alignment: Qt.AlignHCenter
               Layout.preferredWidth: 64
               Layout.preferredHeight: 64
-              radius: Theme.radius.full
+              radius: Config.radius.full
               color: Theme.surface_container_high
 
               Text {
                 anchors.centerIn: parent
                 text: "󰸉"
                 color: Theme.on_surface_variant
-                font.pixelSize: Theme.typography.xxxl
-                font.family: Theme.typography.fontFamily
+                font.pixelSize: Config.typography.xxxl
+                font.family: Config.typography.sans
                 opacity: 0.6
               }
             }
@@ -491,9 +476,9 @@ AnimatedLazyLoader {
                     "No wallpapers found" :
                     "No wallpapers available"
               color: Theme.on_surface
-              font.pixelSize: Theme.typography.md
-              font.family: Theme.typography.fontFamily
-              font.weight: Theme.typography.weightMedium
+              font.pixelSize: Config.typography.md
+              font.family: Config.typography.sans
+              font.weight: Config.typography.weightMedium
               opacity: 0.8
             }
 
@@ -504,8 +489,8 @@ AnimatedLazyLoader {
                     "Try a different search term" :
                     "Add wallpapers to " + (loader.manager ? loader.manager.wallpaperDir : "")
               color: Theme.on_surface_variant
-              font.pixelSize: Theme.typography.sm
-              font.family: Theme.typography.fontFamily
+              font.pixelSize: Config.typography.sm
+              font.family: Config.typography.sans
               opacity: 0.6
             }
           }

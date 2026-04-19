@@ -242,8 +242,8 @@ Singleton {
   PanelWindow {
     id: fallbackRenderer
     visible: false
-    width: 1
-    height: 1
+    implicitWidth: 1
+    implicitHeight: 1
 
     WlrLayershell.layer: WlrLayer.Background
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None

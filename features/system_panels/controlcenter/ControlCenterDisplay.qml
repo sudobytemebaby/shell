@@ -1,11 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import "../../../shared/theme"
 import "../../../shared/components"
 import "../../../shared/components/Modals"
+import "../../../shared/components/Utils"
 import "cc_modules" as Modules
 
 // ============================================================================
@@ -13,9 +13,9 @@ import "cc_modules" as Modules
 // ============================================================================
 // Main control center panel with toggles, sliders, and media controls
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
-  active: manager.visible
+  show: manager.visible
 
   required property var manager
   required property var systemState
@@ -30,20 +30,13 @@ LazyLoader {
       right: true
     }
 
-    visible: loader.manager.visible
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: loader.manager.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     color: "transparent"
     mask: null
-
-    Behavior on height {
-      NumberAnimation {
-        duration: 300
-        easing.type: Easing.OutCubic
-      }
-    }
 
     Component.onCompleted: {
       exclusiveZone = 0
@@ -72,10 +65,13 @@ LazyLoader {
 
     Item {
       id: container
-      x: 28
-      y: 28
-      width: 360
-      height: 620
+      x: Config.controlCenter.posX
+      y: Config.controlCenter.posY
+      width: Config.controlCenter.width
+      height: Config.controlCenter.height
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       Rectangle {
         id: background
@@ -83,20 +79,12 @@ LazyLoader {
         layer.enabled: true
         layer.smooth: true
 
-        layer.effect: MultiEffect {
-          shadowEnabled: true
-          shadowColor: "#80000000"
-          shadowBlur: 1.0
-          shadowVerticalOffset: 6
-          shadowHorizontalOffset: 0
-          shadowOpacity: 1
-          shadowScale: 1.02
-        }
+        layer.effect: PaneShadow {}
 
         anchors.fill: parent
-        radius: Theme.radius.xl
-        color: Theme.surface_transparent_medium
-        border.width: 0.5
+        radius: Config.controlCenter.radius
+        color: Config.paneBackground
+        border.width: Config.paneBorderWidth
         border.color: Theme.surface_container
 
         MouseArea {
@@ -106,9 +94,9 @@ LazyLoader {
         ColumnLayout {
           anchors {
             fill: parent
-            margins: Theme.padding.xl
+            margins: Config.padding.xl
           }
-          spacing: Theme.spacing.md
+          spacing: Config.spacing.md
 
           // ====================================================================
           // HEADER
@@ -162,7 +150,7 @@ LazyLoader {
           Card {
             Layout.fillWidth: true
             height: 210
-            padding: Theme.padding.xs
+            padding: Config.padding.xs
 
             Column {
               anchors.fill: parent
@@ -187,7 +175,7 @@ LazyLoader {
           RowLayout {
             Layout.fillWidth: true
             height: 168
-            spacing: Theme.spacing.sm
+            spacing: Config.spacing.sm
 
             // MPRIS media controls (playback, album art, etc.)
             Modules.PlayerControl {

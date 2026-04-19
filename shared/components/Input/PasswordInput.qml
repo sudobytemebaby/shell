@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell.Services.Pam
 import "../../theme"
+import "../Animations"
 
 Rectangle {
   id: root
@@ -16,20 +17,16 @@ Rectangle {
   
   width: 120
   height: 40
-  radius: Theme.radius.full
+  radius: Config.radius.full
   color: "transparent"
   border.color: "transparent"
   border.width: 0
   opacity: authSuccess ? 0 : 1.0
   scale: authSuccess ? 0.9 : 1.0
   
-  Behavior on opacity {
-    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-  }
+  AFade on opacity {}
   
-  Behavior on scale {
-    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-  }
+  AScale on scale {}
   
   // Shake animation on error
   SequentialAnimation {
@@ -81,8 +78,8 @@ Rectangle {
       width: parent.width
       color: "transparent"
       cursorDelegate: Item {}
-      font.pixelSize: Theme.typography.sm
-      font.family: Theme.typography.fontFamily
+      font.pixelSize: Config.typography.sm
+      font.family: Config.typography.sans
       echoMode: TextInput.Normal
       verticalAlignment: TextInput.AlignVCenter
       horizontalAlignment: TextInput.AlignHCenter
@@ -129,7 +126,7 @@ Rectangle {
     // Visual password dots
     Row {
       anchors.centerIn: parent
-      spacing: Theme.spacing.xs
+      spacing: Config.spacing.xs
       visible: passwordInput.text.length > 0
       
       Repeater {
@@ -174,16 +171,11 @@ Rectangle {
       color: root.parent.errorVisible ? Theme.error : 
              root.isAuthenticating ? "transparent" :
              Theme.on_surface_variant
-      font.family: Theme.typography.fontFamily
-      font.pixelSize: Theme.typography.sm
+      font.family: Config.typography.sans
+      font.pixelSize: Config.typography.sm
       opacity: 0.5
       
-      Behavior on color {
-        ColorAnimation {
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
+      AColor on color {}
     }
   }
   

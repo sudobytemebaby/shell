@@ -21,7 +21,7 @@ import "../../../../shared/theme"
 
 Card {
   id: root
-  padding: Theme.padding.md
+  padding: Config.padding.md
   color: "transparent"
 
   required property var quickActionsManager
@@ -29,8 +29,8 @@ Card {
   GridLayout {
     anchors.centerIn: parent
     columns: 2
-    rowSpacing: Theme.spacing.lg
-    columnSpacing: Theme.spacing.lg
+    rowSpacing: Config.spacing.lg
+    columnSpacing: Config.spacing.lg
 
     Repeater {
       model: root.quickActionsManager.actions.length

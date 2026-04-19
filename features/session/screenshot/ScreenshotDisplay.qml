@@ -1,11 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Animations"
+import "../../../shared/components"
 import "../../../shared/components/Navigation"
+import "../../../shared/components/Utils"
 
 /**
  * ScreenshotDisplay - Compact OSD-style screenshot menu
@@ -17,10 +19,19 @@ import "../../../shared/components/Navigation"
  * - Escape or click outside to close
  */
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
   required property var manager
-  active: manager.visible
+  show: manager.visible
+
+  // When the close animation finishes and loader.active goes false,
+  // notify the manager it's safe to run interactive tools like slurp.
+  Connections {
+    target: loader
+    function onActiveChanged() {
+      if (!loader.active) loader.manager.windowClosed()
+    }
+  }
 
   PanelWindow {
     id: screenshotWindow
@@ -32,6 +43,8 @@ LazyLoader {
       right: true
     }
 
+    visible: loader.active
+
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
@@ -40,13 +53,6 @@ LazyLoader {
 
     Component.onCompleted: {
       exclusiveZone = 0
-    }
-
-    // When this window is fully destroyed by LazyLoader (because manager.visible
-    // went false), notify the manager it's safe to run interactive tools like slurp.
-    // This is the correct place — fires exactly once when the overlay is truly gone.
-    Component.onDestruction: {
-      loader.manager.windowClosed()
     }
 
     property int selectedIndex: 0
@@ -113,28 +119,23 @@ LazyLoader {
     // Compact OSD panel at bottom center
     Rectangle {
       id: container
-      x: (parent.width - 300) / 2
-      y: parent.height - 60 - 24
-      width: 300
-      height: 60
+      x: (parent.width - Config.screenshot.containerWidth) / 2
+      y: parent.height - Config.screenshot.containerHeight - Config.screenshot.bottomMargin
+      width: Config.screenshot.containerWidth
+      height: Config.screenshot.containerHeight
 
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 4
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1.0
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      color: Theme.surface_transparent_medium
+      color: Config.paneBackground
 
-      radius: Theme.radius.full
-      border.width: 0.5
+      radius: Config.radius.full
+      border.width: Config.paneBorderWidth
       border.color: Theme.surface_container
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       MouseArea {
         anchors.fill: parent
@@ -143,10 +144,10 @@ LazyLoader {
       GridLayout {
         anchors {
           fill: parent
-          margins: Theme.padding.sm
+          margins: Config.padding.sm
         }
         columns: 3
-        columnSpacing: Theme.spacing.sm
+        columnSpacing: Config.spacing.sm
 
         Repeater {
           model: loader.manager.screenshotOptions
@@ -157,7 +158,7 @@ LazyLoader {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            radius: Theme.radius.full
+            radius: Config.radius.full
 
             color: index === screenshotWindow.selectedIndex ?
                    Theme.tertiary_container : "transparent"
@@ -168,14 +169,9 @@ LazyLoader {
               color: index === screenshotWindow.selectedIndex ?
                      Theme.on_tertiary_container : Theme.on_surface
               font.pixelSize: 18
-              font.family: Theme.typography.fontFamily
+              font.family: Config.typography.sans
 
-              Behavior on color {
-                ColorAnimation {
-                  duration: 200
-                  easing.type: Easing.OutCubic
-                }
-              }
+              AColor on color {}
             }
 
             MouseArea {

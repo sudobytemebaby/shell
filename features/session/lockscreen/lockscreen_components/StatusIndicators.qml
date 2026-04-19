@@ -15,32 +15,32 @@ Rectangle {
 
   readonly property string username: Quickshell.env("USER") || "user"
 
-  width: contentRow.implicitWidth + Theme.padding.lg * 2
+  width: contentRow.implicitWidth + Config.padding.lg * 2
   height: 60
-  radius: Theme.radius.lg
+  radius: Config.radius.lg
   color: Theme.surface
 
   RowLayout {
     id: contentRow
     anchors.centerIn: parent
-    spacing: Theme.spacing.lg
+    spacing: Config.spacing.lg
 
     // User info
     RowLayout {
-      spacing: Theme.spacing.sm
+      spacing: Config.spacing.sm
 
       Text {
         text: "󰀄"
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.lg
+        font.family: Config.typography.sans
         color: Theme.primary
       }
 
       Text {
         text: root.username
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
         color: Theme.on_surface
       }
     }
@@ -54,13 +54,13 @@ Rectangle {
 
     // Battery (only show if laptop)
     RowLayout {
-      spacing: Theme.spacing.sm
+      spacing: Config.spacing.sm
       visible: root.systemState?.battery.isLaptopBattery ?? false
 
       Text {
         text: root.systemState?.battery.batteryIcon ?? ""
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.lg
+        font.family: Config.typography.sans
         color: {
           if (!root.systemState) return Theme.on_surface_variant
           if (root.systemState.battery.isCharging) return Theme.primary
@@ -73,8 +73,8 @@ Rectangle {
         text: root.systemState
           ? Math.round(root.systemState.battery.percentage * 100) + "%"
           : "0%"
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
         color: Theme.on_surface_variant
       }
     }
@@ -90,8 +90,8 @@ Rectangle {
     // Keyboard layout
     Text {
       text: root.systemState?.keyboardLayout.currentLayout ?? "EN"
-      font.pixelSize: Theme.typography.md
-      font.family: Theme.typography.fontFamily
+      font.pixelSize: Config.typography.md
+      font.family: Config.typography.sans
       color: Theme.on_surface_variant
     }
   }

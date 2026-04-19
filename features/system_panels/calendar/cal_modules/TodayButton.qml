@@ -1,45 +1,31 @@
 import QtQuick
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Rectangle {
   id: root
   
   required property var calendarManager
   
-  radius: Theme.radius.full
+  radius: Config.radius.full
   color: mouseArea.containsMouse ? Qt.darker(Theme.primary_container, 1.2) : Theme.primary_container
   
   scale: mouseArea.pressed ? 0.95 : 1.0
   
-  Behavior on color {
-    ColorAnimation {
-      duration: 150
-      easing.type: Easing.OutCubic
-    }
-  }
+  AColor on color {}
   
-  Behavior on scale {
-    NumberAnimation {
-      duration: 100
-      easing.type: Easing.OutCubic
-    }
-  }
+  AScale on scale {}
   
   Text {
     anchors.centerIn: parent
     text: "Go to Today"
     color: Theme.on_primary_container
-    font.pixelSize: Theme.typography.md
-    font.family: Theme.typography.fontFamily
-    font.weight: Theme.typography.weightMedium
+    font.pixelSize: Config.typography.md
+    font.family: Config.typography.sans
+    font.weight: Config.typography.weightMedium
     opacity: mouseArea.containsMouse ? 0.7 : 1
     
-    Behavior on color {
-      ColorAnimation {
-        duration: 150
-        easing.type: Easing.OutCubic
-      }
-    }
+    AColor on color {}
   }
   
   MouseArea {

@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Pam
@@ -100,7 +99,7 @@ Scope {
               // Smooth fade-in animation
               Behavior on opacity {
                 NumberAnimation {
-                  duration: 800
+                  duration: Config.lockscreen.fadeInDuration
                   easing.type: Easing.InOutCubic
                 }
               }
@@ -153,8 +152,8 @@ Scope {
                 anchors {
                   right: parent.right
                   top: parent.top
-                  rightMargin: Theme.spacing.xl
-                  topMargin: Theme.spacing.xl
+                  rightMargin: Config.spacing.xl
+                  topMargin: Config.spacing.xl
                 }
               }
 
@@ -170,14 +169,14 @@ Scope {
               Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: Theme.spacing.xl * 3
+                anchors.bottomMargin: Config.spacing.xl * 3
                 width: parent.width
                 height: bottomWidgetsLayout.implicitHeight
 
                 ColumnLayout {
                   id: bottomWidgetsLayout
                   anchors.horizontalCenter: parent.horizontalCenter
-                  spacing: Theme.spacing.md
+                  spacing: Config.spacing.md
 
                   // Media widget (only shows if media is playing)
                   Components.MediaWidget {
@@ -195,7 +194,7 @@ Scope {
                   Components.StatusMessages {
                     id: statusMessages
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: Theme.spacing.lg
+                    Layout.topMargin: Config.spacing.lg
 
                     isAuthenticating: lockContext.unlockInProgress
                     errorVisible: lockContext.showFailure

@@ -83,7 +83,7 @@ Scope {
         
         // Calculate Y position based on stack index (compact stacking)
         property real stackOffset: {
-          var baseOffset = Theme.component.barHeight + Theme.spacing.md
+          var baseOffset = Config.bar.height + Config.spacing.md
           var perNotifOffset = 140
           return baseOffset + (loader.notificationIndex * perNotifOffset)
         }
@@ -95,7 +95,7 @@ Scope {
 
         margins {
           top: stackOffset
-          right: Theme.spacing.md
+          right: Config.spacing.md
         }
         
         WlrLayershell.layer: WlrLayer.Overlay
@@ -134,34 +134,32 @@ Scope {
           Rectangle {
             id: background
             width: parent.width
-            height: notifContent.implicitHeight + (Theme.padding.lg * 2)
-            radius: Theme.radius.lg
+            height: notifContent.implicitHeight + (Config.padding.lg * 2)
+            radius: Config.radius.lg
             
             // Use transparent_medium for blur effect consistency
-            color: Theme.surface_transparent_medium
+            color: Config.paneBackground
             
             border.width: 1
             border.color: Theme.surface_container
             
             property bool hovered: false
             
-            Behavior on color {
-              ColorAnimation { duration: 200 }
-            }
+            AColor on color {}
             
             ColumnLayout {
               id: notifContent
               anchors {
                 fill: parent
-                margins: Theme.padding.lg
+                margins: Config.padding.lg
               }
 
-              spacing: Theme.spacing.md
+              spacing: Config.spacing.md
               
               // Header row - app icon + name + close
               RowLayout {
                 Layout.fillWidth: true
-                spacing: Theme.spacing.sm
+                spacing: Config.spacing.sm
                 
                 // App icon 
                 IconCircle {
@@ -170,7 +168,7 @@ Scope {
                   icon: "󰂚"
                   bgColor: Theme.primary_container
                   iconColor: Theme.primary
-                  iconSize: Theme.typography.md
+                  iconSize: Config.typography.md
                 }
                 
                 // App name
@@ -178,9 +176,9 @@ Scope {
                   Layout.fillWidth: true
                   text: loader.notifApp || "Notification"
                   color: Theme.on_surface
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
-                  font.weight: Theme.typography.weightMedium
+                  font.pixelSize: Config.typography.sm
+                  font.family: Config.typography.sans
+                  font.weight: Config.typography.weightMedium
                   elide: Text.ElideRight
                   maximumLineCount: 1
                 }
@@ -188,8 +186,8 @@ Scope {
                 // Close button
                 Text {
                   text: "✕"
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
+                  font.pixelSize: Config.typography.sm
+                  font.family: Config.typography.sans
                   color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface_variant
 
                   MouseArea {
@@ -207,16 +205,16 @@ Scope {
               // Content - summary + body
               ColumnLayout {
                 Layout.fillWidth: true
-                spacing: Theme.spacing.xs
+                spacing: Config.spacing.xs
                 
                 // Summary - bold and prominent
                 Text {
                   Layout.fillWidth: true
                   text: loader.notifSummary
                   color: Theme.on_surface
-                  font.pixelSize: Theme.typography.md
-                  font.family: Theme.typography.fontFamily
-                  font.weight: Theme.typography.weightMedium
+                  font.pixelSize: Config.typography.md
+                  font.family: Config.typography.sans
+                  font.weight: Config.typography.weightMedium
                   wrapMode: Text.Wrap
                   maximumLineCount: 2
                   elide: Text.ElideRight
@@ -227,8 +225,8 @@ Scope {
                   Layout.fillWidth: true
                   text: loader.notifBody
                   color: Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamily
+                  font.pixelSize: Config.typography.sm
+                  font.family: Config.typography.sans
                   wrapMode: Text.Wrap
                   maximumLineCount: 3
                   elide: Text.ElideRight

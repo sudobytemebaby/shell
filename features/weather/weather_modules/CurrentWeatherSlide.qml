@@ -20,23 +20,23 @@ Item {
   RowLayout {
     anchors.centerIn: parent
     width: parent.width * 0.9
-    spacing: Theme.spacing.xxl
+    spacing: Config.spacing.xxl
 
     // ========================================================================
     // LEFT SIDE - Primary Weather Display
     // ========================================================================
 
     ColumnLayout {
-      spacing: Theme.spacing.sm
+      spacing: Config.spacing.sm
       Layout.preferredWidth: parent.width * 0.45
 
       // City name
       Text {
         text: manager.city
         color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.xl
-        font.family: Theme.typography.fontFamilyDisplay
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.xl
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
         Layout.alignment: Qt.AlignHCenter
       }
 
@@ -45,8 +45,8 @@ Item {
         text: Math.round(manager.currentTemp) + "°"
         color: Theme.primary
         font.pixelSize: 112
-        font.family: Theme.typography.fontFamilyDisplay
-        font.weight: Theme.typography.weightBold
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightBold
         Layout.alignment: Qt.AlignHCenter
       }
 
@@ -58,9 +58,9 @@ Item {
           return desc
         }
         color: Theme.tertiary
-        font.pixelSize: Theme.typography.xl
-        font.family: Theme.typography.fontFamilyDisplay
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.xl
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
         Layout.alignment: Qt.AlignHCenter
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
@@ -71,9 +71,9 @@ Item {
       Text {
         text: "H: " + Math.round(manager.maxTemp) + "°  L: " + Math.round(manager.minTemp) + "°"
         color: Theme.on_surface
-        font.pixelSize: Theme.typography.lg
+        font.pixelSize: Config.typography.lg
         Layout.alignment: Qt.AlignHCenter
-        Layout.topMargin: Theme.spacing.sm
+        Layout.topMargin: Config.spacing.sm
       }
     }
 
@@ -92,7 +92,7 @@ Item {
     // ========================================================================
 
     ColumnLayout {
-      spacing: Theme.spacing.xxl
+      spacing: Config.spacing.xxl
       Layout.alignment: Qt.AlignVCenter
       Layout.preferredWidth: parent.width * 0.45
 
@@ -102,8 +102,8 @@ Item {
 
       GridLayout {
         columns: 2
-        columnSpacing: Theme.spacing.xl
-        rowSpacing: Theme.spacing.xl
+        columnSpacing: Config.spacing.xl
+        rowSpacing: Config.spacing.xl
         Layout.alignment: Qt.AlignHCenter
 
         // Wind
@@ -117,12 +117,12 @@ Item {
             Text {
               text: "Wind"
               color: Theme.on_surface_variant
-              font.pixelSize: Theme.typography.sm
+              font.pixelSize: Config.typography.sm
             }
             Text {
               text: Utils.getWindDir(manager.windDirection)
               color: Theme.on_surface_variant
-              font.pixelSize: Theme.typography.sm
+              font.pixelSize: Config.typography.sm
             }
           }
 
@@ -136,8 +136,8 @@ Item {
             Text {
               text: Math.round(manager.windSpeed) + " m/s"
               color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.weight: Theme.typography.weightBold
+              font.pixelSize: Config.typography.lg
+              font.weight: Config.typography.weightBold
             }
           }
         }
@@ -150,7 +150,7 @@ Item {
           Text {
             text: "Humidity"
             color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
+            font.pixelSize: Config.typography.sm
             Layout.alignment: Qt.AlignHCenter
           }
 
@@ -164,8 +164,8 @@ Item {
             Text {
               text: manager.humidity + "%"
               color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.weight: Theme.typography.weightBold
+              font.pixelSize: Config.typography.lg
+              font.weight: Config.typography.weightBold
             }
           }
         }
@@ -178,7 +178,7 @@ Item {
           Text {
             text: "Feels Like"
             color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
+            font.pixelSize: Config.typography.sm
             Layout.alignment: Qt.AlignHCenter
           }
 
@@ -192,8 +192,8 @@ Item {
             Text {
               text: Math.round(manager.feelsLike) + "°"
               color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.weight: Theme.typography.weightBold
+              font.pixelSize: Config.typography.lg
+              font.weight: Config.typography.weightBold
             }
           }
         }
@@ -206,7 +206,7 @@ Item {
           Text {
             text: "Precipitation"
             color: Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
+            font.pixelSize: Config.typography.sm
             Layout.alignment: Qt.AlignHCenter
           }
 
@@ -220,8 +220,8 @@ Item {
             Text {
               text: manager.precipProb + "%"
               color: Theme.on_surface
-              font.pixelSize: Theme.typography.lg
-              font.weight: Theme.typography.weightBold
+              font.pixelSize: Config.typography.lg
+              font.weight: Config.typography.weightBold
             }
           }
         }
@@ -288,8 +288,8 @@ Item {
           anchors.leftMargin: parent.width * 0.15
           text: manager.sunrise
           color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.weight: Theme.typography.weightMedium
+          font.pixelSize: Config.typography.sm
+          font.weight: Config.typography.weightMedium
         }
 
         // Sunset time label
@@ -299,8 +299,8 @@ Item {
           anchors.rightMargin: parent.width * 0.15
           text: manager.sunset
           color: Theme.on_surface_variant
-          font.pixelSize: Theme.typography.sm
-          font.weight: Theme.typography.weightMedium
+          font.pixelSize: Config.typography.sm
+          font.weight: Config.typography.weightMedium
         }
       }
     }

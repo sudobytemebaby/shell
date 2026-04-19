@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Item {
   id: root
@@ -14,43 +15,33 @@ Item {
   property bool hovered: false
   
   implicitWidth: rowLayout.implicitWidth
-  implicitHeight: Theme.barHeight
+  implicitHeight: Config.bar.height
   
   // Smooth width transition
-  Behavior on implicitWidth {
-    NumberAnimation {
-      duration: 250
-      easing.type: Easing.OutCubic
-    }
-  }
+  AExpand on implicitWidth {}
   
   RowLayout {
     id: rowLayout
     anchors.centerIn: parent
-    spacing: Theme.spacing.sm
+    spacing: Config.spacing.sm
 
     // Bell icon
     Text {
       id: iconText
       text: notificationCount > 0 ? "󱅫" : "󰂚"
       color: mouseArea.containsMouse ? Theme.outline : Theme.on_surface
-      font.pixelSize: Theme.typography.sm
-      font.family: Theme.fontFamily
+      font.pixelSize: Config.typography.sm
+      font.family: Config.typography.sans
       verticalAlignment: Text.AlignVCenter
       
-      Behavior on color {
-        ColorAnimation {
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
+      AColor on color {}
     }
     
     // Notification count badge
     Rectangle {
       Layout.preferredWidth: 12
       Layout.preferredHeight: 12
-      radius: Theme.radius.full
+      radius: Config.radius.full
       color: Theme.on_surface_variant
       visible: notificationCount > 0
 
@@ -60,8 +51,8 @@ Item {
         text: notificationCount > 99 ? "99+" : notificationCount
         color: Theme.surface_container
         font.pixelSize: 8
-        font.family: Theme.fontFamily
-        font.weight: Theme.typography.weightBold
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightBold
       }
     }
   }

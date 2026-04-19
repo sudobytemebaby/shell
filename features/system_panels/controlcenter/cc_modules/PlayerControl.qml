@@ -26,7 +26,7 @@ Card {
   Rectangle {
     anchors.fill: parent
     color: Theme.surface_container
-    radius: Theme.radius.xl
+    radius: Config.radius.xl
     visible: mediaManager.playerActive && mediaManager.playerArtUrl !== ""
   }
 
@@ -37,8 +37,8 @@ Card {
   // Idle state - centered icon and text
   ColumnLayout {
     anchors.centerIn: parent
-    width: parent.width - Theme.padding.md * 2
-    spacing: Theme.spacing.md
+    width: parent.width - Config.padding.md * 2
+    spacing: Config.spacing.md
     visible: !mediaManager.playerActive
 
     IconCircle {
@@ -46,9 +46,9 @@ Card {
       Layout.preferredWidth: 60
       Layout.preferredHeight: 60
 
-      radius: Theme.radius.lg
+      radius: Config.radius.lg
       icon: "󰝛"
-      iconSize: Theme.typography.xxl
+      iconSize: Config.typography.xxl
       bgColor: Theme.surface_container
       iconColor: Theme.on_surface_variant
     }
@@ -57,9 +57,9 @@ Card {
       Layout.fillWidth: true
       text: "No Media Playing"
       color: Theme.on_surface
-      font.pixelSize: Theme.typography.md
-      font.family: Theme.typography.fontFamilyDisplay
-      font.weight: Theme.typography.weightMedium
+      font.pixelSize: Config.typography.md
+      font.family: Config.typography.sans
+      font.weight: Config.typography.weightMedium
       horizontalAlignment: Text.AlignHCenter
     }
   }
@@ -67,8 +67,8 @@ Card {
   // Active state
   ColumnLayout {
     anchors.fill: parent
-    anchors.margins: Theme.padding.lg
-    spacing: Theme.spacing.md
+    anchors.margins: Config.padding.lg
+    spacing: Config.spacing.md
     visible: mediaManager.playerActive
 
     // Track Info
@@ -81,9 +81,9 @@ Card {
         Layout.fillWidth: true
         text: mediaManager.playerTitle || "Unknown Title"
         color: Theme.on_surface
-        font.pixelSize: Theme.typography.lg
-        font.family: Theme.typography.fontFamilyDisplay
-        font.weight: Theme.typography.weightMedium
+        font.pixelSize: Config.typography.lg
+        font.family: Config.typography.sans
+        font.weight: Config.typography.weightMedium
         elide: Text.ElideRight
       }
 
@@ -91,8 +91,8 @@ Card {
         Layout.fillWidth: true
         text: mediaManager.playerArtist || "Unknown Artist"
         color: Theme.on_surface_variant
-        font.pixelSize: Theme.typography.md
-        font.family: Theme.typography.fontFamily
+        font.pixelSize: Config.typography.md
+        font.family: Config.typography.sans
         elide: Text.ElideRight
         opacity: 0.8
       }
@@ -127,7 +127,7 @@ Card {
           return 0
         }
 
-        Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+        AExpand on width {}
       }
 
       // Hit area for seeking
@@ -153,17 +153,17 @@ Card {
     RowLayout {
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignHCenter
-      spacing: Theme.spacing.md
+      spacing: Config.spacing.md
 
       // Previous
       Text {
         text: "󰒮"
         color: Theme.on_surface
         font.pixelSize: 24
-        font.family: Theme.typography.fontFamily
+        font.family: Config.typography.sans
         opacity: prevMouse.containsMouse ? 0.7 : 1
 
-        Behavior on opacity { NumberAnimation { duration: 100 } }
+        AFade on opacity {}
 
         MouseArea {
           id: prevMouse
@@ -187,11 +187,11 @@ Card {
           text: mediaManager.playerPlaying ? "󰏤" : "󰐊"
           color: Theme.primary
           font.pixelSize: 18
-          font.family: Theme.typography.fontFamily
+          font.family: Config.typography.sans
         }
 
         scale: playMouse.pressed ? 0.9 : (playMouse.containsMouse ? 1.05 : 1.0)
-        Behavior on scale { NumberAnimation { duration: 100 } }
+        AScale on scale {}
 
         MouseArea {
           id: playMouse
@@ -207,10 +207,10 @@ Card {
         text: "󰒭"
         color: Theme.on_surface
         font.pixelSize: 24
-        font.family: Theme.typography.fontFamily
+        font.family: Config.typography.sans
         opacity: nextMouse.containsMouse ? 0.7 : 1
 
-        Behavior on opacity { NumberAnimation { duration: 100 } }
+        AFade on opacity {}
 
         MouseArea {
           id: nextMouse

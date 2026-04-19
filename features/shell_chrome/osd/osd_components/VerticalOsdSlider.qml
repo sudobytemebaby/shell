@@ -1,5 +1,6 @@
 import QtQuick
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 Item {
   id: root
@@ -15,7 +16,7 @@ Item {
   
   Row {
     anchors.centerIn: parent
-    spacing: Theme.spacing.xs
+    spacing: Config.spacing.xs
     height: parent.height
     
     // Tick marks column
@@ -58,7 +59,7 @@ Item {
         anchors.centerIn: parent
         width: 6
         height: parent.height
-        radius: Theme.radius.sm
+        radius: Config.radius.sm
         color: Theme.surface_container_highest
         
         // Filled portion
@@ -72,9 +73,7 @@ Item {
           radius: parent.radius
           color: root.isMuted ? Theme.outline : Theme.primary
           
-          Behavior on color {
-            ColorAnimation { duration: 200 }
-          }
+          AColor on color {}
         }
       }
       
@@ -85,23 +84,16 @@ Item {
         anchors.horizontalCenter: track.horizontalCenter
         width: 16
         height: 16
-        radius: Theme.radius.full
+        radius: Config.radius.full
         color: root.isMuted ? Theme.outline : Theme.primary
         border.color: Theme.surface_container_low
         border.width: 2
         
         scale: handleArea.pressed || handleArea.containsMouse ? 1.2 : 1.0
         
-        Behavior on color {
-          ColorAnimation { duration: 200 }
-        }
+        AColor on color {}
         
-        Behavior on scale {
-          NumberAnimation {
-            duration: 150
-            easing.type: Easing.OutCubic
-          }
-        }
+        AScale on scale {}
         
         MouseArea {
           id: handleArea

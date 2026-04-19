@@ -1,13 +1,14 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components"
 import "../../../shared/components/Input"
 import "../../../shared/components/Modals"
 import "../../../shared/components/Navigation"
+import "../../../shared/components/Utils"
 
 /**
  * LauncherDisplay
@@ -43,13 +44,13 @@ import "../../../shared/components/Navigation"
 
 // ========== LAZY LOADING ==========
 
-Loader {
+AnimatedLazyLoader {
   id: loader
-  active: manager.visible
+  show: manager.visible
 
   required property var manager
 
-  sourceComponent: PanelWindow {
+  PanelWindow {
     id: launcherWindow
 
     // Fill entire screen - the launcher box will be centered inside
@@ -60,7 +61,7 @@ Loader {
       right: true
     }
 
-    visible: true
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
@@ -123,29 +124,24 @@ Loader {
 
     Rectangle {
       id: background
-      
+
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 6
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      x: (parent.width - 500) / 2
-      y: (parent.height - 600) / 2
-      width: 500
-      height: 600
+      x: (parent.width - Config.launcher.width) / 2
+      y: (parent.height - Config.launcher.height) / 2
+      width: Config.launcher.width
+      height: Config.launcher.height
 
-      color: Theme.surface_transparent_medium
+      color: Config.paneBackground
 
-      radius: Theme.radius.xl
-      border.width: 0.5
+      radius: Config.launcher.radius
+      border.width: Config.paneBorderWidth
       border.color: Theme.surface_container
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Prevent clicks on launcher from closing it (only background clicks close)
       MouseArea {
@@ -155,9 +151,9 @@ Loader {
       ColumnLayout {
         anchors {
           fill: parent
-          margins: Theme.padding.xl
+          margins: Config.padding.xl
         }
-        spacing: Theme.spacing.md
+        spacing: Config.spacing.md
 
         // ========== HEADER ==========
 

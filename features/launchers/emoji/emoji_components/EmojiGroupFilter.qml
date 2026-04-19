@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../../../shared/theme"
+import "../../../../shared/components/Animations"
 
 /**
  * EmojiGroupFilter - Category filter buttons
@@ -38,7 +39,7 @@ Item {
   ListView {
     anchors.fill: parent
     orientation: ListView.Horizontal
-    spacing: Theme.spacing.sm
+    spacing: Config.spacing.sm
     clip: true
 
     model: root.groupsWithAll
@@ -54,8 +55,8 @@ Item {
                                          (modelData === root.selectedGroup)
 
       height: parent.height
-      width: groupText.width + Theme.padding.lg * 2
-      radius: Theme.radius.full
+      width: groupText.width + Config.padding.lg * 2
+      radius: Config.radius.full
 
       // Dynamic color based on state
       color: {
@@ -68,20 +69,10 @@ Item {
       scale: groupMouseArea.pressed ? 0.95 : 1.0
 
       // Smooth color transition
-      Behavior on color {
-        ColorAnimation {
-          duration: 200
-          easing.type: Easing.OutCubic
-        }
-      }
+      AColor on color {}
 
       // Smooth scale transition for click feedback
-      Behavior on scale {
-        NumberAnimation {
-          duration: 100
-          easing.type: Easing.OutCubic
-        }
-      }
+      AScale on scale {}
 
       // Button text label
       Text {
@@ -89,17 +80,12 @@ Item {
         anchors.centerIn: parent
         text: modelData
         color: isSelected ? Theme.on_primary_container : Theme.on_surface
-        font.pixelSize: Theme.typography.sm
-        font.family: Theme.typography.fontFamily
-        font.weight: isSelected ? Theme.typography.weightMedium : Theme.typography.weightNormal
+        font.pixelSize: Config.typography.sm
+        font.family: Config.typography.sans
+        font.weight: isSelected ? Config.typography.weightMedium : Config.typography.weightNormal
 
         // Smooth text color transition
-        Behavior on color {
-          ColorAnimation {
-            duration: 200
-            easing.type: Easing.OutCubic
-          }
-        }
+        AColor on color {}
       }
 
       // Mouse interaction area

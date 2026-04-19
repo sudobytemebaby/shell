@@ -1,12 +1,14 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
 import "../../../shared/theme"
+import "../../../shared/components/Animations"
+import "../../../shared/components"
 import "../../../shared/components/Modals"
 import "../../../shared/components/Navigation"
+import "../../../shared/components/Utils"
 
 /**
  * PowerMenuDisplay - UI display for the power menu system
@@ -18,7 +20,7 @@ import "../../../shared/components/Navigation"
  * - Smooth animations and visual feedback
  *
  * Architecture:
- * - LazyLoader ensures UI only loads when visible
+ * - AnimatedLazyLoader ensures UI only loads when visible
  * - PowerMenuManager handles state and command execution
  * - This component is purely presentational
  *
@@ -36,13 +38,12 @@ import "../../../shared/components/Navigation"
 
 // ========== LAZY LOADING ==========
 
-LazyLoader {
+AnimatedLazyLoader {
   id: loader
 
   required property var manager
 
-  // Lazy load UI only when visible for better performance
-  active: manager.visible
+  show: manager.visible
 
   // ========== WINDOW CONFIGURATION ==========
 
@@ -56,6 +57,8 @@ LazyLoader {
       bottom: true
       right: true
     }
+
+    visible: loader.active
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
@@ -167,26 +170,21 @@ LazyLoader {
 
       layer.enabled: true
       layer.smooth: true
-      layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#80000000"
-        shadowBlur: 1.0
-        shadowVerticalOffset: 6
-        shadowHorizontalOffset: 0
-        shadowOpacity: 1
-        shadowScale: 1.02
-      }
+      layer.effect: PaneShadow {}
 
-      color: Theme.surface_transparent_medium
+      color: Config.paneBackground
 
-      radius: Theme.radius.xl
-      border.width: 1
+      radius: Config.powerMenu.radius
+      border.width: Config.paneBorderWidth
       border.color: Theme.surface_container
 
-      width: 700
-      height: 450
-      x: (parent.width - 700) / 2
-      y: (parent.height - 450) / 2
+      width: Config.powerMenu.width
+      height: Config.powerMenu.height
+      x: (parent.width - Config.powerMenu.width) / 2
+      y: (parent.height - Config.powerMenu.height) / 2
+
+      scale: loader.contentScale
+      opacity: loader.contentOpacity
 
       // Prevent clicks on container from propagating to background (which would close menu)
       MouseArea {
@@ -196,9 +194,9 @@ LazyLoader {
       ColumnLayout {
         anchors {
           fill: parent
-          margins: Theme.padding.xl
+          margins: Config.padding.xl
         }
-        spacing: Theme.spacing.md
+        spacing: Config.spacing.md
 
         // ====================================================================
         // HEADER
@@ -217,8 +215,8 @@ LazyLoader {
           Layout.fillWidth: true
           Layout.fillHeight: true
           columns: 3
-          rowSpacing: Theme.spacing.md
-          columnSpacing: Theme.spacing.md
+          rowSpacing: Config.spacing.md
+          columnSpacing: Config.spacing.md
 
           Repeater {
             model: loader.manager.powerOptions
@@ -232,7 +230,7 @@ LazyLoader {
               Layout.fillHeight: true
               Layout.preferredHeight: 140
 
-              radius: Theme.radius.xl
+              radius: Config.radius.xl
 
               // Color logic: Use tertiary color for selection, hover for mouse interaction
               color: {
@@ -241,15 +239,15 @@ LazyLoader {
                   return Theme.tertiary_container
                 }
                 // Default state: Use transparent surface container low
-                return "transparent" 
+                return "transparent"
               }
 
               ColumnLayout {
                 anchors {
                   fill: parent
-                  margins: Theme.spacing.md
+                  margins: Config.spacing.md
                 }
-                spacing: Theme.spacing.sm
+                spacing: Config.spacing.sm
 
                 Item { Layout.fillHeight: true }
 
@@ -261,14 +259,9 @@ LazyLoader {
                   color: index === powerMenuWindow.selectedIndex ?
                          Theme.on_tertiary_container : Theme.on_surface
                   font.pixelSize: 48
-                  font.family: Theme.typography.fontFamily
+                  font.family: Config.typography.sans
 
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: 200
-                      easing.type: Easing.OutCubic
-                    }
-                  }
+                  AColor on color {}
                 }
 
                 // Power option name
@@ -277,17 +270,12 @@ LazyLoader {
                   text: modelData.name
                   color: index === powerMenuWindow.selectedIndex ?
                          Theme.tertiary: Theme.on_surface
-                  font.pixelSize: Theme.typography.lg
-                  font.family: Theme.typography.fontFamilyDisplay
-                  font.weight: Theme.typography.weightMedium
+                  font.pixelSize: Config.typography.lg
+                  font.family: Config.typography.sans
+                  font.weight: Config.typography.weightMedium
                   horizontalAlignment: Text.AlignHCenter
 
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: 200
-                      easing.type: Easing.OutCubic
-                    }
-                  }
+                  AColor on color {}
                 }
 
                 // Power option description
@@ -296,18 +284,13 @@ LazyLoader {
                   text: modelData.description
                   color: index === powerMenuWindow.selectedIndex ?
                          Theme.tertiary: Theme.on_surface_variant
-                  font.pixelSize: Theme.typography.sm
-                  font.family: Theme.typography.fontFamilyDisplay
+                  font.pixelSize: Config.typography.sm
+                  font.family: Config.typography.sans
                   horizontalAlignment: Text.AlignHCenter
                   wrapMode: Text.WordWrap
                   opacity: index === powerMenuWindow.selectedIndex ? 0.9 : 0.7
 
-                  Behavior on color {
-                    ColorAnimation {
-                      duration: 200
-                      easing.type: Easing.OutCubic
-                    }
-                  }
+                  AColor on color {}
                 }
 
                 Item { Layout.fillHeight: true }

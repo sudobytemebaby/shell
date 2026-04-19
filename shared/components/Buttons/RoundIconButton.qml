@@ -1,5 +1,6 @@
 import QtQuick
 import "../../theme"
+import "../Animations"
 
 // Unified Round Icon Button Component
 // Consolidates: RoundIconButton + MediaButton
@@ -26,12 +27,12 @@ Rectangle {
 
   width: size
   height: size
-  radius: variant === "media" ? (isPrimary ? size / 2 : size / 2) : Theme.radius.full
+  radius: variant === "media" ? (isPrimary ? size / 2 : size / 2) : Config.radius.full
 
   color: {
     if (isPrimary) {
       if (variant === "media") {
-        return mouseArea.containsMouse ? Theme.primary : Theme.primary_transparent
+        return mouseArea.containsMouse ? Theme.primary : Theme.primary_transparent_medium
       } else {
         return mouseArea.pressed ? Qt.darker(Theme.primary, 1.2) : Theme.primary
       }
@@ -50,20 +51,13 @@ Rectangle {
   // ANIMATIONS
   // ============================================================================
 
-  Behavior on color {
-    ColorAnimation { duration: 150 }
-  }
+  AColor on color {}
 
   Behavior on border.color {
     ColorAnimation { duration: 150 }
   }
 
-  Behavior on scale {
-    NumberAnimation {
-      duration: 100
-      easing.type: Easing.OutCubic
-    }
-  }
+  AScale on scale {}
 
   // ============================================================================
   // ICON
@@ -79,8 +73,8 @@ Rectangle {
         return Theme.on_surface
       }
     }
-    font.pixelSize: isPrimary ? Theme.typography.xxl : Theme.typography.xl
-    font.family: Theme.typography.fontFamily
+    font.pixelSize: isPrimary ? Config.typography.xxl : Config.typography.xl
+    font.family: Config.typography.sans
   }
 
   // ============================================================================

@@ -11,9 +11,15 @@ MaterialButton 1.0 Buttons/MaterialButton.qml
 Card 1.0 Cards/Card.qml
 SliderCard 1.0 Cards/SliderCard.qml
 
+# Animations
+AFade 1.0 Animations/AFade.qml
+AColor 1.0 Animations/AColor.qml
+AScale 1.0 Animations/AScale.qml
+AExpand 1.0 Animations/AExpand.qml
+
 # Display
 IconCircle 1.0 Display/IconCircle.qml
-Elevation 1.0 Display/Elevation.qml
+PaneShadow 1.0 Display/PaneShadow.qml
 TickMarks 1.0 Display/TickMarks.qml
 NImageRounded 1.0 Display/NImageRounded.qml
 
@@ -29,4 +35,3 @@ HorizontalSlider 1.0 Sliders/HorizontalSlider.qml
 
 # Utils
 AnimatedLazyLoader 1.0 Utils/AnimatedLazyLoader.qml
-SlideOutPanel 1.0 SlideOutPanel.qml

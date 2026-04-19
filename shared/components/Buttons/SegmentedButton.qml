@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../theme"
+import "../Animations"
 
 /**
  * SegmentedButton
@@ -30,7 +31,7 @@ Rectangle {
   
   Layout.preferredWidth: 200
   Layout.preferredHeight: 40
-  radius: Theme.radius.full
+  radius: Config.radius.full
   color: Theme.surface_container_low
   border.width: 0.5
   border.color: Theme.surface_container
@@ -67,7 +68,7 @@ Rectangle {
         Layout.fillWidth: true
         Layout.margins: 6
         
-        radius: Theme.radius.full
+        radius: Config.radius.full
         
         // Active state: Tertiary container
         // Inactive state: Transparent
@@ -75,25 +76,25 @@ Rectangle {
 
         RowLayout {
           anchors.centerIn: parent
-          spacing: Theme.spacing.xs
+          spacing: Config.spacing.xs
 
           Text {
             text: modelData.icon
             color: index === root.currentIndex ? Theme.on_tertiary_container : Theme.on_surface_variant
-            font.pixelSize: Theme.typography.md
-            font.family: Theme.typography.fontFamily
+            font.pixelSize: Config.typography.md
+            font.family: Config.typography.sans
             
-            Behavior on color { ColorAnimation { duration: 200 } }
+            AColor on color {}
           }
 
           Text {
             text: modelData.text
             color: index === root.currentIndex ? Theme.on_tertiary_container : Theme.on_surface_variant
-            font.pixelSize: Theme.typography.sm
-            font.family: Theme.typography.fontFamily
-            font.weight: index === root.currentIndex ? Theme.typography.weightMedium : Theme.typography.weightNormal
+            font.pixelSize: Config.typography.sm
+            font.family: Config.typography.sans
+            font.weight: index === root.currentIndex ? Config.typography.weightMedium : Config.typography.weightNormal
 
-            Behavior on color { ColorAnimation { duration: 200 } }
+            AColor on color {}
           }
         }
 
