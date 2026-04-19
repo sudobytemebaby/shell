@@ -6,7 +6,7 @@ IconButton {
   required property var systemState
 
   icon: systemState.network.networkIcon
-  title: "Wireless"
+  title: "Network"
   subtitle: {
     if (!systemState.network.wifiEnabled) return "Off"
     if (!systemState.network.wifiConnected) return "Disconnected"

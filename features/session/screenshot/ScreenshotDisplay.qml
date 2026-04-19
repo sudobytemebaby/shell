@@ -26,11 +26,10 @@ AnimatedLazyLoader {
 
   // When the close animation finishes and loader.active goes false,
   // notify the manager it's safe to run interactive tools like slurp.
-  Connections {
-    target: loader
-    function onActiveChanged() {
-      if (!loader.active) loader.manager.windowClosed()
-    }
+  // Note: this must be on the loader itself (not inside loaded content)
+  // because loaded children are destroyed when active becomes false.
+  onActiveChanged: {
+    if (!active) manager.windowClosed()
   }
 
   PanelWindow {
