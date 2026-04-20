@@ -1,6 +1,6 @@
 {
   "animations": {
-    "speed": 2,
+    "speed": 1.5,
     "disabled": false
   },
   "appearance": {
@@ -12,13 +12,13 @@
     "scaleRatio": 1.0
   },
   "shadows": {
-    "blur": 1,
+    "blur": 1.4,
     "color": "#80000000",
     "horizontalOffset": 0,
     "verticalOffset": 4
   },
   "bar": {
-    "height": 26
+    "height": 28
   },
   "controlCenter": {
     "width": 360,

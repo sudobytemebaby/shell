@@ -9,7 +9,7 @@ LazyLoader {
   required property bool show
 
   // Scale range: content scales from scaleFrom → 1.0 on open
-  property real scaleFrom: 0.96
+  property real scaleFrom: 0.88
 
   // Animation state (driven independently)
   property real _opacity: 0
@@ -48,7 +48,7 @@ LazyLoader {
       target: root; property: "_opacity"
       to: 0
       duration: Config.animations.fast
-      easing.type: Easing.InCubic
+      easing.type: Easing.OutQuad
       onFinished: {
         root._scale = root.scaleFrom
         root.isClosing = false
